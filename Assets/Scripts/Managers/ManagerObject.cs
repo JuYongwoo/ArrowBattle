@@ -6,7 +6,7 @@ public class ManagerObject : MonoBehaviour
 
     static public AudioManager audioM = new AudioManager();
     static public InputManager inputM = new InputManager();
-    static public SkillManager skillInfoM = new SkillManager();
+    static public SkillDataBaseManager skillInfoM = new SkillDataBaseManager();
 
     private void Awake()
     {

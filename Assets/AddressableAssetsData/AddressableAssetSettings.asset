@@ -44,9 +44,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c2a1426eb5c5dba448881a02d71b26b6, type: 2}
   - {fileID: 11400000, guid: 4d87d0f51e5f3fc41b6a561c44dfef93, type: 2}
   - {fileID: 11400000, guid: 99010905016f5544daeb121369af2c41, type: 2}
-  - {fileID: 11400000, guid: ad8f6e739ff147a4a9ffd55ded99a719, type: 2}
   - {fileID: 11400000, guid: fec9c47019f7b53499761839a46346f5, type: 2}
-  - {fileID: 11400000, guid: 5114b0c4eb3caae40befe092a64eb964, type: 2}
+  - {fileID: 11400000, guid: 2770664d2e6079b4386b6c5a60971882, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -87,13 +86,11 @@ MonoBehaviour:
     m_ProfileVersion: 1
   m_LabelTable:
     m_LabelNames:
-    - SO
-    - Sound
+    - Attack
     - Skill1
     - Skill2
     - Skill3
-    - Attack
-    - BGM
+    - SkillData
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 0ffb42818af8bb24ba830eb2fd49d915, type: 2}

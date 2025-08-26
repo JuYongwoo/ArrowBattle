@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfdd3b4b06373f242bef8f8fa1b03167, type: 3}
+  m_Name: SkillData
+  m_EditorClassIdentifier: 
+  skillName: "\uAE30\uBCF8 \uACF5\uACA9"
+  skillDamage: 0
+  skillCooldown: 0
+  skillSound: {fileID: 8300000, guid: f9ed927211c60f64aa06c671df99a358, type: 3}
+  skillProjectile: {fileID: 21300000, guid: b680caee5703d3f40a5b56e2acf5f064, type: 3}
+  skillIcon: {fileID: 21300000, guid: 8a9731ca96306d741a87fb7321dbc010, type: 3}
+  projectileSpeed: 0
+  isShowPortrait: 0
+  isGuided: 0
+  skillProjectileMovingType: 1

@@ -126,16 +126,26 @@ public class Util
 
         foreach (TEnum e in Enum.GetValues(typeof(TEnum)))
         {
+            // 공통 라벨 + Enum 이름을 교집합으로 조회
+            IEnumerable keys = new[] { commonLabel, e.ToString() };
 
-            // 공통 라벨 + Enum 라벨 동시 만족 교집합 조회
-            IEnumerable keys = new IEnumerable[] { commonLabel, e.ToString() }; //인자와 Enum이름
-            var locHandle = Addressables.LoadResourceLocationsAsync(keys, Addressables.MergeMode.Intersection, typeof(TObject)).WaitForCompletion(); // Addressables.MergeMode.Intersection: 교집합으로 리소스 로드
-            Addressables.Release(locHandle);
+            var locHandle = Addressables.LoadResourceLocationsAsync(keys, Addressables.MergeMode.Intersection, typeof(TObject));
+            var locations = locHandle.WaitForCompletion();
 
-            // 여러 개면 첫 번째를 사용
+            if (locations == null || locations.Count == 0)
+            {
+                Debug.LogWarning($"[MapEnumToAddressablesByLabels] No asset found for Enum {e} with label '{commonLabel}'");
+                continue;
+            }
 
-            var asset = Addressables.LoadAssetAsync<TObject>(locHandle[0]).WaitForCompletion();
+            // 첫 번째 리소스만 사용
+            var assetHandle = Addressables.LoadAssetAsync<TObject>(locations[0]);
+            var asset = assetHandle.WaitForCompletion();
+
             dict[e] = asset;
+
+            Addressables.Release(locHandle);
+            Addressables.Release(assetHandle);
         }
 
         return dict;

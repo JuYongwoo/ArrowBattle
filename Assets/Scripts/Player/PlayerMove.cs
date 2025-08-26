@@ -1,3 +1,4 @@
+using Unity.Burst;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -12,14 +13,13 @@ public class PlayerMove : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        moveSpeed = GetComponent<Player>().stat.Current.CurrentMoveSpeed; // Player 스크립트에서 이동 속도 가져오기
         sr = Util.getObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
+        moveSpeed = GetComponent<Player>().stat.Current.CurrentMoveSpeed; // Player 스크립트에서 이동 속도 가져오기
+        ManagerObject.inputM.leftRightMove += Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
     }
 
-    private void Update()
+    private void Move(float moveX)
     {
-        // 좌우 이동
-        float moveX = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(moveX * moveSpeed, rb.velocity.y);
 
         // 좌우 플립
