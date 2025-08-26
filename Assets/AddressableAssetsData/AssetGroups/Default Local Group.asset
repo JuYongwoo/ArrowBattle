@@ -24,7 +24,11 @@ MonoBehaviour:
     - Sound
     - BGM
   - m_GUID: b5a8c3b3aac9b1c4bbcf2f6daa895c79
-    m_Address: CharacterStatData
+    m_Address: PlayerData
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a80ae1482f702c344ace49c2b7b8bf8b
+    m_Address: EnemyData
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

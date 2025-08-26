@@ -30,9 +30,9 @@ public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지�
 
     //TODO JYW 플레이어마다 가지고 있을 스킬들 목록도 여기서 존재가능
 
-    public CharacterStatManager()
+    public CharacterStatManager(string key)
     {
-        var playerData = Addressables.LoadAssetAsync<CharacterStatDataSO>("CharacterStatData").WaitForCompletion();
+        var playerData = Addressables.LoadAssetAsync<CharacterStatDataSO>(key).WaitForCompletion();
 
         Current = new CurrentStat(playerData);
 
