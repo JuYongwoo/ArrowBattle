@@ -16,7 +16,7 @@ public class SkillDataSO : ScriptableObject //이 SO를 이용하여 세 개의 스킬 데이
     public float skillDamage; //스킬 데미지
     public float skillCooldown; //스킬 쿨타임
     public AudioClip skillSound; //스킬 사운드
-    public Sprite skillProjectile; //스킬 투사체 이미지
+    public GameObject skillProjectile; //스킬 투사체 프리팹
     public Sprite skillIcon; //스킬 아이콘 이미지
 
 

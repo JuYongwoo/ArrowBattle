@@ -1,17 +1,13 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Enemy : MonoBehaviour
+public class PlayerStat : MonoBehaviour
 {
     public CharacterStatManager stat;
 
     private void Awake()
     {
-        stat = new CharacterStatManager("EnemyData");
+        stat = new CharacterStatManager("PlayerData");
     }
 
-    private void Update()
-    {
-
-    }
 }

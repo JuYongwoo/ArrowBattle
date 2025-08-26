@@ -16,7 +16,7 @@ MonoBehaviour:
   skillDamage: 0
   skillCooldown: 0
   skillSound: {fileID: 8300000, guid: f9ed927211c60f64aa06c671df99a358, type: 3}
-  skillProjectile: {fileID: 21300000, guid: b680caee5703d3f40a5b56e2acf5f064, type: 3}
+  skillProjectile: {fileID: 4503533334088539303, guid: fb38e5d62f3db8d48b8136e9a75f610d, type: 3}
   skillIcon: {fileID: 21300000, guid: 8a9731ca96306d741a87fb7321dbc010, type: 3}
   projectileSpeed: 0
   isShowPortrait: 0

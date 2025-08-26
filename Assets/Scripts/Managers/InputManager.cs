@@ -1,12 +1,10 @@
 using System;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.Playables;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class InputManager
 {
     public Action<float> leftRightMove;
+    public Action<Skills> useSkill;
 
     public void OnAwake()
     {
@@ -20,6 +18,11 @@ public class InputManager
         if (moveX != 0)
         {
             leftRightMove?.Invoke(moveX);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            useSkill?.Invoke(Skills.Attack);
         }
 
     }

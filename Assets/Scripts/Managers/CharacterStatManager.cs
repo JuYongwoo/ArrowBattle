@@ -1,8 +1,5 @@
 using System;
-using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Playables;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 
 public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지고 있게 된다.

@@ -13,6 +13,7 @@ public class GameMode : MonoBehaviour
     private void Awake()
     {
         gameModeData = Addressables.LoadAssetAsync<GameModeDataSO>("GameModeData").WaitForCompletion(); // GameModeDataSO 로드
+        //해당 정보를 기반으로 게임을 세팅
 
 
     }
