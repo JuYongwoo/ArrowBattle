@@ -7,5 +7,6 @@ public class CharacterStatDataSO : ScriptableObject //이 SO를 이용하여 플레이어�
     public float MaxHP;
     public float CurrentHP;
     public float CurrentMoveSpeed;
+    public AudioClip HitSound;
 
 }

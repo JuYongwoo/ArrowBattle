@@ -7,12 +7,12 @@ public class AudioManager
 
     private AudioSource skillAudioSource;
     private AudioSource bgmAudioSource;
-    private Dictionary<Skills, AudioClip> skillSoundsMap;
+    //private Dictionary<Skills, AudioClip> skillSoundsMap;
     private AudioClip BGM;
 
     public void OnAwake()
     {
-        skillSoundsMap = Util.MapEnumToAddressablesByLabels<Skills, AudioClip>("Sound");
+        //skillSoundsMap = Util.MapEnumToAddressablesByLabels<Skills, AudioClip>("Sound");
         BGM = Addressables.LoadAssetAsync<AudioClip>("BGM").WaitForCompletion();
 
         GameObject target = ManagerObject.instance.gameObject;
@@ -27,10 +27,11 @@ public class AudioManager
         PlayBGM(BGM);
     }
 
-    public void PlaySkillSound(Skills sound, float volume = 1f)
+/*    public void PlaySkillSound(Skills sound, float volume = 1f)
     {
         skillAudioSource.PlayOneShot(skillSoundsMap[sound], volume);
     }
+*/
 
     public void PlayAudioClip(AudioClip sound, float volume = 1f)
     {

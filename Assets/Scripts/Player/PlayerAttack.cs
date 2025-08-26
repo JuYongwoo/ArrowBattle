@@ -12,6 +12,7 @@ public class PlayerAttack : MonoBehaviour
     private void Attack(Skills skill)
     {
         //스킬의 투사체 프리팹 소환
-        Instantiate(ManagerObject.skillInfoM.attackSkillData[skill].skillProjectile, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), Quaternion.identity);
+        GameObject projectile = Instantiate(ManagerObject.skillInfoM.attackSkillData[skill].skillProjectile, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), Quaternion.identity);
+        projectile.GetComponent<SkillProjectile>().SetProjectile(GameObject.FindGameObjectWithTag("Enemy").transform.position, gameObject.tag, skill);
     }
 }

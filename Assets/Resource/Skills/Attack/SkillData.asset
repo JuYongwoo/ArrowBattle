@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfdd3b4b06373f242bef8f8fa1b03167, type: 3}
+  m_Script: {fileID: 11500000, guid: 7a15b642988f16242ad30434af14c48e, type: 3}
   m_Name: SkillData
   m_EditorClassIdentifier: 
-  skillName: "\uAE30\uBCF8 \uACF5\uACA9"
+  skillName: 
   skillDamage: 0
   skillCooldown: 0
   skillSound: {fileID: 8300000, guid: f9ed927211c60f64aa06c671df99a358, type: 3}
@@ -21,4 +21,4 @@ MonoBehaviour:
   projectileSpeed: 0
   isShowPortrait: 0
   isGuided: 0
-  skillProjectileMovingType: 1
+  skillProjectileMovingType: 0

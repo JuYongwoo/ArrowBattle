@@ -2,6 +2,11 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 
+public interface IAttackable
+{
+    void TakeDamage(float damage);
+}
+
 // JYW 이 스크립트는 게임 시작 정보인 GameModeDataSO를 로드하고 SO에 정의된 캐릭터들을 씬에 생성하는 단순한 역할을 합니다.
 
 public class GameMode : MonoBehaviour

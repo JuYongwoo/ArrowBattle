@@ -1,13 +1,7 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class PlayerStat : MonoBehaviour
+public class PlayerStat : CharacterStatBase
 {
-    public CharacterStatManager stat;
-
-    private void Awake()
-    {
-        stat = new CharacterStatManager("PlayerData");
-    }
+    protected override string CharacterDataName => "PlayerData";
 
 }

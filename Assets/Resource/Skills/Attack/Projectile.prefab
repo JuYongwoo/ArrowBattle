@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5201998293293795073}
   - component: {fileID: 3014346211516544273}
+  - component: {fileID: 8417698053603863280}
+  - component: {fileID: 5030589501095425472}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -84,3 +86,33 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8417698053603863280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4503533334088539303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f9bfec78bb43d647bec8d354b024428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteAngleOffset: -45
+  speed: 3
+--- !u!58 &5030589501095425472
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4503533334088539303}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.96
