@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -20,7 +17,7 @@ public class GameMode : MonoBehaviour
 
 
     }
-    void Start()
+    private void Start()
     {
         //GameMode에서 정의된 캐릭터들을 SO 속 정보에 따라 씬에 생성
         foreach (var character in gameModeData.Characters)
@@ -29,9 +26,4 @@ public class GameMode : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

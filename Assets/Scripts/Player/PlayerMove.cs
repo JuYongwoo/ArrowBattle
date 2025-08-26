@@ -4,14 +4,15 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     // SO 값으로 교체 예정
-    [SerializeField] private float moveSpeed = 5f;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
+    private float moveSpeed;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        moveSpeed = GetComponent<Player>().stat.Current.CurrentMoveSpeed; // Player 스크립트에서 이동 속도 가져오기
         sr = Util.getObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
     }
 

@@ -115,8 +115,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6887121872436583789}
-  - component: {fileID: 6887121872436583787}
+  - component: {fileID: 3752520424913221043}
   - component: {fileID: -8584544749491097751}
+  - component: {fileID: 6887121872436583787}
   - component: {fileID: -6028769171527773945}
   m_Layer: 0
   m_Name: Player
@@ -134,7 +135,7 @@ Transform:
   m_GameObject: {fileID: 6887121872436583790}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6887121871495450157}
@@ -142,6 +143,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3752520424913221043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6887121872436583790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa4c97a393d63e4a944ab3c562e2dbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-8584544749491097751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6887121872436583790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 340c7eb5ce04fbc459cd49677f178b90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &6887121872436583787
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -168,18 +193,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.27, y: 2.5}
   m_EdgeRadius: 0
---- !u!114 &-8584544749491097751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6887121872436583790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 340c7eb5ce04fbc459cd49677f178b90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &-6028769171527773945
 Rigidbody2D:
   serializedVersion: 4

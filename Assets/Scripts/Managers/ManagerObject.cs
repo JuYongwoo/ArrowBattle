@@ -4,9 +4,9 @@ public class ManagerObject : MonoBehaviour
 {
     static public ManagerObject instance;
 
-    static public AudioManager audio = new AudioManager();
-    static public InputManager input = new InputManager();
-    static public StatManager characterStat = new StatManager();
+    static public AudioManager audioM = new AudioManager();
+    static public InputManager inputM = new InputManager();
+    static public SkillManager skillInfoM = new SkillManager();
 
     private void Awake()
     {
@@ -18,20 +18,20 @@ public class ManagerObject : MonoBehaviour
 
         instance = this;
         //DontDestroyOnLoad(gameObject);
-        characterStat.OnAwake();
-        audio.OnAwake();
-        input.OnAwake();
+        skillInfoM.OnAwake();
+        audioM.OnAwake();
+        inputM.OnAwake();
     }
     void Start()
     {
         Screen.SetResolution(1600, 900, false);
-        audio.onStart();
+        audioM.onStart();
 
     }
 
     void Update()
     {
-        input.OnUpdate();
+        inputM.OnUpdate();
     }
 
 

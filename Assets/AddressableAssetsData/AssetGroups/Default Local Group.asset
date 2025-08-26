@@ -23,6 +23,10 @@ MonoBehaviour:
     m_SerializedLabels:
     - Sound
     - BGM
+  - m_GUID: b5a8c3b3aac9b1c4bbcf2f6daa895c79
+    m_Address: CharacterStatData
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 2c7ba97915dd9df4996218e78c1a45c8, type: 2}
   m_SchemaSet:
