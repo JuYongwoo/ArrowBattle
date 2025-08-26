@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 
-public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지고 있게 된다.
+public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지도록
 {
     public struct CharacterStat
     {

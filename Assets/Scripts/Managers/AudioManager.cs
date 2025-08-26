@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 public class AudioManager
 {
@@ -8,12 +7,10 @@ public class AudioManager
     private AudioSource skillAudioSource;
     private AudioSource bgmAudioSource;
     //private Dictionary<Skills, AudioClip> skillSoundsMap;
-    private AudioClip BGM;
 
     public void OnAwake()
     {
         //skillSoundsMap = Util.MapEnumToAddressablesByLabels<Skills, AudioClip>("Sound");
-        BGM = Addressables.LoadAssetAsync<AudioClip>("BGM").WaitForCompletion();
 
         GameObject target = ManagerObject.instance.gameObject;
         skillAudioSource = target.AddComponent<AudioSource>();
@@ -22,10 +19,6 @@ public class AudioManager
         bgmAudioSource.playOnAwake = false;
     }
 
-    public void onStart()
-    {
-        PlayBGM(BGM);
-    }
 
 /*    public void PlaySkillSound(Skills sound, float volume = 1f)
     {

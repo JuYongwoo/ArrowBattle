@@ -20,13 +20,6 @@ public class ManagerObject : MonoBehaviour
         //DontDestroyOnLoad(gameObject);
         skillInfoM.OnAwake();
         audioM.OnAwake();
-        inputM.OnAwake();
-    }
-    void Start()
-    {
-        Screen.SetResolution(1600, 900, false);
-        audioM.onStart();
-
     }
 
     void Update()

@@ -1,24 +1,24 @@
+using System;
 using UnityEngine;
 
 public class SkillProjectile : MonoBehaviour
 {
     [SerializeField] private float spriteAngleOffset = 45f;
-    [SerializeField] private float speed = 5f;
 
     private Vector3 startPos;
     private Vector3 targetPos;
     private Vector3 controlPos;   // 포물선 제어점
-    private string attackerTag;
+    private CharacterTypeEnum attackerType;
     private Skills skill;
 
     private float t;              // 0~1 진행도
 
-    public void SetProjectile(Vector3 targetPos, string attackerTag, Skills skill)
+    public void SetProjectile(CharacterTypeEnum attackerType, Skills skill)
     {
-        this.startPos = transform.position;
-        this.targetPos = targetPos;
-        this.attackerTag = attackerTag;
+        this.attackerType = attackerType;
+        targetPos =  GameObject.FindGameObjectWithTag(Enum.GetName(typeof(CharacterTypeEnum), ((int)attackerType+1) % Enum.GetValues(typeof(CharacterTypeEnum)).Length)).transform.position;
         this.skill = skill;
+        startPos = transform.position;
 
         // 제어점 = 시작점과 목표점의 중간 + 위로 offset
         Vector3 mid = (startPos + targetPos) * 0.5f;
@@ -38,7 +38,7 @@ public class SkillProjectile : MonoBehaviour
         float distance = Vector3.Distance(startPos, targetPos);
         if (distance < 0.01f) { Destroy(gameObject); return; }
 
-        t += (speed / distance) * Time.deltaTime;
+        t += (ManagerObject.skillInfoM.attackSkillData[skill].projectileSpeed / distance) * Time.deltaTime;
         t = Mathf.Clamp01(t);
 
         // Quadratic Bezier 곡선 위치 계산
@@ -66,9 +66,9 @@ public class SkillProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(attackerTag)) return;
+        if (other.CompareTag(Enum.GetName(typeof(CharacterTypeEnum), attackerType))) return;
 
-        CharacterStatBase stat = other.GetComponent<CharacterStatBase>();
+        CharacterBase stat = other.GetComponent<CharacterBase>();
         if (stat != null)
         {
             stat.getDamaged(0);

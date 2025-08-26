@@ -1,6 +1,8 @@
 using UnityEditor;
 using UnityEngine;
 
+
+//SO를 다룰 때 깔끔하게 보이기 위한 커스텀 에디터 스크립트
 [CustomEditor(typeof(SkillDataSO))]
 public class SkillDataSOEditor : Editor
 {
@@ -16,7 +18,8 @@ public class SkillDataSOEditor : Editor
         EditorGUILayout.LabelField("Skill Base Info", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillName"), new GUIContent("Skill Name"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillDamage"), new GUIContent("Skill Damage"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("skillCooldown"), new GUIContent("Skill Cooldown"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("skillCoolTime"), new GUIContent("Skill CooldTime"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("skillCastingTime"), new GUIContent("Skill CastingTime"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillSound"), new GUIContent("Skill Sound"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillProjectile"), new GUIContent("Skill Projectile"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillIcon"), new GUIContent("Skill Icon"));
