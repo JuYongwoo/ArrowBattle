@@ -10,9 +10,25 @@ public class InputManager
 
     public void OnUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            useSkill?.Invoke(Skills.Attack);
+            useSkill?.Invoke(Skills.Skill1);
+        }
+        else if (Input.GetKeyDown(KeyCode.W))
+        {
+            useSkill?.Invoke(Skills.Skill2);
+        }
+        else if (Input.GetKeyDown(KeyCode.W))
+        {
+            useSkill?.Invoke(Skills.Skill3);
+        }
+        else if (Input.GetKeyDown(KeyCode.W))
+        {
+            useSkill?.Invoke(Skills.Skill4);
+        }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            useSkill?.Invoke(Skills.Skill5);
         }
         else
         {
