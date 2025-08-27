@@ -45,6 +45,18 @@ MonoBehaviour:
     - Skill
     - SkillData
     - Skill1
+  - m_GUID: fd445de5ce53dd241b200d18cf575f63
+    m_Address: Skill4SO
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Skill4
+    - SkillData
+  - m_GUID: 5cdf40173d5d6d842945a2b0e0c8946b
+    m_Address: Skill5SO
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Skill5
+    - SkillData
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 2c7ba97915dd9df4996218e78c1a45c8, type: 2}
   m_SchemaSet:

@@ -81,6 +81,11 @@ public abstract class CharacterBase : MonoBehaviour
 
     protected void startSkill(Skills skill)
     {
+        if (skillCoroutine != null)
+        {
+            StopCoroutine(skillCoroutine);
+            skillCoroutine = null;
+        }
         skillCoroutine = StartCoroutine(castSkill(skill));
 
     }

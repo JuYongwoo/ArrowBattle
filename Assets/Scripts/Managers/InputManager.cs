@@ -18,11 +18,11 @@ public class InputManager
         {
             useSkill?.Invoke(Skills.Skill2);
         }
-        else if (Input.GetKeyDown(KeyCode.W))
+        else if (Input.GetKeyDown(KeyCode.E))
         {
             useSkill?.Invoke(Skills.Skill3);
         }
-        else if (Input.GetKeyDown(KeyCode.W))
+        else if (Input.GetKeyDown(KeyCode.R))
         {
             useSkill?.Invoke(Skills.Skill4);
         }

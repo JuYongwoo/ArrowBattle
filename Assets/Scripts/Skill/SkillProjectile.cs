@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class SkillProjectile : MonoBehaviour
 {
-    [SerializeField] private float spriteAngleOffset = 45f;
+    [SerializeField]
+    private float spriteAngleOffset; //임포트한 스프라이트가 기울어져 있을 수 있으므로 각도 보정값 존재
 
     private Vector3 startPos;
     private Vector3 targetPos;

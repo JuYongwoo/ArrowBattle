@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: 
   skillDamage: 0
-  skillCooldown: 0
+  skillCoolTime: 0
+  skillCastingTime: 0
   skillSound: {fileID: 8300000, guid: a09573ba2dc5b2c42a8e9c449c6be809, type: 3}
   skillProjectile: {fileID: 4503533334088539303, guid: c6eebad8cfe8dec4aa80d6e34a18e0b3, type: 3}
   skillIcon: {fileID: 21300000, guid: 0303a580835831242a6ad47e04696c19, type: 3}
-  projectileSpeed: 0
+  projectileSpeed: 7
   isShowPortrait: 0
   isGuided: 0
   skillProjectileMovingType: 0

@@ -86,11 +86,13 @@ MonoBehaviour:
     m_ProfileVersion: 1
   m_LabelTable:
     m_LabelNames:
+    - SkillData
     - Attack
     - Skill1
     - Skill2
     - Skill3
-    - SkillData
+    - Skill4
+    - Skill5
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 0ffb42818af8bb24ba830eb2fd49d915, type: 2}
