@@ -71,7 +71,7 @@ public class SkillProjectile : MonoBehaviour
         CharacterBase stat = other.GetComponent<CharacterBase>();
         if (stat != null)
         {
-            stat.getDamaged(0);
+            stat.getDamaged(ManagerObject.skillInfoM.attackSkillData[skill].skillDamage);
             Destroy(gameObject);
         }
     }

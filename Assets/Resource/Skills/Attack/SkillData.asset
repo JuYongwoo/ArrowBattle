@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SkillData
   m_EditorClassIdentifier: 
   skillName: "\uAE30\uBCF8 \uACF5\uACA9"
-  skillDamage: 5
+  skillDamage: 20
   skillCoolTime: 0
   skillCastingTime: 1
   skillSound: {fileID: 8300000, guid: f9ed927211c60f64aa06c671df99a358, type: 3}

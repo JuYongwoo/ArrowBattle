@@ -18,7 +18,7 @@ public class SkillDataSOEditor : Editor
         EditorGUILayout.LabelField("Skill Base Info", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillName"), new GUIContent("Skill Name"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillDamage"), new GUIContent("Skill Damage"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("skillCoolTime"), new GUIContent("Skill CooldTime"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("skillCoolTime"), new GUIContent("Skill CoolTime"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillCastingTime"), new GUIContent("Skill CastingTime"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillSound"), new GUIContent("Skill Sound"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillProjectile"), new GUIContent("Skill Projectile"));

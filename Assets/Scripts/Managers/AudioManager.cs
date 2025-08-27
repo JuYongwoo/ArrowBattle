@@ -36,7 +36,7 @@ public class AudioManager
     public void PlayBGM(AudioClip BGM, float volume = 1f)
     {
         if (bgmAudioSource.clip == BGM && bgmAudioSource.isPlaying)
-            return; // 이미 재생 중이면 다시 재생 안 함
+            return; // 이미 재생 중이면 다시 재생X
 
         bgmAudioSource.clip = BGM;
         bgmAudioSource.volume = volume;

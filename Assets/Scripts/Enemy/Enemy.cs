@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ public class Enemy : CharacterBase
 
     private Coroutine moveLoop;
 
+    public static Action<float, float> setHPinUI;
+
     protected override void Awake()
     {
         base.Awake();
@@ -18,7 +21,7 @@ public class Enemy : CharacterBase
     protected override void Start()
     {
         base.Start();
-        moveLoop = StartCoroutine(CoPingPongMove());
+        moveLoop = StartCoroutine(CoMove());
     }
 
     private void OnDestroy()
@@ -26,7 +29,14 @@ public class Enemy : CharacterBase
         if (moveLoop != null) StopCoroutine(moveLoop);
     }
 
-    private IEnumerator CoPingPongMove()
+    public override void getDamaged(float damageAmount)
+    {
+        stat.deltaHP(-damageAmount);
+        setHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.audioM.PlayAudioClip(stat.Current.HitSound);
+    }
+
+    private IEnumerator CoMove()
     {
         float dir = -1f;
         WaitForFixedUpdate waitFixed = new WaitForFixedUpdate();

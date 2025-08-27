@@ -15,6 +15,8 @@ public enum CharacterTypeEnum
     Enemy
 }
 
+//JYW Enemy와 Player의 공통 기능을 묶은 부모 클래스입니다.
+
 public abstract class CharacterBase : MonoBehaviour
 {
     protected CharacterStateEnum state = CharacterStateEnum.Moving;
@@ -23,17 +25,17 @@ public abstract class CharacterBase : MonoBehaviour
     protected Rigidbody2D rb;
     private SpriteRenderer sr;
     protected Coroutine skillCoroutine;
+    public abstract void getDamaged(float damageAmount); //자식클래스  getDamaged 구현 강제
 
-    protected abstract CharacterTypeEnum CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티로 선언하여 자식 클래스에서 반드시 구현하도록 강제
+    protected abstract CharacterTypeEnum CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제
 
-    protected virtual void Awake() //Awake는 virtual로 선언하여 자식 클래스에서 override 가능하도록 다형성 보장
+    protected virtual void Awake() //virtual로 선언하여 자식 클래스에서 override 가능하도록 다형성 보장
     {
         if(CharacterTypeEnum == CharacterTypeEnum.Player) stat = new CharacterStatManager("PlayerData");
         else if (CharacterTypeEnum == CharacterTypeEnum.Enemy) stat = new CharacterStatManager("EnemyData");
         anim = GetComponentInChildren<Animator>(); // Animator 캐싱
         rb = GetComponent<Rigidbody2D>(); // Rigidbody2D 캐싱
         sr = Util.getObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
-
 
 
     }
@@ -43,11 +45,6 @@ public abstract class CharacterBase : MonoBehaviour
         setState(CharacterStateEnum.Idle); //처음 상태는 Idle
     }
 
-    public void getDamaged(float damageAmount) //SkillProjectile이 어떤 캐릭터든 공동 호출
-    {
-        stat.deltaHP(-damageAmount);
-        ManagerObject.audioM.PlayAudioClip(stat.Current.HitSound);
-    }
     public void setState(CharacterStateEnum s)
     {
         if (state == s || (state == CharacterStateEnum.Attacking && s == CharacterStateEnum.Idle && skillCoroutine != null)) return; //이미 같은 상태거나 Attacking 상태에서 공격중 일 때 Idle로 바뀌는 경우 무시

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -6,6 +7,7 @@ public class Player : CharacterBase
     // SO 값으로 교체 예정
     protected override CharacterTypeEnum CharacterTypeEnum => CharacterTypeEnum.Player;
 
+    public static Action<float, float> setHPinUI;
 
     protected override void Awake()
     {
@@ -14,7 +16,12 @@ public class Player : CharacterBase
     }
 
 
-
+    public override void getDamaged(float damageAmount)
+    {
+        stat.deltaHP(-damageAmount);
+        setHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.audioM.PlayAudioClip(stat.Current.HitSound);
+    }
     private void mapOtherAction()
     {
         ManagerObject.inputM.useSkill = startSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
