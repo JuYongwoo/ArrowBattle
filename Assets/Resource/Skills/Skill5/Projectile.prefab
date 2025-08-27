@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5201998293293795073}
   - component: {fileID: 3014346211516544273}
   - component: {fileID: -5057532526772724299}
+  - component: {fileID: 8859788110954563298}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -98,3 +99,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteAngleOffset: -45
+--- !u!58 &8859788110954563298
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4503533334088539303}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.96

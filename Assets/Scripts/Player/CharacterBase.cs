@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public enum CharacterStateEnum //Enum으로 상태 관리 //int로 캐스팅하여 사용
@@ -138,8 +139,9 @@ public abstract class CharacterBase : MonoBehaviour
         yield return new WaitForSeconds(ManagerObject.skillInfoM.attackSkillData[skill].skillCastingTime); //캐스팅 시간 대기
 
         //스킬의 투사체 프리팹 소환
-        GameObject projectile = Instantiate(ManagerObject.skillInfoM.attackSkillData[skill].skillProjectile, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), Quaternion.identity);
-        projectile.GetComponent<SkillProjectile>().SetProjectile(CharacterTypeEnum, skill);
+        //TODO JYW 투사체를 하나 발사하는게 아니라 SkillDataBaseManager에서 설정한 방식으로 발사, shoot(CharacterTypeEnum, Skill) 함수로
+        ManagerObject.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
+
 
         skillCoroutine = null;
         castingSkill = Skills.Attack; //스킬 시전 후 다시 일반 공격 준비 상태로

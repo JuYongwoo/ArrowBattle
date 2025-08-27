@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: SkillData
   m_EditorClassIdentifier: 
   skillName: 
-  skillDamage: 0
-  skillCoolTime: 5
-  skillCastingTime: 0
+  skillDamage: 100
+  skillCoolTime: 7
+  skillCastingTime: 1
   skillSound: {fileID: 8300000, guid: 8ba9a595aacfbfe4b864b0ccda689140, type: 3}
   skillProjectile: {fileID: 4503533334088539303, guid: baa0a827baa91c940a15045607cefa31, type: 3}
   skillIcon: {fileID: 21300000, guid: b3afc52cfe17ff94798dbb39dec21000, type: 3}

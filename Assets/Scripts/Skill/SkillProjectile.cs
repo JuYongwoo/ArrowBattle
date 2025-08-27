@@ -33,7 +33,8 @@ public class SkillProjectile : MonoBehaviour
 
     private void Update()
     {
-        if (targetPos == Vector3.zero) return;
+
+        //TODO if SO에 ~가 체크되어있다면 ~움직임 실행
 
         // t 증가 (속도 기반)
         float distance = Vector3.Distance(startPos, targetPos);

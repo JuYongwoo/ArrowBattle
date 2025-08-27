@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public enum Skills
 {
@@ -104,5 +105,11 @@ public class SkillDataBaseManager
         yield return new WaitForSeconds(dur);
         // 여전히 쿨이 끝났는지 확인(중간에 리셋 가능)
         if (GetRemaining(skill) <= 0f) CooldownEnded?.Invoke(skill);
+    }
+
+    public void shoot(CharacterTypeEnumByTag CharacterTypeEnum, Vector3 startPosition, Skills skill)
+    {
+        GameObject projectile = MonoBehaviour.Instantiate(ManagerObject.skillInfoM.attackSkillData[skill].skillProjectile, startPosition, Quaternion.identity);
+        projectile.GetComponent<SkillProjectile>().SetProjectile(CharacterTypeEnum, skill);
     }
 }
