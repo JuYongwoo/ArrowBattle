@@ -6,7 +6,6 @@ public enum CharacterStateEnum //Enum으로 상태 관리 //int로 캐스팅하여 사용
 {
     Idle, //Attacking을 하기 위한 1틱
     Moving,
-    Attacking,
     UsingSkill
 }
 
@@ -30,6 +29,7 @@ public abstract class CharacterBase : MonoBehaviour
 
     protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제
     protected CharacterTypeEnumByTag OpponentType; //상대방 타입, Awake에서 자동 설정
+    protected Skills castingSkill; //현재 시전 중인 스킬
 
     protected virtual void Awake() //virtual로 선언하여 자식 클래스에서 override 가능하도록 다형성 보장
     {
@@ -46,18 +46,20 @@ public abstract class CharacterBase : MonoBehaviour
     {
         setState(CharacterStateEnum.Idle); //처음 상태는 Idle
     }
+    protected virtual void Update()
+    {
+        if (state == CharacterStateEnum.Idle) //아무 행동 하지 않을 시 일반 공격
+        {
+            if (skillCoroutine == null) prepareSkill(Skills.Attack);
+        }
+    }
 
     public void setState(CharacterStateEnum s)
     {
-        if (state == s || (state == CharacterStateEnum.Attacking && s == CharacterStateEnum.Idle && skillCoroutine != null)) return; //이미 같은 상태거나 Attacking 상태에서 공격중 일 때 Idle로 바뀌는 경우 무시
+        if (state == s) return;
         state = s;
 
-
-        if (state == CharacterStateEnum.Idle) //아무 행동 하지 않을 시 일반 공격
-        {
-            if (skillCoroutine == null) startSkill(Skills.Attack);
-        }
-        else if(state == CharacterStateEnum.Moving || state == CharacterStateEnum.UsingSkill) //이동, 스킬 사용하는 순간 일반 공격 취소
+        if(state == CharacterStateEnum.Moving || state == CharacterStateEnum.UsingSkill) //이동, 스킬 사용하는 순간 일반 공격 취소
         {
             if (skillCoroutine != null)
             {
@@ -111,35 +113,37 @@ public abstract class CharacterBase : MonoBehaviour
         // 프로젝트 컨벤션: 오른쪽을 볼 때 flipX=false, 왼쪽이면 true
         sr.flipX = IsOpponentOnLeft();
     }
-    protected void startSkill(Skills skill)
+    protected void prepareSkill(Skills skill)
     {
         FaceOpponentLR(); //스킬 시전 전 상대방 바라보기
+
+        if (castingSkill != Skills.Attack) return; //스킬 중간 취소 불가 시 return
+        if (ManagerObject.skillInfoM.TryBeginCooldown(skill) == false) return;//쿨타임 중이면 스킬 시전 불가
+
+        castingSkill = skill; //현재 시전 중인 스킬 설정
 
         if (skillCoroutine != null)
         {
             StopCoroutine(skillCoroutine);
             skillCoroutine = null;
         }
+
+        setState(CharacterStateEnum.UsingSkill); //여기서 순간적으로 input에서 모든 키 해제, 스킬 시전 중 아무것도 못하도록
         skillCoroutine = StartCoroutine(castSkill(skill));
 
     }
     protected IEnumerator castSkill(Skills skill)
     {
-        if(skill == Skills.Attack)
-        {
-            setState(CharacterStateEnum.Attacking);
-        }else
-        {
-            setState(CharacterStateEnum.UsingSkill);
-            //여기서 순간적으로 input에서 모든 키 해제, 스킬 시전 중 아무것도 못하도록
-        }
+
         yield return new WaitForSeconds(ManagerObject.skillInfoM.attackSkillData[skill].skillCastingTime); //캐스팅 시간 대기
 
         //스킬의 투사체 프리팹 소환
         GameObject projectile = Instantiate(ManagerObject.skillInfoM.attackSkillData[skill].skillProjectile, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), Quaternion.identity);
         projectile.GetComponent<SkillProjectile>().SetProjectile(CharacterTypeEnum, skill);
+
         skillCoroutine = null;
-        setState(CharacterStateEnum.Idle);
+        castingSkill = Skills.Attack; //스킬 시전 후 다시 일반 공격 준비 상태로
+        prepareSkill(Skills.Attack);
 
     }
 }

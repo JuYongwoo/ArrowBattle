@@ -25,7 +25,7 @@ public class Player : CharacterBase
     }
     private void mapOtherAction()
     {
-        ManagerObject.inputM.useSkill = startSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.inputM.useSkill = prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
         ManagerObject.inputM.leftRightMove = Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
         ManagerObject.inputM.idle = () => { setState(CharacterStateEnum.Idle); };
 

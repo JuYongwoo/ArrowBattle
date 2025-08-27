@@ -10,6 +10,7 @@ public class SkillPanel : MonoBehaviour
     {
         Skill1CoolFadeImg, Skill2CoolFadeImg, Skill3CoolFadeImg, Skill4CoolFadeImg, Skill5CoolFadeImg,
         Skill1CoolTxt, Skill2CoolTxt, Skill3CoolTxt, Skill4CoolTxt, Skill5CoolTxt,
+        Skill1IconImg, Skill2IconImg, Skill3IconImg, Skill4IconImg, Skill5IconImg
     }
 
     private Dictionary<SkillPanelEnum, GameObject> map;
@@ -26,15 +27,29 @@ public class SkillPanel : MonoBehaviour
     {
         wait1s = new WaitForSeconds(1f);
         map = Util.mapDictionaryInChildren<SkillPanelEnum, GameObject>(gameObject);
+        for (int i = 1; i <= 5; i++) //SO 토대로 스킬 아이콘 설정
+        {
+
+            // SkillPanelEnum 이름 만들기
+            var enumName = $"Skill{i}IconImg";
+            var panelEnum = (SkillPanelEnum)System.Enum.Parse(typeof(SkillPanelEnum), enumName);
+
+            // Skills enum도 i에 맞게 선택
+            var skillEnum = (Skills)System.Enum.Parse(typeof(Skills), $"Skill{i}");
+
+            // 아이콘 적용
+            map[panelEnum].GetComponent<Image>().sprite = ManagerObject.skillInfoM.attackSkillData[skillEnum].skillIcon;
+        }
+        ManagerObject.skillInfoM.cooldownUI = StartCooldown;
     }
 
     private void Start()
     {
-        StartCooldown(1, 1f);
-        StartCooldown(2, 1f);
-        StartCooldown(3, 1f);
-        StartCooldown(4, 1f);
-        StartCooldown(5, 1f);
+
+        for (int i = 1; i <= 5; i++)
+        {
+            StartCooldown(i, 0);
+        }
     }
 
     public void StartCooldown(int skillNumber, float durationSec)
