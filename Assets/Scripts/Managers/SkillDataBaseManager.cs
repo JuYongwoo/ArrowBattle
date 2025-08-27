@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
-public enum Skills
+public enum Skill
 {
     Attack,
     Skill1, Skill2, Skill3, Skill4, Skill5
@@ -12,14 +12,14 @@ public enum Skills
 public class SkillDataBaseManager
 {
     // 매핑된 스킬 데이터 (이미 사용 중)
-    public Dictionary<Skills, SkillDataSO> attackSkillData;
+    public Dictionary<Skill, SkillDataSO> attackSkillData;
 
     // 쿨다운 종료 시각(Time.time 기준)
-    private readonly Dictionary<Skills, float> _cooldownEnd = new();
+    private readonly Dictionary<Skill, float> _cooldownEnd = new();
 
     // 쿨다운 이벤트
-    public event Action<Skills, float> CooldownStarted; // (skill, durationSec)
-    public event Action<Skills> CooldownEnded;
+    public event Action<Skill, float> CooldownStarted; // (skill, durationSec)
+    public event Action<Skill> CooldownEnded;
 
     // (선택) 쿨다운 끝 이벤트를 코루틴으로 쏘고 싶을 때 바인딩
     private MonoBehaviour _runner;
@@ -28,7 +28,7 @@ public class SkillDataBaseManager
 
     public void OnAwake()
     {
-        attackSkillData = Util.MapEnumToAddressablesByLabels<Skills, SkillDataSO>("SkillData");
+        attackSkillData = Util.MapEnumToAddressablesByLabels<Skill, SkillDataSO>("SkillData");
         _cooldownEnd.Clear();
     }
 
@@ -36,14 +36,14 @@ public class SkillDataBaseManager
     public void BindRunner(MonoBehaviour runner) => _runner = runner;
 
     /// <summary> 지금 사용 가능? (쿨 종료 시각 <= 현재 시각) </summary>
-    public bool CanUse(Skills skill)
+    public bool CanUse(Skill skill)
     {
         if (!attackSkillData.ContainsKey(skill)) return false;
         return !(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end);
     }
 
     /// <summary> 남은 쿨타임(초). 없으면 0 </summary>
-    public float GetRemaining(Skills skill)
+    public float GetRemaining(Skill skill)
     {
         if (_cooldownEnd.TryGetValue(skill, out var end))
             return Mathf.Max(0f, end - Time.time);
@@ -51,7 +51,7 @@ public class SkillDataBaseManager
     }
 
     /// <summary> 0~1 정규화된 남은 비율(1=쿨 중, 0=사용 가능). skillCoolTime이 0이면 0 </summary>
-    public float GetRemaining01(Skills skill)
+    public float GetRemaining01(Skill skill)
     {
         if (!attackSkillData.TryGetValue(skill, out var so)) return 0f;
         float dur = Mathf.Max(so.skillCoolTime, 0f);
@@ -63,7 +63,7 @@ public class SkillDataBaseManager
     /// 사용 시도: 가능하면 쿨 시작하고 true 반환. 불가(쿨 중)면 false.
     /// 성공 시 CooldownStarted 이벤트를 즉시 발행.
     /// </summary>
-    public bool TryBeginCooldown(Skills skill)
+    public bool TryBeginCooldown(Skill skill)
     {
         if (!attackSkillData.TryGetValue(skill, out var so)) return false;
 
@@ -88,7 +88,7 @@ public class SkillDataBaseManager
         return true;
     }
 
-    public void ResetCooldown(Skills skill)
+    public void ResetCooldown(Skill skill)
     {
         _cooldownEnd.Remove(skill);
         CooldownEnded?.Invoke(skill);
@@ -100,14 +100,14 @@ public class SkillDataBaseManager
         // 필요하다면 모든 스킬에 대해 End 이벤트 쏘고 싶을 때 반복 발행 가능
     }
 
-    private System.Collections.IEnumerator CoEmitEndAfter(Skills skill, float dur)
+    private System.Collections.IEnumerator CoEmitEndAfter(Skill skill, float dur)
     {
         yield return new WaitForSeconds(dur);
         // 여전히 쿨이 끝났는지 확인(중간에 리셋 가능)
         if (GetRemaining(skill) <= 0f) CooldownEnded?.Invoke(skill);
     }
 
-    public void shoot(CharacterTypeEnumByTag CharacterTypeEnum, Vector3 startPosition, Skills skill)
+    public void shoot(CharacterTypeEnumByTag CharacterTypeEnum, Vector3 startPosition, Skill skill)
     {
         GameObject projectile = MonoBehaviour.Instantiate(ManagerObject.skillInfoM.attackSkillData[skill].skillProjectile, startPosition, Quaternion.identity);
         projectile.GetComponent<SkillProjectile>().SetProjectile(CharacterTypeEnum, skill);

@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a15b642988f16242ad30434af14c48e, type: 3}
   m_Name: SkillData
   m_EditorClassIdentifier: 
-  skillName: 
+  skillProjectile: {fileID: 4503533334088539303, guid: 8523827c5dee07d4c857c99e3030517e, type: 3}
+  skillIcon: {fileID: 21300000, guid: f0af44f64367f4943895fb7bc6b01cb3, type: 2}
+  skillSound: {fileID: 8300000, guid: 6fa43d825c0f4184db56ff854a103f50, type: 3}
   skillDamage: 200
   skillCoolTime: 20
   skillCastingTime: 1
-  skillSound: {fileID: 8300000, guid: 6fa43d825c0f4184db56ff854a103f50, type: 3}
-  skillProjectile: {fileID: 4503533334088539303, guid: 8523827c5dee07d4c857c99e3030517e, type: 3}
-  skillIcon: {fileID: 21300000, guid: f0af44f64367f4943895fb7bc6b01cb3, type: 2}
-  projectileSpeed: 20
-  isShowPortrait: 0
+  projectileSpeed: 5
+  skillProjectileMovingType: 2
+  projectileCount: 5
   isGuided: 0
-  skillProjectileMovingType: 0
+  isShowPortrait: 0

@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: cb71f977c061814419dd5a6a79a1a061, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c0ea4b6e528e7fe4aa6cdc94d38691a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -99,6 +99,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteAngleOffset: -45
+  guidedTurnRate: 720
+  parabolaHeightBase: 3.5
+  lateralAmplitude: 0.6
+  waveFrequency: 2.5
+  boomerangTotalTime: 1.6
+  multiShotInterval: 0.12
+  multishotSpreadAngle: 6
+  rainSpawnHeight: 6
+  rainHeadYOffset: 1
+  rainSpreadBase: 1.25
+  rainLateralFollowSpeed: 8
+  maxLifeTime: 6
 --- !u!58 &-7081909860629469865
 CircleCollider2D:
   m_ObjectHideFlags: 0

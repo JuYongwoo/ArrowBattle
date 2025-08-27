@@ -30,7 +30,7 @@ public abstract class CharacterBase : MonoBehaviour
 
     protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제
     protected CharacterTypeEnumByTag OpponentType; //상대방 타입, Awake에서 자동 설정
-    protected Skills castingSkill; //현재 시전 중인 스킬
+    protected Skill castingSkill; //현재 시전 중인 스킬
 
     protected virtual void Awake() //virtual로 선언하여 자식 클래스에서 override 가능하도록 다형성 보장
     {
@@ -39,7 +39,6 @@ public abstract class CharacterBase : MonoBehaviour
         rb = GetComponent<Rigidbody2D>(); // Rigidbody2D 캐싱
         sr = Util.getObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
         OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
-
 
     }
 
@@ -51,7 +50,7 @@ public abstract class CharacterBase : MonoBehaviour
     {
         if (state == CharacterStateEnum.Idle) //아무 행동 하지 않을 시 일반 공격
         {
-            if (skillCoroutine == null) prepareSkill(Skills.Attack);
+            if (skillCoroutine == null) prepareSkill(Skill.Attack);
         }
     }
 
@@ -114,11 +113,11 @@ public abstract class CharacterBase : MonoBehaviour
         // 프로젝트 컨벤션: 오른쪽을 볼 때 flipX=false, 왼쪽이면 true
         sr.flipX = IsOpponentOnLeft();
     }
-    protected void prepareSkill(Skills skill)
+    protected void prepareSkill(Skill skill)
     {
         FaceOpponentLR(); //스킬 시전 전 상대방 바라보기
 
-        if (castingSkill != Skills.Attack) return; //스킬 중간 취소 불가 시 return
+        if (castingSkill != Skill.Attack) return; //스킬 중간 취소 불가 시 return
         if (ManagerObject.skillInfoM.TryBeginCooldown(skill) == false) return;//쿨타임 중이면 스킬 시전 불가
 
         castingSkill = skill; //현재 시전 중인 스킬 설정
@@ -133,7 +132,7 @@ public abstract class CharacterBase : MonoBehaviour
         skillCoroutine = StartCoroutine(castSkill(skill));
 
     }
-    protected IEnumerator castSkill(Skills skill)
+    protected IEnumerator castSkill(Skill skill)
     {
 
         yield return new WaitForSeconds(ManagerObject.skillInfoM.attackSkillData[skill].skillCastingTime); //캐스팅 시간 대기
@@ -144,8 +143,8 @@ public abstract class CharacterBase : MonoBehaviour
 
 
         skillCoroutine = null;
-        castingSkill = Skills.Attack; //스킬 시전 후 다시 일반 공격 준비 상태로
-        prepareSkill(Skills.Attack);
+        castingSkill = Skill.Attack; //스킬 시전 후 다시 일반 공격 준비 상태로
+        prepareSkill(Skill.Attack);
 
     }
 }

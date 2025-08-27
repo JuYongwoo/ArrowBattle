@@ -35,7 +35,7 @@ public class SkillPanel : MonoBehaviour
             var panelEnum = (SkillPanelEnum)System.Enum.Parse(typeof(SkillPanelEnum), enumName);
 
             // Skills enum도 i에 맞게 선택
-            var skillEnum = (Skills)System.Enum.Parse(typeof(Skills), $"Skill{i}");
+            var skillEnum = (Skill)System.Enum.Parse(typeof(Skill), $"Skill{i}");
 
             // 아이콘 적용
             map[panelEnum].GetComponent<Image>().sprite = ManagerObject.skillInfoM.attackSkillData[skillEnum].skillIcon;
