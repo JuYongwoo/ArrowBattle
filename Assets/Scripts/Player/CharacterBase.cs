@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public enum CharacterStateEnum //Enum으로 상태 관리 //int로 캐스팅하여 사용
     UsingSkill
 }
 
-public enum CharacterTypeEnum
+public enum CharacterTypeEnumByTag
 {
     Player,
     Enemy
@@ -27,15 +28,16 @@ public abstract class CharacterBase : MonoBehaviour
     protected Coroutine skillCoroutine;
     public abstract void getDamaged(float damageAmount); //자식클래스  getDamaged 구현 강제
 
-    protected abstract CharacterTypeEnum CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제
+    protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제
+    protected CharacterTypeEnumByTag OpponentType; //상대방 타입, Awake에서 자동 설정
 
     protected virtual void Awake() //virtual로 선언하여 자식 클래스에서 override 가능하도록 다형성 보장
     {
-        if(CharacterTypeEnum == CharacterTypeEnum.Player) stat = new CharacterStatManager("PlayerData");
-        else if (CharacterTypeEnum == CharacterTypeEnum.Enemy) stat = new CharacterStatManager("EnemyData");
+        stat = new CharacterStatManager($"{Enum.GetName(typeof(CharacterTypeEnumByTag), CharacterTypeEnum)}Data");
         anim = GetComponentInChildren<Animator>(); // Animator 캐싱
         rb = GetComponent<Rigidbody2D>(); // Rigidbody2D 캐싱
         sr = Util.getObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
+        OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
 
 
     }
@@ -78,9 +80,41 @@ public abstract class CharacterBase : MonoBehaviour
         setState(CharacterStateEnum.Moving);
     }
 
+    private bool IsOpponentOnLeft()
+    {
+        var targets = GameObject.FindGameObjectsWithTag(OpponentType.ToString()); // "Player"/"Enemy" 태그 사용
+        if (targets == null || targets.Length == 0) return false; // 기본값: 오른쪽
 
+        Transform me = transform;
+        Transform nearest = null;
+        float bestAbsDx = float.MaxValue;
+
+        for (int i = 0; i < targets.Length; i++)
+        {
+            float dx = targets[i].transform.position.x - me.position.x;
+            float abs = Mathf.Abs(dx);
+            if (abs < bestAbsDx)
+            {
+                bestAbsDx = abs;
+                nearest = targets[i].transform;
+            }
+        }
+        if (nearest == null) return false;
+
+        float dxNearest = nearest.position.x - me.position.x;
+        return dxNearest < 0f; // 왼쪽이면 true
+    }
+
+    private void FaceOpponentLR()
+    {
+        if (sr == null) return;
+        // 프로젝트 컨벤션: 오른쪽을 볼 때 flipX=false, 왼쪽이면 true
+        sr.flipX = IsOpponentOnLeft();
+    }
     protected void startSkill(Skills skill)
     {
+        FaceOpponentLR(); //스킬 시전 전 상대방 바라보기
+
         if (skillCoroutine != null)
         {
             StopCoroutine(skillCoroutine);

@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 5070545947813553153}
   - component: {fileID: 3793035316062256501}
   m_Layer: 0
-  m_Name: GroundTileMap
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -399,7 +399,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 8031075120351961965}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: c97f2cfc2696f924b95c4e334071d3a1, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0

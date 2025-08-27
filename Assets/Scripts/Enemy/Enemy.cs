@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : CharacterBase
 {
-    protected override CharacterTypeEnum CharacterTypeEnum => CharacterTypeEnum.Enemy;
+    protected override CharacterTypeEnumByTag CharacterTypeEnum => CharacterTypeEnumByTag.Enemy;
 
     private float moveDuration = 3f;
     private float moveInterval = 2.1f;

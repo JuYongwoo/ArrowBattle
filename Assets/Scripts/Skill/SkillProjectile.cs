@@ -9,15 +9,15 @@ public class SkillProjectile : MonoBehaviour
     private Vector3 startPos;
     private Vector3 targetPos;
     private Vector3 controlPos;   // 포물선 제어점
-    private CharacterTypeEnum attackerType;
+    private CharacterTypeEnumByTag attackerType;
     private Skills skill;
 
     private float t;              // 0~1 진행도
 
-    public void SetProjectile(CharacterTypeEnum attackerType, Skills skill)
+    public void SetProjectile(CharacterTypeEnumByTag attackerType, Skills skill)
     {
         this.attackerType = attackerType;
-        targetPos =  GameObject.FindGameObjectWithTag(Enum.GetName(typeof(CharacterTypeEnum), ((int)attackerType+1) % Enum.GetValues(typeof(CharacterTypeEnum)).Length)).transform.position;
+        targetPos =  GameObject.FindGameObjectWithTag(Enum.GetName(typeof(CharacterTypeEnumByTag), ((int)attackerType+1) % Enum.GetValues(typeof(CharacterTypeEnumByTag)).Length)).transform.position;
         this.skill = skill;
         startPos = transform.position;
 
@@ -67,7 +67,7 @@ public class SkillProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(Enum.GetName(typeof(CharacterTypeEnum), attackerType))) return;
+        if (other.CompareTag(Enum.GetName(typeof(CharacterTypeEnumByTag), attackerType))) return;
 
         CharacterBase stat = other.GetComponent<CharacterBase>();
         if (stat != null)

@@ -5,7 +5,8 @@ using UnityEngine;
 public class Player : CharacterBase
 {
     // SO 값으로 교체 예정
-    protected override CharacterTypeEnum CharacterTypeEnum => CharacterTypeEnum.Player;
+    protected override CharacterTypeEnumByTag CharacterTypeEnum => CharacterTypeEnumByTag.Player;
+
 
     public static Action<float, float> setHPinUI;
 
