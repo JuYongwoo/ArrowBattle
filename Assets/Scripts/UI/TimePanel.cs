@@ -9,22 +9,23 @@ public class TimePanel : MonoBehaviour
         TimeTxt
     }
     private Dictionary<TimePanelEnum, GameObject> TimePanelmap;
-    private int time = 99;
+    private int timeforUI = 99;
 
 
     private void Awake()
     {
         TimePanelmap = Util.mapDictionaryInChildren<TimePanelEnum, GameObject>(this.gameObject);
-        InvokeRepeating("flowTime", 1f, 1f);
+        GameMode.setGameTime = setTime;
     }
     void Start()
     {
 
     }
 
-    private void flowTime()
+
+    private void setTime(int time)
     {
-        time--;
+        this.timeforUI = time;
         string timeString = $"{time}";
         TimePanelmap[TimePanelEnum.TimeTxt].GetComponent<Text>().text = timeString;
     }

@@ -11,12 +11,13 @@ public enum Skill
 
 public enum SkillProjectileMovingType
 {
-    // 기존
+    // 기본
     Straight,
     Parabola,
-    Rain,     // Down N개 스폰하고 부모는 즉시 종료
-    Down,     // 머리 위 고정 스폰, 아래로 낙하만
+    Rain,                      // Down N개 스폰하고 부모는 즉시 종료
+    Down,                      // 머리 위 고정 스폰, 아래로 낙하만
     StraightThreeMultipleShot, // 3연속 직사
+    StraightFiveMultipleShot,  // 5연속 직사 (0.1s 간격)
 
     // 추가 연출 (스폰형/컨트롤러형/무빙형)
     FanBurst,             // 시작 지점에서 부채꼴 N발 확산(직선)
@@ -25,60 +26,62 @@ public enum SkillProjectileMovingType
     LineVerticalForward,  // 시작 지점에서 상하 라인 N개 → 직선 돌진
     LineHorizontalForward,// 시작 지점에서 좌우 라인 N개 → 직선 돌진
 
-    RandomDownRainDuration, // 5초 등, 랜덤 낙하를 지속적으로 생성(컨트롤러)
-    SweepDownRainDuration,  // 좌→우로 스윕하며 낙하 지속 생성(컨트롤러)
+    RandomDownRainDuration, // 랜덤 낙하를 지속적으로 생성(컨트롤러)
+    SweepDownRainDuration,  // 좌↔우 스윕하며 낙하 지속 생성(컨트롤러)
 
     SineStraight,         // 직선 진행 + 사인 횡진동
     ZigZagStraight,       // 직선 진행 + 지그재그(삼각파)
-    ScatterSplit,          // 잠시 비행 후 다수 파편으로 분열
+    ScatterSplit,         // 잠시 비행 후 다수 파편으로 분열
 
-    SpinningStraight  // 직선 이동 + 스프라이트 지속 회전
-
+    StraightSpin          // 직선 이동 + 스프라이트 지속 회전
 }
 
 public class SkillDataBaseManager
 {
     public Dictionary<Skill, SkillDataSO> attackSkillData;
 
-    // ====== 매니저 튜닝(전부 여기 둠) ======
-    // 공통
+    // ====== 튜닝 ======
     public float headYOffset = 1.0f;
 
     // StraightThreeMultipleShot
     public int tripleShots = 3;
     public float tripleInterval = 0.12f;
 
+    // StraightFiveMultipleShot
+    public int fiveShots = 5;
+    public float fiveInterval = 0.10f;
+
     // Parabola
     public float parabolaHeightBase = 3.5f;
 
-    // Rain/Down (단발)
+    // Rain/Down
     public int rainDownCount = 6;
-    public float downSpawnHeight = 6f;
+    public float downSpawnHeight = 5f;
     public float downWidth = 4f;
     public float downFallSpeedMul = 1f;
 
     // RandomDownRainDuration
-    public float randomRainDuration = 5.0f; // 초
-    public float randomRainRatePerSec = 8.0f; // 초당 생성수
-    public float randomRainWidth = 6.0f; // 가로 폭
-    public float randomRainSpawnH = 6.0f; // 머리 위 높이
+    public float randomRainDuration = 5.0f;
+    public float randomRainRatePerSec = 8.0f;
+    public float randomRainWidth = 6.0f;
+    public float randomRainSpawnH = 6.0f;
     public float randomRainFallMul = 1.0f;
 
     // SweepDownRainDuration
     public float sweepRainDuration = 5.0f;
     public float sweepRainRatePerSec = 8.0f;
-    public float sweepRainWidth = 6.0f; // 스윕 범위(좌우)
-    public float sweepRainSpeed = 3.0f; // 스윕 속도(유닛/초)
+    public float sweepRainWidth = 6.0f;
+    public float sweepRainSpeed = 3.0f;
     public float sweepRainSpawnH = 6.0f;
     public float sweepRainFallMul = 1.0f;
 
     // FanBurst
     public int fanCount = 7;
-    public float fanAngle = 60f; // 총각도
+    public float fanAngle = 60f;
 
     // RingBurst
     public int ringCount = 12;
-    public float ringRadius = 4.0f;
+    public float ringRadius = 7.0f;
 
     // LineForward
     public int lineCount = 5;
@@ -95,11 +98,10 @@ public class SkillDataBaseManager
     public int scatterCount = 12;
     public float scatterFanAngle = 120f;
 
-    //
-    public float spinningStraightSpinSpeedDeg = 720f; // 초당 회전 각도(도)
+    // StraightSpin
+    public float spinningStraightSpinSpeedDeg = -1440f; // 도/초
 
-
-    // 코루틴 발사용
+    // 코루틴 러너 (옵션)
     private MonoBehaviour _runner;
 
     // 쿨타임
@@ -115,6 +117,13 @@ public class SkillDataBaseManager
     }
 
     public void BindRunner(MonoBehaviour runner) => _runner = runner;
+
+    // 항상 살아있는 코루틴 호스트 확보
+    private MonoBehaviour GetRunner()
+    {
+        if (_runner != null) return _runner;
+        return SkillCoroutineHub.Instance;
+    }
 
     // === 쿨타임 편의 ===
     public bool CanUse(Skill skill)
@@ -133,7 +142,7 @@ public class SkillDataBaseManager
 
         _cooldownEnd[skill] = now + dur;
         CooldownStarted?.Invoke(skill, dur);
-        if (_runner != null && dur > 0f) _runner.StartCoroutine(CoEmitEndAfter(skill, dur));
+        if (dur > 0f) GetRunner().StartCoroutine(CoEmitEndAfter(skill, dur));
 
         cooldownUI?.Invoke((int)skill, so.skillCoolTime);
         return true;
@@ -153,11 +162,8 @@ public class SkillDataBaseManager
         var proj = UnityEngine.Object.Instantiate(so.skillProjectile, startPosition, Quaternion.identity)
                     .GetComponent<SkillProjectile>();
 
-        var type = so.skillProjectileMovingType;
-
-        switch (type)
+        switch (so.skillProjectileMovingType)
         {
-            // 단발 컨트롤/무빙
             case SkillProjectileMovingType.Straight:
                 proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
                 break;
@@ -168,24 +174,23 @@ public class SkillDataBaseManager
 
             case SkillProjectileMovingType.StraightThreeMultipleShot:
                 proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
-                if (_runner != null) _runner.StartCoroutine(CoTripleBurst(casterType, startPosition, so));
+                GetRunner().StartCoroutine(CoBurst(casterType, startPosition, so, tripleShots, tripleInterval));
+                break;
+
+            case SkillProjectileMovingType.StraightFiveMultipleShot:
+                proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
+                GetRunner().StartCoroutine(CoBurst(casterType, startPosition, so, fiveShots, fiveInterval));
                 break;
 
             // Down/Rain
             case SkillProjectileMovingType.Rain:
-                proj.SetProjectile(
-                    casterType, so,
-                    spawnAction_Rain, tickAction_NoOp,
-                    rainDownCount, downSpawnHeight, downWidth, headYOffset, downFallSpeedMul
-                );
+                proj.SetProjectile(casterType, so, spawnAction_Rain, tickAction_NoOp,
+                                   rainDownCount, downSpawnHeight, downWidth, headYOffset, downFallSpeedMul);
                 break;
 
             case SkillProjectileMovingType.Down:
-                proj.SetProjectile(
-                    casterType, so,
-                    spawnAction_Down, tickAction_Down,
-                    1, downSpawnHeight, 0f, headYOffset, downFallSpeedMul
-                );
+                proj.SetProjectile(casterType, so, spawnAction_Down, tickAction_Down,
+                                   1, downSpawnHeight, 0f, headYOffset, downFallSpeedMul);
                 break;
 
             // 퍼져나가는 스폰형
@@ -211,15 +216,11 @@ public class SkillDataBaseManager
 
             // 지속형 컨트롤러
             case SkillProjectileMovingType.RandomDownRainDuration:
-                proj.SetProjectile(
-                    casterType, so, spawnAction_RandomDownRain, tickAction_RandomDownRain
-                );
+                proj.SetProjectile(casterType, so, spawnAction_RandomDownRain, tickAction_RandomDownRain);
                 break;
 
             case SkillProjectileMovingType.SweepDownRainDuration:
-                proj.SetProjectile(
-                    casterType, so, spawnAction_SweepDownRain, tickAction_SweepDownRain
-                );
+                proj.SetProjectile(casterType, so, spawnAction_SweepDownRain, tickAction_SweepDownRain);
                 break;
 
             // 무빙형
@@ -236,11 +237,9 @@ public class SkillDataBaseManager
                 proj.SetProjectile(casterType, so, spawnAction_ScatterSplit, tickAction_ScatterSplit);
                 break;
 
-            case SkillProjectileMovingType.SpinningStraight:
-                {
-                    proj.SetProjectile(casterType, so, spawnAction_StraightSpin, tickAction_StraightSpin, spinningStraightSpinSpeedDeg);
-                    break;
-                }
+            case SkillProjectileMovingType.StraightSpin:
+                proj.SetProjectile(casterType, so, spawnAction_StraightSpin, tickAction_StraightSpin, spinningStraightSpinSpeedDeg);
+                break;
 
             default:
                 proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
@@ -248,20 +247,20 @@ public class SkillDataBaseManager
         }
     }
 
-    private IEnumerator CoTripleBurst(CharacterTypeEnumByTag casterType, Vector3 startPos, SkillDataSO so)
+    // 공용 버스트(연사): 첫 발은 이미 발사됨, 나머지 (shots-1) 발을 interval 간격으로 추가
+    private IEnumerator CoBurst(CharacterTypeEnumByTag casterType, Vector3 startPos, SkillDataSO so, int shots, float interval)
     {
-        for (int i = 1; i < Mathf.Max(1, tripleShots); i++)
+        int n = Mathf.Max(1, shots);
+        for (int i = 1; i < n; i++)
         {
-            yield return new WaitForSeconds(tripleInterval);
+            yield return new WaitForSeconds(interval);
             var p = UnityEngine.Object.Instantiate(so.skillProjectile, startPos, Quaternion.identity)
                         .GetComponent<SkillProjectile>();
             p.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
         }
     }
 
-    // ------------------------------------------------------------------
-    // 공통 유틸
-    // ------------------------------------------------------------------
+    // ===== 공통 유틸 =====
     static Vector3 DirFromTo(Vector3 from, Vector3 to)
     {
         var v = to - from;
@@ -274,21 +273,11 @@ public class SkillDataBaseManager
         return (v * 2f - 1f);            // -1..1..-1
     }
 
-    // ------------------------------------------------------------------
-    // Straight (비유도) : args[0]로 Vector3 dir을 넘겨주면 그 방향으로 고정
-    // ------------------------------------------------------------------
+    // ===== Straight =====
     void spawnAction_Straight(SkillProjectile p, object[] args)
     {
-        Vector3 dir;
-        if (args != null && args.Length > 0 && args[0] is Vector3 argDir)
-        {
-            dir = argDir.normalized;
-        }
-        else
-        {
-            dir = DirFromTo(p.transform.position, p.TargetPosStatic);
-        }
-
+        Vector3 dir = (args != null && args.Length > 0 && args[0] is Vector3 v) ? v.normalized
+                                                                                 : DirFromTo(p.transform.position, p.TargetPosStatic);
         float maxDist = Mathf.Max(0.05f, Vector3.Distance(p.transform.position, p.TargetPosStatic));
         p.State["dir"] = dir;
         p.State["travel"] = 0f;
@@ -307,18 +296,11 @@ public class SkillDataBaseManager
         Vector3 next = p.transform.position + dir * step;
         p.ApplyMove(next, dir);
 
-        if (travel >= maxDist + 0.01f)
-        {
-            p.DestroySelf();
-            return;
-        }
-
+        if (travel >= maxDist + 0.01f) { p.DestroySelf(); return; }
         p.State["travel"] = travel;
     }
 
-    // ------------------------------------------------------------------
-    // Parabola (비유도)
-    // ------------------------------------------------------------------
+    // ===== Parabola =====
     void spawnAction_Parabola(SkillProjectile p, object[] args)
     {
         float heightBase = (args != null && args.Length > 0) ? Convert.ToSingle(args[0]) : 3.5f;
@@ -359,8 +341,7 @@ public class SkillDataBaseManager
 
         p.ApplyMove(pos, dir.normalized);
 
-        if (Mathf.Approximately(t, 1f))
-            p.DestroySelf();
+        if (Mathf.Approximately(t, 1f)) p.DestroySelf();
     }
 
     Vector3 ComputeCtrl(float heightBase, Vector3 from, Vector3 to)
@@ -371,10 +352,8 @@ public class SkillDataBaseManager
         return new Vector3(mid.x, mid.y + h, mid.z);
     }
 
-    // ------------------------------------------------------------------
-    // Rain → Down N (단발)
+    // ===== Rain → Down N =====
     // args: [0]=count, [1]=spawnHeight, [2]=width, [3]=headYOffset, [4]=fallMul
-    // ------------------------------------------------------------------
     void spawnAction_Rain(SkillProjectile p, object[] args)
     {
         int count = (int)args[0];
@@ -387,11 +366,11 @@ public class SkillDataBaseManager
 
         for (int i = 0; i < count; i++)
         {
-            float u = (i + 0.5f) / count; // 0..1
+            float u = (i + 0.5f) / count;
             float xOffset = Mathf.Lerp(-width * 0.5f, width * 0.5f, u);
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
 
             child.SetProjectile(
                 p.AttackerType, p.Data,
@@ -399,14 +378,11 @@ public class SkillDataBaseManager
                 centerBase.x, centerBase.y, spawnH, xOffset, fallMul
             );
         }
-
         p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // Down (단순 낙하)
+    // ===== Down (단순 낙하) =====
     // args: [0]=centerX, [1]=centerY, [2]=spawnHeight, [3]=xOffset, [4]=fallMul
-    // ------------------------------------------------------------------
     void spawnAction_Down(SkillProjectile p, object[] args)
     {
         float cx = Convert.ToSingle(args[0]);
@@ -433,13 +409,10 @@ public class SkillDataBaseManager
         Vector3 next = new Vector3(x, nextY, cur.z);
         p.ApplyMove(next, Vector3.down);
 
-        if (p.transform.position.y <= stopY - 0.2f)
-            p.DestroySelf();
+        if (p.transform.position.y <= stopY - 0.2f) p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // FanBurst (부채꼴 확산) : 시작지점에서 N발 즉시 스폰 후 부모 종료
-    // ------------------------------------------------------------------
+    // ===== FanBurst =====
     void spawnAction_FanBurst(SkillProjectile p, object[] args)
     {
         Vector3 baseDir = DirFromTo(p.transform.position, p.TargetPosStatic);
@@ -455,16 +428,13 @@ public class SkillDataBaseManager
             Vector3 dir = rot * baseDir;
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
             child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dir);
         }
-
         p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // RingBurstOut (시작 위치 원형 바깥으로)
-    // ------------------------------------------------------------------
+    // ===== RingBurstOut =====
     void spawnAction_RingBurstOut(SkillProjectile p, object[] args)
     {
         int N = Mathf.Max(1, ringCount);
@@ -477,16 +447,13 @@ public class SkillDataBaseManager
             Vector3 dir = (pos - center).normalized;
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
             child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dir);
         }
-
         p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // RingBurstInToTarget (타깃 머리 주변 원형에서 안쪽으로)
-    // ------------------------------------------------------------------
+    // ===== RingBurstInToTarget =====
     void spawnAction_RingBurstInToTarget(SkillProjectile p, object[] args)
     {
         int N = Mathf.Max(1, ringCount);
@@ -499,16 +466,13 @@ public class SkillDataBaseManager
             Vector3 dir = (center - pos).normalized;
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
             child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dir);
         }
-
         p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // LineVerticalForward / LineHorizontalForward
-    // ------------------------------------------------------------------
+    // ===== LineForward =====
     void spawnAction_LineVerticalForward(SkillProjectile p, object[] args)
     {
         int N = Mathf.Max(1, lineCount);
@@ -521,10 +485,9 @@ public class SkillDataBaseManager
             Vector3 pos = p.transform.position + Vector3.up * (offIdx * lineSpacing);
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
             child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, forward);
         }
-
         p.DestroySelf();
     }
 
@@ -540,17 +503,13 @@ public class SkillDataBaseManager
             Vector3 pos = p.transform.position + Vector3.right * (offIdx * lineSpacing);
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
             child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, forward);
         }
-
         p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // RandomDownRainDuration (컨트롤러: duration 동안 interval마다 랜덤 낙하 생성)
-    // State: tLeft, spawnInterval, acc, centerX, centerY, width
-    // ------------------------------------------------------------------
+    // ===== RandomDownRainDuration =====
     void spawnAction_RandomDownRain(SkillProjectile p, object[] args)
     {
         float duration = Mathf.Max(0.01f, randomRainDuration);
@@ -587,30 +546,23 @@ public class SkillDataBaseManager
         while (acc >= intv && tLeft > 0f)
         {
             acc -= intv;
-
             float xOff = UnityEngine.Random.Range(-width * 0.5f, width * 0.5f);
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
 
-            child.SetProjectile(
-                p.AttackerType, p.Data,
-                spawnAction_Down, tickAction_Down,
-                cX, cY, spawnH, xOff, fallMul
-            );
+            child.SetProjectile(p.AttackerType, p.Data,
+                                spawnAction_Down, tickAction_Down,
+                                cX, cY, spawnH, xOff, fallMul);
         }
 
         p.State["tLeft"] = tLeft;
         p.State["acc"] = acc;
 
-        if (tLeft <= 0f)
-            p.DestroySelf();
+        if (tLeft <= 0f) p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // SweepDownRainDuration (컨트롤러: 중앙이 좌↔우 스윕되며 낙하 생성)
-    // State: tLeft, spawnInterval, acc, baseX, cY, width, sweepWidth, speed
-    // ------------------------------------------------------------------
+    // ===== SweepDownRainDuration =====
     void spawnAction_SweepDownRain(SkillProjectile p, object[] args)
     {
         float duration = Mathf.Max(0.01f, sweepRainDuration);
@@ -624,7 +576,7 @@ public class SkillDataBaseManager
         p.State["acc"] = 0f;
         p.State["baseX"] = headCenter.x - sweepRainWidth * 0.5f;
         p.State["cY"] = headCenter.y;
-        p.State["width"] = sweepRainWidth;   // 스윕 범위
+        p.State["width"] = sweepRainWidth;
         p.State["spawnH"] = sweepRainSpawnH;
         p.State["fallMul"] = sweepRainFallMul;
         p.State["speed"] = sweepRainSpeed;
@@ -646,7 +598,7 @@ public class SkillDataBaseManager
         tLeft -= dt;
         acc += dt;
 
-        // 현재 스윕 중심 (좌→우→좌 PingPong)
+        // 좌→우→좌 PingPong 중심
         float traveled = (p.Elapsed * speed) % (width * 2f);
         float offset = (traveled <= width) ? traveled : (2f * width - traveled);
         float centerX = baseX + offset;
@@ -654,32 +606,24 @@ public class SkillDataBaseManager
         while (acc >= intv && tLeft > 0f)
         {
             acc -= intv;
-
-            // 중심 부근 ±(width*0.25)에서 랜덤
             float jitter = UnityEngine.Random.Range(-width * 0.25f, width * 0.25f);
             float x = centerX + jitter;
 
             var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                            .GetComponent<SkillProjectile>();
+                         .GetComponent<SkillProjectile>();
 
-            child.SetProjectile(
-                p.AttackerType, p.Data,
-                spawnAction_Down, tickAction_Down,
-                x, cY, spawnH, 0f, fallMul
-            );
+            child.SetProjectile(p.AttackerType, p.Data,
+                                spawnAction_Down, tickAction_Down,
+                                x, cY, spawnH, 0f, fallMul);
         }
 
         p.State["tLeft"] = tLeft;
         p.State["acc"] = acc;
 
-        if (tLeft <= 0f)
-            p.DestroySelf();
+        if (tLeft <= 0f) p.DestroySelf();
     }
 
-    // ------------------------------------------------------------------
-    // SineStraight (무빙형): 직선 + 사인 횡진동
-    // State: origin, forward, right, dist, maxDist
-    // ------------------------------------------------------------------
+    // ===== SineStraight =====
     void spawnAction_SineStraight(SkillProjectile p, object[] args)
     {
         Vector3 forward = DirFromTo(p.transform.position, p.TargetPosStatic);
@@ -690,49 +634,6 @@ public class SkillDataBaseManager
         p.State["right"] = right;
         p.State["dist"] = 0f;
         p.State["maxDist"] = Vector3.Distance(p.transform.position, p.TargetPosStatic);
-    }
-
-    void spawnAction_StraightSpin(SkillProjectile p, object[] args)
-    {
-        // 직선과 동일하게 방향/종료거리 셋업
-        Vector3 dir = DirFromTo(p.transform.position, p.TargetPosStatic);
-        float maxDist = Mathf.Max(0.05f, Vector3.Distance(p.transform.position, p.TargetPosStatic));
-
-        p.State["dir"] = dir;
-        p.State["travel"] = 0f;
-        p.State["maxDist"] = maxDist;
-
-        float spin = (args != null && args.Length > 0)
-            ? Convert.ToSingle(args[0])
-            : spinningStraightSpinSpeedDeg;
-        p.State["spinSpeed"] = spin; // 도/초
-    }
-
-    void tickAction_StraightSpin(SkillProjectile p, object[] args)
-    {
-        Vector3 dir = (Vector3)p.State["dir"];
-        float travel = (float)p.State["travel"];
-        float maxDist = (float)p.State["maxDist"];
-        float spin = (float)p.State["spinSpeed"];
-
-        float step = p.Data.projectileSpeed * Time.deltaTime;
-        travel += step;
-
-        Vector3 next = p.transform.position + dir * step;
-
-        // 기본 이동 + 방향 회전(ApplyMove)
-        p.ApplyMove(next, dir);
-
-        // 추가 스핀(이미 ApplyMove가 기본 각도를 세팅했으므로, 그 위에 누적 회전)
-        p.transform.rotation = p.transform.rotation * Quaternion.Euler(0f, 0f, spin * Time.deltaTime);
-
-        if (travel >= maxDist + 0.01f)
-        {
-            p.DestroySelf();
-            return;
-        }
-
-        p.State["travel"] = travel;
     }
 
     void tickAction_SineStraight(SkillProjectile p, object[] args)
@@ -757,15 +658,11 @@ public class SkillDataBaseManager
 
         p.ApplyMove(pos, dir);
 
-        if (dist >= maxDist + 0.01f)
-            p.DestroySelf();
-
+        if (dist >= maxDist + 0.01f) p.DestroySelf();
         p.State["dist"] = dist;
     }
 
-    // ------------------------------------------------------------------
-    // ZigZagStraight (무빙형): 직선 + 삼각파 횡진동
-    // ------------------------------------------------------------------
+    // ===== ZigZagStraight =====
     void spawnAction_ZigZagStraight(SkillProjectile p, object[] args)
     {
         Vector3 forward = DirFromTo(p.transform.position, p.TargetPosStatic);
@@ -799,16 +696,11 @@ public class SkillDataBaseManager
 
         p.ApplyMove(pos, dir);
 
-        if (dist >= maxDist + 0.01f)
-            p.DestroySelf();
-
+        if (dist >= maxDist + 0.01f) p.DestroySelf();
         p.State["dist"] = dist;
     }
 
-    // ------------------------------------------------------------------
-    // ScatterSplit (분열형): delay 후 현재 위치에서 N발 부채꼴 분열
-    // State: dir, timer
-    // ------------------------------------------------------------------
+    // ===== ScatterSplit =====
     void spawnAction_ScatterSplit(SkillProjectile p, object[] args)
     {
         Vector3 dir = DirFromTo(p.transform.position, p.TargetPosStatic);
@@ -824,13 +716,11 @@ public class SkillDataBaseManager
         float dt = Time.deltaTime;
         timer += dt;
 
-        // 이동
         Vector3 next = p.transform.position + dir * p.Data.projectileSpeed * dt;
         p.ApplyMove(next, dir);
 
         if (timer >= scatterDelaySec)
         {
-            // 분열
             int N = Mathf.Max(1, scatterCount);
             float total = scatterFanAngle;
             float step = (N <= 1) ? 0f : total / (N - 1);
@@ -843,22 +733,84 @@ public class SkillDataBaseManager
                 Vector3 dirOut = rot * dir;
 
                 var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                                .GetComponent<SkillProjectile>();
+                             .GetComponent<SkillProjectile>();
                 child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dirOut);
             }
-
             p.DestroySelf();
             return;
         }
-
         p.State["timer"] = timer;
     }
 
-    // ------------------------------------------------------------------
-    // No-Op (컨트롤러 부모 등)
-    // ------------------------------------------------------------------
+    // ===== StraightSpin =====
+    void spawnAction_StraightSpin(SkillProjectile p, object[] args)
+    {
+        Vector3 dir = DirFromTo(p.transform.position, p.TargetPosStatic);
+        float maxDist = Mathf.Max(0.05f, Vector3.Distance(p.transform.position, p.TargetPosStatic));
+
+        p.State["dir"] = dir;
+        p.State["travel"] = 0f;
+        p.State["maxDist"] = maxDist;
+
+        float spin = (args != null && args.Length > 0) ? Convert.ToSingle(args[0]) : spinningStraightSpinSpeedDeg;
+        p.State["spinSpeed"] = spin;   // 도/초
+        p.State["spinAccum"] = 0f;     // 누적 각
+        // baseRot은 첫 틱에서 ApplyMove가 만든 회전을 캡처
+    }
+
+    void tickAction_StraightSpin(SkillProjectile p, object[] args)
+    {
+        Vector3 dir = (Vector3)p.State["dir"];
+        float travel = (float)p.State["travel"];
+        float maxDist = (float)p.State["maxDist"];
+        float spinSpd = (float)p.State["spinSpeed"];
+        float dt = Time.deltaTime;
+
+        float step = p.Data.projectileSpeed * dt;
+        travel += step;
+        Vector3 next = p.transform.position + dir * step;
+
+        // 위치/기본 방향 회전
+        p.ApplyMove(next, dir);
+
+        // 첫 프레임에 기준 회전 저장
+        if (!p.State.ContainsKey("baseRot"))
+            p.State["baseRot"] = p.transform.rotation;
+
+        // 누적 회전 적용
+        float accum = (float)p.State["spinAccum"];
+        accum += spinSpd * dt;
+        p.State["spinAccum"] = accum;
+
+        Quaternion baseRot = (Quaternion)p.State["baseRot"];
+        p.transform.rotation = baseRot * Quaternion.Euler(0f, 0f, accum);
+
+        if (travel >= maxDist + 0.01f) { p.DestroySelf(); return; }
+        p.State["travel"] = travel;
+    }
+
+    // ===== No-Op =====
     void tickAction_NoOp(SkillProjectile p, object[] args)
     {
-        // 아무 것도 안 함 (부모는 필요 시 자체 DestroySelf 호출)
+        // 컨트롤러 부모 등에서 사용
+    }
+}
+
+// 퍼시스턴트 코루틴 호스트
+internal class SkillCoroutineHub : MonoBehaviour
+{
+    private static SkillCoroutineHub _inst;
+    public static SkillCoroutineHub Instance
+    {
+        get
+        {
+            if (_inst == null)
+            {
+                var go = new GameObject("~SkillCoroutineHub");
+                DontDestroyOnLoad(go);
+                _inst = go.AddComponent<SkillCoroutineHub>();
+            }
+            return _inst;
+        }
     }
 }

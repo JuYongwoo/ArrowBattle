@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SkillData
   m_EditorClassIdentifier: 
   skillProjectile: {fileID: 4503533334088539303, guid: 8523827c5dee07d4c857c99e3030517e, type: 3}
-  skillIcon: {fileID: 21300000, guid: f0af44f64367f4943895fb7bc6b01cb3, type: 2}
+  skillIcon: {fileID: 21300000, guid: 49aa9442686a099439f525f8f86cb400, type: 2}
   skillSound: {fileID: 8300000, guid: 6fa43d825c0f4184db56ff854a103f50, type: 3}
-  skillDamage: 200
+  skillDamage: 100
   skillCoolTime: 20
   skillCastingTime: 1
-  projectileSpeed: 4
-  skillProjectileMovingType: 15
+  projectileSpeed: 6
+  skillProjectileMovingType: 16

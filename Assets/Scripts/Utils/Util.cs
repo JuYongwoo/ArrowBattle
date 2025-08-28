@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -61,6 +62,18 @@ public class Util
         foreach (T s in System.Enum.GetValues(typeof(T)))
         {
             dict[s] = Resources.Load<T2>(filePath + "/" + s.ToString());
+        }
+
+        return dict;
+    }
+
+    static public Dictionary<T, T2> mapDictionaryWithKeyLoad<T, T2>() where T : Enum where T2 : UnityEngine.Object
+    {
+        Dictionary<T, T2> dict = new Dictionary<T, T2>();
+
+        foreach (T s in System.Enum.GetValues(typeof(T)))
+        {
+            dict[s] = Addressables.LoadAssetAsync<T2>(s.ToString()).WaitForCompletion();
         }
 
         return dict;

@@ -20,6 +20,10 @@ public class Player : CharacterBase
         stat.deltaHP(-damageAmount);
         setHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         ManagerObject.audioM.PlayAudioClip(stat.Current.HitSound);
+        if (stat.Current.CurrentHP <= 0)
+        {
+            ManagerObject.gameMode.endGame(ResultStateEnum.Defeat);
+        }
     }
     private void mapOtherAction()
     {

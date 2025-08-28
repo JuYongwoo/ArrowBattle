@@ -34,6 +34,10 @@ public class Enemy : CharacterBase
         stat.deltaHP(-damageAmount);
         setHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         ManagerObject.audioM.PlayAudioClip(stat.Current.HitSound);
+        if (stat.Current.CurrentHP <= 0)
+        {
+            ManagerObject.gameMode.endGame(ResultStateEnum.Victory);
+        }
     }
 
     private IEnumerator CoMove()
