@@ -20,16 +20,16 @@ public class SkillProjectile : MonoBehaviour
     // 실행 중 상태 저장용(각 액션들이 자유롭게 사용)
     public readonly Dictionary<string, object> State = new();
 
-    private Action<SkillProjectile, object[]> _onSpawn;
+    private Action<SkillProjectile, object[]> _onInit;
     private Action<SkillProjectile, object[]> _onTick;
     private object[] _args; // params 보관
 
     public void SetProjectile(
         CharacterTypeEnumByTag attackerType,
         SkillDataSO skillData,
-        Action<SkillProjectile, object[]> spawnAction,
+        Action<SkillProjectile, object[]> initAction,
         Action<SkillProjectile, object[]> tickAction,
-        params object[] args // 매니저가 계산
+        params object[] args
     )
     {
         AttackerType = attackerType;
@@ -46,14 +46,11 @@ public class SkillProjectile : MonoBehaviour
         TargetTr = targetTr; // 참고용으로 보관
         TargetPosStatic = (targetTr != null) ? targetTr.position : (transform.position + Vector3.right * 8f);
 
-        if (Data.skillSound != null)
-            ManagerObject.audioM.PlayAudioClip(Data.skillSound);
-
-        _onSpawn = spawnAction;
+        _onInit = initAction;
         _onTick = tickAction;
         _args = args;
 
-        _onSpawn?.Invoke(this, _args);
+        _onInit?.Invoke(this, _args);
     }
 
     private void Update()

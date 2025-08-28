@@ -46,7 +46,6 @@ public class GameMode
 
         gameLeftTime = gameModeData.GameTime;
 
-        // === 여기부터: 안전한 반복 호출로 교체 ===
         if (_timerRunner == null)
         {
             var go = new GameObject("__GameModeTimer");
@@ -91,18 +90,12 @@ public sealed class TimerRunner : MonoBehaviour
 {
     private Coroutine _loop;
 
-    /// <summary>
-    /// timeScale의 영향을 받는 1초 루프
-    /// </summary>
     public void StartRepeating(Action callback, float intervalSeconds)
     {
         StopRepeating();
         _loop = StartCoroutine(Co_Repeat(callback, intervalSeconds));
     }
 
-    /// <summary>
-    /// timeScale 무시(일시정지 중에도 진행)하는 1초 루프
-    /// </summary>
     public void StartRepeatingRealtime(Action callback, float intervalSeconds)
     {
         StopRepeating();

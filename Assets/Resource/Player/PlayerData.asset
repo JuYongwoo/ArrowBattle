@@ -15,4 +15,4 @@ MonoBehaviour:
   MaxHP: 1000
   CurrentHP: 1000
   CurrentMoveSpeed: 2
-  HitSound: {fileID: 8300000, guid: 110b3e93b839df3429764a586c067f2d, type: 3}
+  HitSound: {fileID: 8300000, guid: 70216e892f8950148828a02087070a1a, type: 3}

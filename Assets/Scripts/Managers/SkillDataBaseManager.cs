@@ -14,7 +14,7 @@ public enum SkillProjectileMovingType
     // 기본
     Straight,
     Parabola,
-    Rain,                      // Down N개 스폰하고 부모는 즉시 종료
+    Rain,                      // Down N개 스폰(매니저가 N발 생성)
     Down,                      // 머리 위 고정 스폰, 아래로 낙하만
     StraightThreeMultipleShot, // 3연속 직사
     StraightFiveMultipleShot,  // 5연속 직사 (0.1s 간격)
@@ -26,12 +26,12 @@ public enum SkillProjectileMovingType
     LineVerticalForward,  // 시작 지점에서 상하 라인 N개 → 직선 돌진
     LineHorizontalForward,// 시작 지점에서 좌우 라인 N개 → 직선 돌진
 
-    RandomDownRainDuration, // 랜덤 낙하를 지속적으로 생성(컨트롤러)
-    SweepDownRainDuration,  // 좌↔우 스윕하며 낙하 지속 생성(컨트롤러)
+    RandomDownRainDuration, // 랜덤 낙하를 지속적으로 생성(매니저 코루틴)
+    SweepDownRainDuration,  // 좌↔우 스윕하며 낙하 지속 생성(매니저 코루틴)
 
     SineStraight,         // 직선 진행 + 사인 횡진동
     ZigZagStraight,       // 직선 진행 + 지그재그(삼각파)
-    ScatterSplit,         // 잠시 비행 후 다수 파편으로 분열
+    ScatterSplit,         // 일정 시간 후 다수 파편으로 분열(매니저 코루틴)
 
     StraightSpin          // 직선 이동 + 스프라이트 지속 회전
 }
@@ -112,7 +112,7 @@ public class SkillDataBaseManager
 
     public void OnAwake()
     {
-        attackSkillData = Util.MapEnumToAddressablesByLabels<Skill, SkillDataSO>("SkillData");
+        attackSkillData = Util.mapDictionaryWithKeyLoad<Skill, SkillDataSO>();
         _cooldownEnd.Clear();
     }
 
@@ -155,111 +155,6 @@ public class SkillDataBaseManager
             CooldownEnded?.Invoke(skill);
     }
 
-    // === 발사 ===
-    public void shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
-    {
-        var so = attackSkillData[skill];
-        var proj = UnityEngine.Object.Instantiate(so.skillProjectile, startPosition, Quaternion.identity)
-                    .GetComponent<SkillProjectile>();
-
-        switch (so.skillProjectileMovingType)
-        {
-            case SkillProjectileMovingType.Straight:
-                proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
-                break;
-
-            case SkillProjectileMovingType.Parabola:
-                proj.SetProjectile(casterType, so, spawnAction_Parabola, tickAction_Parabola, parabolaHeightBase);
-                break;
-
-            case SkillProjectileMovingType.StraightThreeMultipleShot:
-                proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
-                GetRunner().StartCoroutine(CoBurst(casterType, startPosition, so, tripleShots, tripleInterval));
-                break;
-
-            case SkillProjectileMovingType.StraightFiveMultipleShot:
-                proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
-                GetRunner().StartCoroutine(CoBurst(casterType, startPosition, so, fiveShots, fiveInterval));
-                break;
-
-            // Down/Rain
-            case SkillProjectileMovingType.Rain:
-                proj.SetProjectile(casterType, so, spawnAction_Rain, tickAction_NoOp,
-                                   rainDownCount, downSpawnHeight, downWidth, headYOffset, downFallSpeedMul);
-                break;
-
-            case SkillProjectileMovingType.Down:
-                proj.SetProjectile(casterType, so, spawnAction_Down, tickAction_Down,
-                                   1, downSpawnHeight, 0f, headYOffset, downFallSpeedMul);
-                break;
-
-            // 퍼져나가는 스폰형
-            case SkillProjectileMovingType.FanBurst:
-                proj.SetProjectile(casterType, so, spawnAction_FanBurst, tickAction_NoOp);
-                break;
-
-            case SkillProjectileMovingType.RingBurstOut:
-                proj.SetProjectile(casterType, so, spawnAction_RingBurstOut, tickAction_NoOp);
-                break;
-
-            case SkillProjectileMovingType.RingBurstInToTarget:
-                proj.SetProjectile(casterType, so, spawnAction_RingBurstInToTarget, tickAction_NoOp);
-                break;
-
-            case SkillProjectileMovingType.LineVerticalForward:
-                proj.SetProjectile(casterType, so, spawnAction_LineVerticalForward, tickAction_NoOp);
-                break;
-
-            case SkillProjectileMovingType.LineHorizontalForward:
-                proj.SetProjectile(casterType, so, spawnAction_LineHorizontalForward, tickAction_NoOp);
-                break;
-
-            // 지속형 컨트롤러
-            case SkillProjectileMovingType.RandomDownRainDuration:
-                proj.SetProjectile(casterType, so, spawnAction_RandomDownRain, tickAction_RandomDownRain);
-                break;
-
-            case SkillProjectileMovingType.SweepDownRainDuration:
-                proj.SetProjectile(casterType, so, spawnAction_SweepDownRain, tickAction_SweepDownRain);
-                break;
-
-            // 무빙형
-            case SkillProjectileMovingType.SineStraight:
-                proj.SetProjectile(casterType, so, spawnAction_SineStraight, tickAction_SineStraight);
-                break;
-
-            case SkillProjectileMovingType.ZigZagStraight:
-                proj.SetProjectile(casterType, so, spawnAction_ZigZagStraight, tickAction_ZigZagStraight);
-                break;
-
-            // 분열형
-            case SkillProjectileMovingType.ScatterSplit:
-                proj.SetProjectile(casterType, so, spawnAction_ScatterSplit, tickAction_ScatterSplit);
-                break;
-
-            case SkillProjectileMovingType.StraightSpin:
-                proj.SetProjectile(casterType, so, spawnAction_StraightSpin, tickAction_StraightSpin, spinningStraightSpinSpeedDeg);
-                break;
-
-            default:
-                proj.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
-                break;
-        }
-    }
-
-    // 공용 버스트(연사): 첫 발은 이미 발사됨, 나머지 (shots-1) 발을 interval 간격으로 추가
-    private IEnumerator CoBurst(CharacterTypeEnumByTag casterType, Vector3 startPos, SkillDataSO so, int shots, float interval)
-    {
-        int n = Mathf.Max(1, shots);
-        for (int i = 1; i < n; i++)
-        {
-            yield return new WaitForSeconds(interval);
-            var p = UnityEngine.Object.Instantiate(so.skillProjectile, startPos, Quaternion.identity)
-                        .GetComponent<SkillProjectile>();
-            p.SetProjectile(casterType, so, spawnAction_Straight, tickAction_Straight);
-        }
-    }
-
     // ===== 공통 유틸 =====
     static Vector3 DirFromTo(Vector3 from, Vector3 to)
     {
@@ -273,18 +168,352 @@ public class SkillDataBaseManager
         return (v * 2f - 1f);            // -1..1..-1
     }
 
-    // ===== Straight =====
-    void spawnAction_Straight(SkillProjectile p, object[] args)
+    private Transform FindTargetForCaster(CharacterTypeEnumByTag casterType)
+    {
+        var values = Enum.GetValues(typeof(CharacterTypeEnumByTag));
+        string enemyTag = Enum.GetName(
+            typeof(CharacterTypeEnumByTag),
+            ((int)casterType + 1) % values.Length
+        );
+        var go = GameObject.FindGameObjectWithTag(enemyTag);
+        return go != null ? go.transform : null;
+    }
+
+    // 매니저 전용 생성기 (유일한 Instantiate 경로)
+    private SkillProjectile SpawnProjectile(
+        CharacterTypeEnumByTag casterType,
+        Vector3 pos,
+        SkillDataSO so,
+        Action<SkillProjectile, object[]> init,
+        Action<SkillProjectile, object[]> tick,
+        params object[] args
+    )
+    {
+        var p = UnityEngine.Object.Instantiate(so.skillProjectile, pos, Quaternion.identity)
+                    .GetComponent<SkillProjectile>();
+        p.SetProjectile(casterType, so, init, tick, args);
+        return p;
+    }
+
+    // ====== 진입점 ======
+    public void shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
+    {
+        var so = attackSkillData[skill];
+        var targetTr = FindTargetForCaster(casterType);
+        var targetPos = (targetTr != null) ? targetTr.position : (startPosition + Vector3.right * 8f);
+        var forward = DirFromTo(startPosition, targetPos);
+
+        ManagerObject.audioM.PlayAudioClip(attackSkillData[skill].skillSound);
+
+        switch (so.skillProjectileMovingType)
+        {
+            case SkillProjectileMovingType.Straight:
+                Spawn_Straight(casterType, so, startPosition, forward);
+                break;
+
+            case SkillProjectileMovingType.Parabola:
+                Spawn_Parabola(casterType, so, startPosition, parabolaHeightBase);
+                break;
+
+            case SkillProjectileMovingType.StraightThreeMultipleShot:
+                Spawn_StraightBurst(casterType, so, startPosition, forward, tripleShots, tripleInterval);
+                break;
+
+            case SkillProjectileMovingType.StraightFiveMultipleShot:
+                Spawn_StraightBurst(casterType, so, startPosition, forward, fiveShots, fiveInterval);
+                break;
+
+            case SkillProjectileMovingType.Rain:
+                Spawn_Rain(casterType, so, startPosition, targetPos);
+                break;
+
+            case SkillProjectileMovingType.Down:
+                Spawn_DownSingle(casterType, so, targetPos);
+                break;
+
+            case SkillProjectileMovingType.FanBurst:
+                Spawn_FanBurst(casterType, so, startPosition, forward);
+                break;
+
+            case SkillProjectileMovingType.RingBurstOut:
+                Spawn_RingBurstOut(casterType, so, startPosition);
+                break;
+
+            case SkillProjectileMovingType.RingBurstInToTarget:
+                Spawn_RingBurstInToTarget(casterType, so, targetPos);
+                break;
+
+            case SkillProjectileMovingType.LineVerticalForward:
+                Spawn_LineVerticalForward(casterType, so, startPosition, forward);
+                break;
+
+            case SkillProjectileMovingType.LineHorizontalForward:
+                Spawn_LineHorizontalForward(casterType, so, startPosition, forward);
+                break;
+
+            case SkillProjectileMovingType.RandomDownRainDuration:
+                GetRunner().StartCoroutine(Co_RandomDownRainDuration(casterType, so, targetPos));
+                break;
+
+            case SkillProjectileMovingType.SweepDownRainDuration:
+                GetRunner().StartCoroutine(Co_SweepDownRainDuration(casterType, so, targetPos));
+                break;
+
+            case SkillProjectileMovingType.SineStraight:
+                Spawn_SineStraight(casterType, so, startPosition, forward);
+                break;
+
+            case SkillProjectileMovingType.ZigZagStraight:
+                Spawn_ZigZagStraight(casterType, so, startPosition, forward);
+                break;
+
+            case SkillProjectileMovingType.ScatterSplit:
+                Spawn_ScatterSplit(casterType, so, startPosition, forward);
+                break;
+
+            case SkillProjectileMovingType.StraightSpin:
+                Spawn_StraightSpin(casterType, so, startPosition, forward, spinningStraightSpinSpeedDeg);
+                break;
+
+            default:
+                Spawn_Straight(casterType, so, startPosition, forward);
+                break;
+        }
+    }
+
+    // ====== 단발/기본 패턴 ======
+    void Spawn_Straight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir)
+    {
+        SpawnProjectile(caster, pos, so, init_Straight, tick_Straight, dir);
+    }
+
+    void Spawn_Parabola(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, float heightBase)
+    {
+        SpawnProjectile(caster, pos, so, init_Parabola, tick_Parabola, heightBase);
+    }
+
+    void Spawn_StraightSpin(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir, float spinDegPerSec)
+    {
+        SpawnProjectile(caster, pos, so, init_StraightSpin, tick_StraightSpin, dir, spinDegPerSec);
+    }
+
+    // ====== 연사 ======
+    void Spawn_StraightBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir, int shots, float interval)
+    {
+        shots = Mathf.Max(1, shots);
+        // 첫 발
+        Spawn_Straight(caster, so, pos, dir);
+        // 나머지
+        if (shots > 1)
+            GetRunner().StartCoroutine(Co_StraightBurst(caster, so, pos, dir, shots - 1, interval));
+    }
+
+    IEnumerator Co_StraightBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir, int remain, float interval)
+    {
+        for (int i = 0; i < remain; i++)
+        {
+            yield return new WaitForSeconds(interval);
+            Spawn_Straight(caster, so, pos, dir);
+        }
+    }
+
+    // ====== Rain / Down ======
+    void Spawn_Rain(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 startPos, Vector3 targetPos)
+    {
+        int count = Mathf.Max(1, rainDownCount);
+        float width = downWidth;
+        float spawnH = downSpawnHeight;
+
+        Vector3 centerBase = targetPos + Vector3.up * headYOffset;
+        for (int i = 0; i < count; i++)
+        {
+            float u = (i + 0.5f) / count;
+            float xOff = Mathf.Lerp(-width * 0.5f, width * 0.5f, u);
+            Vector3 spawnPos = new Vector3(centerBase.x + xOff, centerBase.y + spawnH, startPos.z);
+            SpawnProjectile(caster, spawnPos, so, init_Down, tick_Down, centerBase.y, centerBase.x + xOff, downFallSpeedMul);
+        }
+    }
+
+    void Spawn_DownSingle(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    {
+        Vector3 centerBase = targetPos + Vector3.up * headYOffset;
+        Vector3 spawnPos = new Vector3(centerBase.x, centerBase.y + downSpawnHeight, targetPos.z);
+        SpawnProjectile(caster, spawnPos, so, init_Down, tick_Down, centerBase.y, centerBase.x, downFallSpeedMul);
+    }
+
+    // ====== Fan / Ring / Line ======
+    void Spawn_FanBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
+    {
+        int N = Mathf.Max(1, fanCount);
+        float total = fanAngle;
+        float step = (N <= 1) ? 0f : total / (N - 1);
+        float start = -total * 0.5f;
+
+        for (int i = 0; i < N; i++)
+        {
+            float ang = start + step * i;
+            Vector3 dir = Quaternion.AngleAxis(ang, Vector3.forward) * forward;
+            Spawn_Straight(caster, so, pos, dir);
+        }
+    }
+
+    void Spawn_RingBurstOut(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 center)
+    {
+        int N = Mathf.Max(1, ringCount);
+        for (int i = 0; i < N; i++)
+        {
+            float theta = (i / (float)N) * Mathf.PI * 2f;
+            Vector3 pos = center + new Vector3(Mathf.Cos(theta) * ringRadius, Mathf.Sin(theta) * ringRadius, 0f);
+            Vector3 dir = (pos - center).normalized;
+            Spawn_Straight(caster, so, pos, dir);
+        }
+    }
+
+    void Spawn_RingBurstInToTarget(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    {
+        int N = Mathf.Max(1, ringCount);
+        Vector3 center = targetPos + Vector3.up * headYOffset;
+        for (int i = 0; i < N; i++)
+        {
+            float theta = (i / (float)N) * Mathf.PI * 2f;
+            Vector3 pos = center + new Vector3(Mathf.Cos(theta) * ringRadius, Mathf.Sin(theta) * ringRadius, 0f);
+            Vector3 dir = (center - pos).normalized;
+            Spawn_Straight(caster, so, pos, dir);
+        }
+    }
+
+    void Spawn_LineVerticalForward(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 start, Vector3 forward)
+    {
+        int N = Mathf.Max(1, lineCount);
+        int mid = (N - 1) / 2;
+        for (int i = 0; i < N; i++)
+        {
+            int off = i - mid;
+            Vector3 pos = start + Vector3.up * (off * lineSpacing);
+            Spawn_Straight(caster, so, pos, forward);
+        }
+    }
+
+    void Spawn_LineHorizontalForward(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 start, Vector3 forward)
+    {
+        int N = Mathf.Max(1, lineCount);
+        int mid = (N - 1) / 2;
+        for (int i = 0; i < N; i++)
+        {
+            int off = i - mid;
+            Vector3 pos = start + Vector3.right * (off * lineSpacing);
+            Spawn_Straight(caster, so, pos, forward);
+        }
+    }
+
+    // ====== 지속 생성(매니저 코루틴) ======
+    IEnumerator Co_RandomDownRainDuration(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    {
+        float tLeft = Mathf.Max(0.01f, randomRainDuration);
+        float interval = 1f / Mathf.Max(0.01f, randomRainRatePerSec);
+
+        Vector3 center = targetPos + Vector3.up * headYOffset;
+
+        while (tLeft > 0f)
+        {
+            float xOff = UnityEngine.Random.Range(-randomRainWidth * 0.5f, randomRainWidth * 0.5f);
+            Vector3 spawnPos = new Vector3(center.x + xOff, center.y + randomRainSpawnH, targetPos.z);
+            SpawnProjectile(caster, spawnPos, so, init_Down, tick_Down, center.y, center.x + xOff, randomRainFallMul);
+
+            yield return new WaitForSeconds(interval);
+            tLeft -= interval;
+        }
+    }
+
+    IEnumerator Co_SweepDownRainDuration(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    {
+        float tLeft = Mathf.Max(0.01f, sweepRainDuration);
+        float interval = 1f / Mathf.Max(0.01f, sweepRainRatePerSec);
+
+        Vector3 center = targetPos + Vector3.up * headYOffset;
+        float baseX = center.x - sweepRainWidth * 0.5f;
+
+        float elapsed = 0f;
+        while (tLeft > 0f)
+        {
+            float traveled = (elapsed * sweepRainSpeed) % (sweepRainWidth * 2f);
+            float offset = (traveled <= sweepRainWidth) ? traveled : (2f * sweepRainWidth - traveled);
+            float cx = baseX + offset;
+
+            float jitter = UnityEngine.Random.Range(-sweepRainWidth * 0.25f, sweepRainWidth * 0.25f);
+            Vector3 spawnPos = new Vector3(cx + jitter, center.y + sweepRainSpawnH, targetPos.z);
+            SpawnProjectile(caster, spawnPos, so, init_Down, tick_Down, center.y, cx + jitter, sweepRainFallMul);
+
+            yield return new WaitForSeconds(interval);
+            elapsed += interval;
+            tLeft -= interval;
+        }
+    }
+
+    // ====== Sine / ZigZag ======
+    void Spawn_SineStraight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
+    {
+        Vector3 right = new Vector3(-forward.y, forward.x, 0f).normalized;
+        float maxDist = 9999f; // 실제 종료는 목표 거리 기반으로 tick에서 처리
+        SpawnProjectile(caster, pos, so, init_SineStraight, tick_SineStraight,
+            pos, forward, right, maxDist, sineAmplitude, sineFrequencyHz);
+    }
+
+    void Spawn_ZigZagStraight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
+    {
+        Vector3 right = new Vector3(-forward.y, forward.x, 0f).normalized;
+        float maxDist = 9999f;
+        SpawnProjectile(caster, pos, so, init_ZigZagStraight, tick_ZigZagStraight,
+            pos, forward, right, maxDist, zigzagAmplitude, zigzagFrequencyHz);
+    }
+
+    // ====== Scatter Split (매니저가 분열 생성) ======
+    void Spawn_ScatterSplit(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir)
+    {
+        var parent = SpawnProjectile(caster, pos, so, init_Straight, tick_Straight, dir);
+        GetRunner().StartCoroutine(Co_ScatterSplit(caster, so, parent, dir, scatterDelaySec, scatterCount, scatterFanAngle));
+    }
+
+    IEnumerator Co_ScatterSplit(CharacterTypeEnumByTag caster, SkillDataSO so, SkillProjectile parent, Vector3 forward, float delay, int count, float fan)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (parent == null) yield break; // 이미 사라짐
+
+        Vector3 pos = parent.transform.position;
+        // 분열 생성(매니저만 Instantiate)
+        count = Mathf.Max(1, count);
+        float total = fan;
+        float step = (count <= 1) ? 0f : total / (count - 1);
+        float start = -total * 0.5f;
+        for (int i = 0; i < count; i++)
+        {
+            float ang = start + step * i;
+            Vector3 dir = Quaternion.AngleAxis(ang, Vector3.forward) * forward;
+            Spawn_Straight(caster, so, pos, dir);
+        }
+
+        if (parent != null)
+            parent.DestroySelf();
+    }
+
+    // =========================
+    // ===== init / tick =======
+    // =========================
+
+    // ----- Straight -----
+    void init_Straight(SkillProjectile p, object[] args)
     {
         Vector3 dir = (args != null && args.Length > 0 && args[0] is Vector3 v) ? v.normalized
-                                                                                 : DirFromTo(p.transform.position, p.TargetPosStatic);
-        float maxDist = Mathf.Max(0.05f, Vector3.Distance(p.transform.position, p.TargetPosStatic));
+                         : DirFromTo(p.transform.position, p.GetCurrentTargetPos(false));
+
+        float maxDist = Mathf.Max(0.05f, Vector3.Distance(p.transform.position, p.GetCurrentTargetPos(false)));
         p.State["dir"] = dir;
         p.State["travel"] = 0f;
         p.State["maxDist"] = maxDist;
     }
 
-    void tickAction_Straight(SkillProjectile p, object[] args)
+    void tick_Straight(SkillProjectile p, object[] args)
     {
         Vector3 dir = (Vector3)p.State["dir"];
         float travel = (float)p.State["travel"];
@@ -300,23 +529,22 @@ public class SkillDataBaseManager
         p.State["travel"] = travel;
     }
 
-    // ===== Parabola =====
-    void spawnAction_Parabola(SkillProjectile p, object[] args)
+    // ----- Parabola -----
+    void init_Parabola(SkillProjectile p, object[] args)
     {
         float heightBase = (args != null && args.Length > 0) ? Convert.ToSingle(args[0]) : 3.5f;
 
         Vector3 from = p.transform.position;
-        Vector3 target = p.TargetPosStatic;
+        Vector3 target = p.GetCurrentTargetPos(false);
 
         p.State["from"] = from;
         p.State["targetSnap"] = target;
         p.State["t"] = 0f;
         p.State["initDist"] = Vector3.Distance(from, target);
         p.State["heightBase"] = heightBase;
-        p.State["ctrl"] = ComputeCtrl(heightBase, from, target);
     }
 
-    void tickAction_Parabola(SkillProjectile p, object[] args)
+    void tick_Parabola(SkillProjectile p, object[] args)
     {
         float t = (float)p.State["t"];
         float initDist = (float)p.State["initDist"];
@@ -352,54 +580,21 @@ public class SkillDataBaseManager
         return new Vector3(mid.x, mid.y + h, mid.z);
     }
 
-    // ===== Rain → Down N =====
-    // args: [0]=count, [1]=spawnHeight, [2]=width, [3]=headYOffset, [4]=fallMul
-    void spawnAction_Rain(SkillProjectile p, object[] args)
+    // ----- Down (단순 낙하) -----
+    // args: [0]=stopY, [1]=xFixed, [2]=fallMul
+    void init_Down(SkillProjectile p, object[] args)
     {
-        int count = (int)args[0];
-        float spawnH = Convert.ToSingle(args[1]);
-        float width = Convert.ToSingle(args[2]);
-        float headYOff = Convert.ToSingle(args[3]);
-        float fallMul = Convert.ToSingle(args[4]);
+        float stopY = Convert.ToSingle(args[0]);
+        float xFixed = Convert.ToSingle(args[1]);
 
-        Vector3 centerBase = p.TargetPosStatic + Vector3.up * headYOff;
-
-        for (int i = 0; i < count; i++)
-        {
-            float u = (i + 0.5f) / count;
-            float xOffset = Mathf.Lerp(-width * 0.5f, width * 0.5f, u);
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-
-            child.SetProjectile(
-                p.AttackerType, p.Data,
-                spawnAction_Down, tickAction_Down,
-                centerBase.x, centerBase.y, spawnH, xOffset, fallMul
-            );
-        }
-        p.DestroySelf();
+        p.State["stopY"] = stopY;
+        p.State["x"] = xFixed;
+        // 위치는 매니저가 스폰 시 이미 y=spawnH로 맞춰둠
     }
 
-    // ===== Down (단순 낙하) =====
-    // args: [0]=centerX, [1]=centerY, [2]=spawnHeight, [3]=xOffset, [4]=fallMul
-    void spawnAction_Down(SkillProjectile p, object[] args)
+    void tick_Down(SkillProjectile p, object[] args)
     {
-        float cx = Convert.ToSingle(args[0]);
-        float cy = Convert.ToSingle(args[1]);
-        float spawnH = Convert.ToSingle(args[2]);
-        float xOffset = Convert.ToSingle(args[3]);
-
-        Vector3 spawnPos = new Vector3(cx + xOffset, cy + spawnH, p.transform.position.z);
-        p.transform.position = spawnPos;
-
-        p.State["stopY"] = cy;
-        p.State["x"] = cx + xOffset;
-    }
-
-    void tickAction_Down(SkillProjectile p, object[] args)
-    {
-        float fallMul = (args != null && args.Length >= 5) ? Convert.ToSingle(args[4]) : 1f;
+        float fallMul = (args != null && args.Length >= 3) ? Convert.ToSingle(args[2]) : 1f;
         float stopY = (float)p.State["stopY"];
         float x = (float)p.State["x"];
 
@@ -412,248 +607,38 @@ public class SkillDataBaseManager
         if (p.transform.position.y <= stopY - 0.2f) p.DestroySelf();
     }
 
-    // ===== FanBurst =====
-    void spawnAction_FanBurst(SkillProjectile p, object[] args)
+    // ----- SineStraight -----
+    // args: origin, forward, right, maxDist, amp, freq
+    void init_SineStraight(SkillProjectile p, object[] args)
     {
-        Vector3 baseDir = DirFromTo(p.transform.position, p.TargetPosStatic);
-        int N = Mathf.Max(1, fanCount);
-        float total = fanAngle;
-        float step = (N <= 1) ? 0f : total / (N - 1);
-        float start = -total * 0.5f;
-
-        for (int i = 0; i < N; i++)
-        {
-            float ang = start + step * i;
-            Quaternion rot = Quaternion.AngleAxis(ang, Vector3.forward);
-            Vector3 dir = rot * baseDir;
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-            child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dir);
-        }
-        p.DestroySelf();
-    }
-
-    // ===== RingBurstOut =====
-    void spawnAction_RingBurstOut(SkillProjectile p, object[] args)
-    {
-        int N = Mathf.Max(1, ringCount);
-        Vector3 center = p.transform.position;
-
-        for (int i = 0; i < N; i++)
-        {
-            float theta = (i / (float)N) * Mathf.PI * 2f;
-            Vector3 pos = center + new Vector3(Mathf.Cos(theta) * ringRadius, Mathf.Sin(theta) * ringRadius, 0f);
-            Vector3 dir = (pos - center).normalized;
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-            child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dir);
-        }
-        p.DestroySelf();
-    }
-
-    // ===== RingBurstInToTarget =====
-    void spawnAction_RingBurstInToTarget(SkillProjectile p, object[] args)
-    {
-        int N = Mathf.Max(1, ringCount);
-        Vector3 center = p.TargetPosStatic + Vector3.up * headYOffset;
-
-        for (int i = 0; i < N; i++)
-        {
-            float theta = (i / (float)N) * Mathf.PI * 2f;
-            Vector3 pos = center + new Vector3(Mathf.Cos(theta) * ringRadius, Mathf.Sin(theta) * ringRadius, 0f);
-            Vector3 dir = (center - pos).normalized;
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-            child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dir);
-        }
-        p.DestroySelf();
-    }
-
-    // ===== LineForward =====
-    void spawnAction_LineVerticalForward(SkillProjectile p, object[] args)
-    {
-        int N = Mathf.Max(1, lineCount);
-        int mid = (N - 1) / 2;
-        Vector3 forward = DirFromTo(p.transform.position, p.TargetPosStatic);
-
-        for (int i = 0; i < N; i++)
-        {
-            int offIdx = i - mid;
-            Vector3 pos = p.transform.position + Vector3.up * (offIdx * lineSpacing);
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-            child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, forward);
-        }
-        p.DestroySelf();
-    }
-
-    void spawnAction_LineHorizontalForward(SkillProjectile p, object[] args)
-    {
-        int N = Mathf.Max(1, lineCount);
-        int mid = (N - 1) / 2;
-        Vector3 forward = DirFromTo(p.transform.position, p.TargetPosStatic);
-
-        for (int i = 0; i < N; i++)
-        {
-            int offIdx = i - mid;
-            Vector3 pos = p.transform.position + Vector3.right * (offIdx * lineSpacing);
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, pos, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-            child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, forward);
-        }
-        p.DestroySelf();
-    }
-
-    // ===== RandomDownRainDuration =====
-    void spawnAction_RandomDownRain(SkillProjectile p, object[] args)
-    {
-        float duration = Mathf.Max(0.01f, randomRainDuration);
-        float rate = Mathf.Max(0.01f, randomRainRatePerSec);
-        float interval = 1f / rate;
-
-        Vector3 headCenter = p.TargetPosStatic + Vector3.up * headYOffset;
-
-        p.State["tLeft"] = duration;
-        p.State["spawnInterval"] = interval;
-        p.State["acc"] = 0f;
-        p.State["cX"] = headCenter.x;
-        p.State["cY"] = headCenter.y;
-        p.State["width"] = randomRainWidth;
-        p.State["spawnH"] = randomRainSpawnH;
-        p.State["fallMul"] = randomRainFallMul;
-    }
-
-    void tickAction_RandomDownRain(SkillProjectile p, object[] args)
-    {
-        float tLeft = (float)p.State["tLeft"];
-        float intv = (float)p.State["spawnInterval"];
-        float acc = (float)p.State["acc"];
-        float cX = (float)p.State["cX"];
-        float cY = (float)p.State["cY"];
-        float width = (float)p.State["width"];
-        float spawnH = (float)p.State["spawnH"];
-        float fallMul = (float)p.State["fallMul"];
-
-        float dt = Time.deltaTime;
-        tLeft -= dt;
-        acc += dt;
-
-        while (acc >= intv && tLeft > 0f)
-        {
-            acc -= intv;
-            float xOff = UnityEngine.Random.Range(-width * 0.5f, width * 0.5f);
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-
-            child.SetProjectile(p.AttackerType, p.Data,
-                                spawnAction_Down, tickAction_Down,
-                                cX, cY, spawnH, xOff, fallMul);
-        }
-
-        p.State["tLeft"] = tLeft;
-        p.State["acc"] = acc;
-
-        if (tLeft <= 0f) p.DestroySelf();
-    }
-
-    // ===== SweepDownRainDuration =====
-    void spawnAction_SweepDownRain(SkillProjectile p, object[] args)
-    {
-        float duration = Mathf.Max(0.01f, sweepRainDuration);
-        float rate = Mathf.Max(0.01f, sweepRainRatePerSec);
-        float interval = 1f / rate;
-
-        Vector3 headCenter = p.TargetPosStatic + Vector3.up * headYOffset;
-
-        p.State["tLeft"] = duration;
-        p.State["spawnInterval"] = interval;
-        p.State["acc"] = 0f;
-        p.State["baseX"] = headCenter.x - sweepRainWidth * 0.5f;
-        p.State["cY"] = headCenter.y;
-        p.State["width"] = sweepRainWidth;
-        p.State["spawnH"] = sweepRainSpawnH;
-        p.State["fallMul"] = sweepRainFallMul;
-        p.State["speed"] = sweepRainSpeed;
-    }
-
-    void tickAction_SweepDownRain(SkillProjectile p, object[] args)
-    {
-        float tLeft = (float)p.State["tLeft"];
-        float intv = (float)p.State["spawnInterval"];
-        float acc = (float)p.State["acc"];
-        float baseX = (float)p.State["baseX"];
-        float cY = (float)p.State["cY"];
-        float width = (float)p.State["width"];
-        float spawnH = (float)p.State["spawnH"];
-        float fallMul = (float)p.State["fallMul"];
-        float speed = (float)p.State["speed"];
-
-        float dt = Time.deltaTime;
-        tLeft -= dt;
-        acc += dt;
-
-        // 좌→우→좌 PingPong 중심
-        float traveled = (p.Elapsed * speed) % (width * 2f);
-        float offset = (traveled <= width) ? traveled : (2f * width - traveled);
-        float centerX = baseX + offset;
-
-        while (acc >= intv && tLeft > 0f)
-        {
-            acc -= intv;
-            float jitter = UnityEngine.Random.Range(-width * 0.25f, width * 0.25f);
-            float x = centerX + jitter;
-
-            var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                         .GetComponent<SkillProjectile>();
-
-            child.SetProjectile(p.AttackerType, p.Data,
-                                spawnAction_Down, tickAction_Down,
-                                x, cY, spawnH, 0f, fallMul);
-        }
-
-        p.State["tLeft"] = tLeft;
-        p.State["acc"] = acc;
-
-        if (tLeft <= 0f) p.DestroySelf();
-    }
-
-    // ===== SineStraight =====
-    void spawnAction_SineStraight(SkillProjectile p, object[] args)
-    {
-        Vector3 forward = DirFromTo(p.transform.position, p.TargetPosStatic);
-        Vector3 right = new Vector3(-forward.y, forward.x, 0f).normalized;
-
-        p.State["origin"] = p.transform.position;
-        p.State["forward"] = forward;
-        p.State["right"] = right;
+        p.State["origin"] = (Vector3)args[0];
+        p.State["forward"] = (Vector3)args[1];
+        p.State["right"] = (Vector3)args[2];
         p.State["dist"] = 0f;
-        p.State["maxDist"] = Vector3.Distance(p.transform.position, p.TargetPosStatic);
+        p.State["maxDist"] = (float)args[3];
+        p.State["amp"] = (float)args[4];
+        p.State["freqHz"] = (float)args[5];
     }
 
-    void tickAction_SineStraight(SkillProjectile p, object[] args)
+    void tick_SineStraight(SkillProjectile p, object[] args)
     {
         Vector3 origin = (Vector3)p.State["origin"];
         Vector3 forward = (Vector3)p.State["forward"];
         Vector3 right = (Vector3)p.State["right"];
         float dist = (float)p.State["dist"];
         float maxDist = (float)p.State["maxDist"];
+        float amp = (float)p.State["amp"];
+        float freqHz = (float)p.State["freqHz"];
 
         float dt = Time.deltaTime;
         dist += p.Data.projectileSpeed * dt;
 
-        float phase = p.Elapsed * sineFrequencyHz * Mathf.PI * 2f;
-        Vector3 pos = origin + forward * dist + right * (Mathf.Sin(phase) * sineAmplitude);
+        float phase = p.Elapsed * freqHz * Mathf.PI * 2f;
+        Vector3 pos = origin + forward * dist + right * (Mathf.Sin(phase) * amp);
 
-        // 진행 방향 근사
         float d2 = dist + p.Data.projectileSpeed * 0.02f;
-        float ph2 = phase + sineFrequencyHz * Mathf.PI * 2f * 0.02f;
-        Vector3 p2 = origin + forward * d2 + right * (Mathf.Sin(ph2) * sineAmplitude);
+        float ph2 = phase + freqHz * Mathf.PI * 2f * 0.02f;
+        Vector3 p2 = origin + forward * d2 + right * (Mathf.Sin(ph2) * amp);
         Vector3 dir = (p2 - pos).normalized;
 
         p.ApplyMove(pos, dir);
@@ -662,36 +647,37 @@ public class SkillDataBaseManager
         p.State["dist"] = dist;
     }
 
-    // ===== ZigZagStraight =====
-    void spawnAction_ZigZagStraight(SkillProjectile p, object[] args)
+    // ----- ZigZagStraight -----
+    void init_ZigZagStraight(SkillProjectile p, object[] args)
     {
-        Vector3 forward = DirFromTo(p.transform.position, p.TargetPosStatic);
-        Vector3 right = new Vector3(-forward.y, forward.x, 0f).normalized;
-
-        p.State["origin"] = p.transform.position;
-        p.State["forward"] = forward;
-        p.State["right"] = right;
+        p.State["origin"] = (Vector3)args[0];
+        p.State["forward"] = (Vector3)args[1];
+        p.State["right"] = (Vector3)args[2];
         p.State["dist"] = 0f;
-        p.State["maxDist"] = Vector3.Distance(p.transform.position, p.TargetPosStatic);
+        p.State["maxDist"] = (float)args[3];
+        p.State["amp"] = (float)args[4];
+        p.State["freqHz"] = (float)args[5];
     }
 
-    void tickAction_ZigZagStraight(SkillProjectile p, object[] args)
+    void tick_ZigZagStraight(SkillProjectile p, object[] args)
     {
         Vector3 origin = (Vector3)p.State["origin"];
         Vector3 forward = (Vector3)p.State["forward"];
         Vector3 right = (Vector3)p.State["right"];
         float dist = (float)p.State["dist"];
         float maxDist = (float)p.State["maxDist"];
+        float amp = (float)p.State["amp"];
+        float freqHz = (float)p.State["freqHz"];
 
         float dt = Time.deltaTime;
         dist += p.Data.projectileSpeed * dt;
 
-        float wave = TriWave(p.Elapsed * zigzagFrequencyHz);
-        Vector3 pos = origin + forward * dist + right * (wave * zigzagAmplitude);
+        float wave = TriWave(p.Elapsed * freqHz);
+        Vector3 pos = origin + forward * dist + right * (wave * amp);
 
         float d2 = dist + p.Data.projectileSpeed * 0.02f;
-        float w2 = TriWave((p.Elapsed + 0.02f) * zigzagFrequencyHz);
-        Vector3 p2 = origin + forward * d2 + right * (w2 * zigzagAmplitude);
+        float w2 = TriWave((p.Elapsed + 0.02f) * freqHz);
+        Vector3 p2 = origin + forward * d2 + right * (w2 * amp);
         Vector3 dir = (p2 - pos).normalized;
 
         p.ApplyMove(pos, dir);
@@ -700,65 +686,24 @@ public class SkillDataBaseManager
         p.State["dist"] = dist;
     }
 
-    // ===== ScatterSplit =====
-    void spawnAction_ScatterSplit(SkillProjectile p, object[] args)
+    // ----- StraightSpin -----
+    void init_StraightSpin(SkillProjectile p, object[] args)
     {
-        Vector3 dir = DirFromTo(p.transform.position, p.TargetPosStatic);
-        p.State["dir"] = dir;
-        p.State["timer"] = 0f;
-    }
+        Vector3 dir = (args != null && args.Length > 0 && args[0] is Vector3 v) ? v.normalized
+                         : DirFromTo(p.transform.position, p.GetCurrentTargetPos(false));
+        float spin = (args != null && args.Length > 1) ? Convert.ToSingle(args[1]) : spinningStraightSpinSpeedDeg;
 
-    void tickAction_ScatterSplit(SkillProjectile p, object[] args)
-    {
-        Vector3 dir = (Vector3)p.State["dir"];
-        float timer = (float)p.State["timer"];
-
-        float dt = Time.deltaTime;
-        timer += dt;
-
-        Vector3 next = p.transform.position + dir * p.Data.projectileSpeed * dt;
-        p.ApplyMove(next, dir);
-
-        if (timer >= scatterDelaySec)
-        {
-            int N = Mathf.Max(1, scatterCount);
-            float total = scatterFanAngle;
-            float step = (N <= 1) ? 0f : total / (N - 1);
-            float start = -total * 0.5f;
-
-            for (int i = 0; i < N; i++)
-            {
-                float ang = start + step * i;
-                Quaternion rot = Quaternion.AngleAxis(ang, Vector3.forward);
-                Vector3 dirOut = rot * dir;
-
-                var child = UnityEngine.Object.Instantiate(p.Data.skillProjectile, p.transform.position, Quaternion.identity)
-                             .GetComponent<SkillProjectile>();
-                child.SetProjectile(p.AttackerType, p.Data, spawnAction_Straight, tickAction_Straight, dirOut);
-            }
-            p.DestroySelf();
-            return;
-        }
-        p.State["timer"] = timer;
-    }
-
-    // ===== StraightSpin =====
-    void spawnAction_StraightSpin(SkillProjectile p, object[] args)
-    {
-        Vector3 dir = DirFromTo(p.transform.position, p.TargetPosStatic);
-        float maxDist = Mathf.Max(0.05f, Vector3.Distance(p.transform.position, p.TargetPosStatic));
+        float maxDist = Mathf.Max(0.05f, Vector3.Distance(p.transform.position, p.GetCurrentTargetPos(false)));
 
         p.State["dir"] = dir;
         p.State["travel"] = 0f;
         p.State["maxDist"] = maxDist;
-
-        float spin = (args != null && args.Length > 0) ? Convert.ToSingle(args[0]) : spinningStraightSpinSpeedDeg;
         p.State["spinSpeed"] = spin;   // 도/초
         p.State["spinAccum"] = 0f;     // 누적 각
         // baseRot은 첫 틱에서 ApplyMove가 만든 회전을 캡처
     }
 
-    void tickAction_StraightSpin(SkillProjectile p, object[] args)
+    void tick_StraightSpin(SkillProjectile p, object[] args)
     {
         Vector3 dir = (Vector3)p.State["dir"];
         float travel = (float)p.State["travel"];
@@ -787,12 +732,6 @@ public class SkillDataBaseManager
 
         if (travel >= maxDist + 0.01f) { p.DestroySelf(); return; }
         p.State["travel"] = travel;
-    }
-
-    // ===== No-Op =====
-    void tickAction_NoOp(SkillProjectile p, object[] args)
-    {
-        // 컨트롤러 부모 등에서 사용
     }
 }
 
