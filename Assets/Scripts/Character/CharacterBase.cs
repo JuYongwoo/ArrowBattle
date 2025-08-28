@@ -32,7 +32,7 @@ public abstract class CharacterBase : MonoBehaviour
     private readonly Dictionary<Skill, float> _cooldownEnd = new();
     public event Action<Skill, float> CooldownStarted;
     public event Action<Skill> CooldownEnded;
-    public static Action<int, float> cooldownUI;
+    public Action<int, float> cooldownUI;
 
 
     protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제

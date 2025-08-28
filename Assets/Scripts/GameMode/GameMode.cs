@@ -15,9 +15,8 @@ public class GameMode
     private GameModeDataSO gameModeData;
     static public Action<int> setGameTime; //TimePanel의 시간을 세팅하는 델리게이트
     private int gameLeftTime = 99;
-
+    static public GameObject playerObject;
     public Action<ResultStateEnum> gameResultUI; //ResultPanel의 UI를 세팅하는 델리게이트
-
     // 기존: MonoBehaviour monoBehaviourforInvoke = new MonoBehaviour();  // ← 금지됨
     private TimerRunner _timerRunner; // 안전한 반복 호출을 위한 러너
 
@@ -33,7 +32,8 @@ public class GameMode
         //GameMode에서 정의된 캐릭터 프리팹들을 SO 속 정보에 따라 씬에 생성
         foreach (var character in gameModeData.Characters)
         {
-            MonoBehaviour.Instantiate(character.characterPrefab, character.characterStartPosition, Quaternion.identity);
+            GameObject go = MonoBehaviour.Instantiate(character.characterPrefab, character.characterStartPosition, Quaternion.identity);
+            if (go.CompareTag("Player")) playerObject = go;
         }
 
         //해상도

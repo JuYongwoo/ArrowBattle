@@ -40,11 +40,11 @@ public class SkillPanel : MonoBehaviour
             // 아이콘 적용
             map[panelEnum].GetComponent<Image>().sprite = ManagerObject.skillInfoM.attackSkillData[skillEnum].skillIcon;
         }
-        Player.cooldownUI = StartCooldown;
     }
 
     private void Start()
     {
+        GameMode.playerObject.GetComponent<Player>().cooldownUI = StartCooldown;
 
         for (int i = 1; i <= 5; i++)
         {
