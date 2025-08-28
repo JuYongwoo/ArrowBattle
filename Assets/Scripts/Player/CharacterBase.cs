@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public enum CharacterStateEnum //Enum으로 상태 관리 //int로 캐스팅하여 사용

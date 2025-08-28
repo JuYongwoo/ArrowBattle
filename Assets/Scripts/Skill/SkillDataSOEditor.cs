@@ -28,9 +28,6 @@ public class SkillDataSOEditor : Editor
 
         EditorGUILayout.LabelField("Skill Motion", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("skillProjectileMovingType"), new GUIContent("Skill Projectile Moving Type"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("projectileCount"), new GUIContent("Projectile Count"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("isGuided"), new GUIContent("Is Guided"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("isShowPortrait"), new GUIContent("Is Show Portrait"));
 
         serializedObject.ApplyModifiedProperties();
     }

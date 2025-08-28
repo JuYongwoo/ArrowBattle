@@ -1,7 +1,5 @@
 using System;
-using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class Player : CharacterBase
 {
     // SO 값으로 교체 예정

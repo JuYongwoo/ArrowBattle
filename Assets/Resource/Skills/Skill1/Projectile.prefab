@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4503533334088539303}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -99,6 +99,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteAngleOffset: -45
+  parabolaHeightBase: 3.5
+  lateralAmplitude: 0.6
+  waveFrequency: 2.5
+  boomerangTotalTime: 1.6
+  multiShotInterval: 0.12
+  rainSpawnHeight: 6
+  rainHeadYOffset: 1
+  rainSpreadBase: 1.25
+  rainLateralFollowSpeed: 8
+  circleRadius: 0.8
+  circleAngularSpeed: 540
+  spiralStartRadius: 3
+  spiralEndRadius: 0.2
+  spiralAngularSpeed: 360
+  spiralShrinkPerSec: 2
+  orbitRadius: 2.5
+  orbitAngularSpeed: 270
+  orbitDuration: 0.8
+  dashSpeedMultiplier: 2
+  splitDelay: 0.45
+  splitFanTotalAngle: 40
+  formationSpacing: 0.5
+  ringRadius: 2
+  backstepDistance: 1.2
+  backstepDuration: 0.18
+  jitterAmplitude: 0.25
+  jitterFrequency: 8
+  teleportInterval: 0.12
+  teleportStepDistance: 1.2
+  maxLifeTime: 6
 --- !u!58 &-6410704366120923472
 CircleCollider2D:
   m_ObjectHideFlags: 0

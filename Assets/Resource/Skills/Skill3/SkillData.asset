@@ -18,8 +18,5 @@ MonoBehaviour:
   skillDamage: 10
   skillCoolTime: 15
   skillCastingTime: 1
-  projectileSpeed: 30
-  skillProjectileMovingType: 0
-  projectileCount: 10
-  isGuided: 1
-  isShowPortrait: 0
+  projectileSpeed: 10
+  skillProjectileMovingType: 4
