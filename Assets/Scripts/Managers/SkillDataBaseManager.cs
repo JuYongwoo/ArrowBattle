@@ -14,24 +14,22 @@ public enum SkillProjectileMovingType
     // 기본
     Straight,
     Parabola,
-    Rain,                      // Down N개 스폰(매니저가 N발 생성)
+    Rain,                      // Down 여러개 스폰
     Down,                      // 머리 위 고정 스폰, 아래로 낙하만
-    StraightThreeMultipleShot, // 3연속 직사
-    StraightFiveMultipleShot,  // 5연속 직사 (0.1s 간격)
-
-    // 추가 연출 (스폰형/컨트롤러형/무빙형)
+    StraightThreeMultipleShot, // 3연속
+    StraightFiveMultipleShot,  // 5연속
     FanBurst,             // 시작 지점에서 부채꼴 N발 확산(직선)
     RingBurstOut,         // 시작 지점에서 원형 N발 바깥으로
     RingBurstInToTarget,  // 타깃 머리 주변 원형 N발 안쪽으로
     LineVerticalForward,  // 시작 지점에서 상하 라인 N개 → 직선 돌진
     LineHorizontalForward,// 시작 지점에서 좌우 라인 N개 → 직선 돌진
 
-    RandomDownRainDuration, // 랜덤 낙하를 지속적으로 생성(매니저 코루틴)
-    SweepDownRainDuration,  // 좌↔우 스윕하며 낙하 지속 생성(매니저 코루틴)
+    RandomDownRainDuration, // 랜덤 낙하
+    SweepDownRainDuration,  // 좌↔우 낙하 
 
-    SineStraight,         // 직선 진행 + 사인 횡진동
-    ZigZagStraight,       // 직선 진행 + 지그재그(삼각파)
-    ScatterSplit,         // 일정 시간 후 다수 파편으로 분열(매니저 코루틴)
+    SineStraight,         
+    ZigZagStraight,       
+    ScatterSplit,         
 
     StraightSpin          // 직선 이동 + 스프라이트 지속 회전
 }
@@ -40,7 +38,8 @@ public class SkillDataBaseManager
 {
     public Dictionary<Skill, SkillDataSO> attackSkillData;
 
-    // ====== 튜닝 ======
+
+    ////////////////////// JYW TODO: SO로 옮기기(Editor사용하여 선택한 type 값에 따라 수치 칸 보이도록)
     public float headYOffset = 1.0f;
 
     // StraightThreeMultipleShot
@@ -101,61 +100,28 @@ public class SkillDataBaseManager
     // StraightSpin
     public float spinningStraightSpinSpeedDeg = -1440f; // 도/초
 
+    //////////////////////
+
     // 코루틴 러너 (옵션)
     private MonoBehaviour _runner;
 
-    // 쿨타임
-    private readonly Dictionary<Skill, float> _cooldownEnd = new();
-    public event Action<Skill, float> CooldownStarted;
-    public event Action<Skill> CooldownEnded;
-    public Action<int, float> cooldownUI;
+
 
     public void OnAwake()
     {
         attackSkillData = Util.mapDictionaryWithKeyLoad<Skill, SkillDataSO>();
-        _cooldownEnd.Clear();
     }
 
     public void BindRunner(MonoBehaviour runner) => _runner = runner;
 
-    // 항상 살아있는 코루틴 호스트 확보
-    private MonoBehaviour GetRunner()
+    public MonoBehaviour GetRunner()
     {
         if (_runner != null) return _runner;
         return SkillCoroutineHub.Instance;
     }
 
-    // === 쿨타임 편의 ===
-    public bool CanUse(Skill skill)
-    {
-        if (!attackSkillData.ContainsKey(skill)) return false;
-        return !(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end);
-    }
+    
 
-    public bool TryBeginCooldown(Skill skill)
-    {
-        if (!attackSkillData.TryGetValue(skill, out var so)) return false;
-
-        float now = Time.time;
-        float dur = Mathf.Max(so.skillCoolTime, 0f);
-        if (_cooldownEnd.TryGetValue(skill, out var end) && now < end) return false;
-
-        _cooldownEnd[skill] = now + dur;
-        CooldownStarted?.Invoke(skill, dur);
-        if (dur > 0f) GetRunner().StartCoroutine(CoEmitEndAfter(skill, dur));
-
-        cooldownUI?.Invoke((int)skill, so.skillCoolTime);
-        return true;
-    }
-
-    private IEnumerator CoEmitEndAfter(Skill skill, float dur)
-    {
-        yield return new WaitForSeconds(dur);
-        if (!(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end))
-            CooldownEnded?.Invoke(skill);
-    }
-
-    // ===== 공통 유틸 =====
     static Vector3 DirFromTo(Vector3 from, Vector3 to)
     {
         var v = to - from;
@@ -195,7 +161,6 @@ public class SkillDataBaseManager
         return p;
     }
 
-    // ====== 진입점 ======
     public void shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
     {
         var so = attackSkillData[skill];
@@ -280,8 +245,6 @@ public class SkillDataBaseManager
                 break;
         }
     }
-
-    // ====== 단발/기본 패턴 ======
     void Spawn_Straight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir)
     {
         SpawnProjectile(caster, pos, so, init_Straight, tick_Straight, dir);
@@ -297,7 +260,6 @@ public class SkillDataBaseManager
         SpawnProjectile(caster, pos, so, init_StraightSpin, tick_StraightSpin, dir, spinDegPerSec);
     }
 
-    // ====== 연사 ======
     void Spawn_StraightBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir, int shots, float interval)
     {
         shots = Mathf.Max(1, shots);
@@ -317,7 +279,6 @@ public class SkillDataBaseManager
         }
     }
 
-    // ====== Rain / Down ======
     void Spawn_Rain(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 startPos, Vector3 targetPos)
     {
         int count = Mathf.Max(1, rainDownCount);
@@ -341,7 +302,6 @@ public class SkillDataBaseManager
         SpawnProjectile(caster, spawnPos, so, init_Down, tick_Down, centerBase.y, centerBase.x, downFallSpeedMul);
     }
 
-    // ====== Fan / Ring / Line ======
     void Spawn_FanBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
     {
         int N = Mathf.Max(1, fanCount);
@@ -406,7 +366,6 @@ public class SkillDataBaseManager
         }
     }
 
-    // ====== 지속 생성(매니저 코루틴) ======
     IEnumerator Co_RandomDownRainDuration(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
     {
         float tLeft = Mathf.Max(0.01f, randomRainDuration);
@@ -450,7 +409,6 @@ public class SkillDataBaseManager
         }
     }
 
-    // ====== Sine / ZigZag ======
     void Spawn_SineStraight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
     {
         Vector3 right = new Vector3(-forward.y, forward.x, 0f).normalized;
@@ -467,7 +425,6 @@ public class SkillDataBaseManager
             pos, forward, right, maxDist, zigzagAmplitude, zigzagFrequencyHz);
     }
 
-    // ====== Scatter Split (매니저가 분열 생성) ======
     void Spawn_ScatterSplit(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir)
     {
         var parent = SpawnProjectile(caster, pos, so, init_Straight, tick_Straight, dir);
@@ -497,11 +454,6 @@ public class SkillDataBaseManager
             parent.DestroySelf();
     }
 
-    // =========================
-    // ===== init / tick =======
-    // =========================
-
-    // ----- Straight -----
     void init_Straight(SkillProjectile p, object[] args)
     {
         Vector3 dir = (args != null && args.Length > 0 && args[0] is Vector3 v) ? v.normalized
@@ -529,7 +481,6 @@ public class SkillDataBaseManager
         p.State["travel"] = travel;
     }
 
-    // ----- Parabola -----
     void init_Parabola(SkillProjectile p, object[] args)
     {
         float heightBase = (args != null && args.Length > 0) ? Convert.ToSingle(args[0]) : 3.5f;
@@ -580,8 +531,6 @@ public class SkillDataBaseManager
         return new Vector3(mid.x, mid.y + h, mid.z);
     }
 
-    // ----- Down (단순 낙하) -----
-    // args: [0]=stopY, [1]=xFixed, [2]=fallMul
     void init_Down(SkillProjectile p, object[] args)
     {
         float stopY = Convert.ToSingle(args[0]);
@@ -607,8 +556,6 @@ public class SkillDataBaseManager
         if (p.transform.position.y <= stopY - 0.2f) p.DestroySelf();
     }
 
-    // ----- SineStraight -----
-    // args: origin, forward, right, maxDist, amp, freq
     void init_SineStraight(SkillProjectile p, object[] args)
     {
         p.State["origin"] = (Vector3)args[0];
@@ -647,7 +594,6 @@ public class SkillDataBaseManager
         p.State["dist"] = dist;
     }
 
-    // ----- ZigZagStraight -----
     void init_ZigZagStraight(SkillProjectile p, object[] args)
     {
         p.State["origin"] = (Vector3)args[0];
@@ -686,7 +632,6 @@ public class SkillDataBaseManager
         p.State["dist"] = dist;
     }
 
-    // ----- StraightSpin -----
     void init_StraightSpin(SkillProjectile p, object[] args)
     {
         Vector3 dir = (args != null && args.Length > 0 && args[0] is Vector3 v) ? v.normalized
@@ -735,7 +680,7 @@ public class SkillDataBaseManager
     }
 }
 
-// 퍼시스턴트 코루틴 호스트
+//Monobehaviour가 필요해서 작성
 internal class SkillCoroutineHub : MonoBehaviour
 {
     private static SkillCoroutineHub _inst;

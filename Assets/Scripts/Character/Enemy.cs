@@ -22,11 +22,26 @@ public class Enemy : CharacterBase
     {
         base.Start();
         moveLoop = StartCoroutine(CoMove());
+        InvokeRepeating(nameof(randomSkill), 3f, 3f); //랜덤 스킬 사용
     }
-
+    protected void Update()
+    {
+        if (state == CharacterStateEnum.Idle) //아무 행동 하지 않을 시 일반 공격
+        {
+            if (skillCoroutine == null) prepareSkill(Skill.Attack);
+        }
+    }
     private void OnDestroy()
     {
         if (moveLoop != null) StopCoroutine(moveLoop);
+    }
+    
+    private void randomSkill()
+    {
+        Array skills = Enum.GetValues(typeof(Skill));
+        System.Random random = new System.Random();
+        Skill randomSkill = (Skill)skills.GetValue(random.Next(skills.Length));
+        prepareSkill(randomSkill);
     }
 
     public override void getDamaged(float damageAmount)
@@ -49,7 +64,7 @@ public class Enemy : CharacterBase
             float t = 0f;
             while (t < moveDuration)
             {
-                Move(dir);
+                move(dir);
                 yield return waitFixed;
                 t += Time.fixedDeltaTime;
             }

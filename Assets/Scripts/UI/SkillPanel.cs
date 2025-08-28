@@ -40,7 +40,7 @@ public class SkillPanel : MonoBehaviour
             // 아이콘 적용
             map[panelEnum].GetComponent<Image>().sprite = ManagerObject.skillInfoM.attackSkillData[skillEnum].skillIcon;
         }
-        ManagerObject.skillInfoM.cooldownUI = StartCooldown;
+        Player.cooldownUI = StartCooldown;
     }
 
     private void Start()
@@ -97,9 +97,6 @@ public class SkillPanel : MonoBehaviour
         remain[skillNumber] = 0f;
     }
 
-    // ======================= Coroutines =======================
-
-    // 크기 줄이기: 위에서 아래로(위치 고정, 높이만 감소)
     private IEnumerator CoShrinkFade(int idx, float duration)
     {
         var rt = GetFadeRect(idx);
@@ -135,7 +132,6 @@ public class SkillPanel : MonoBehaviour
         txtCo[idx] = null;
     }
 
-    // ======================= UI helpers =======================
 
     private RectTransform GetFadeRect(int idx)
     {

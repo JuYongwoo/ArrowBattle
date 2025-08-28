@@ -15,5 +15,8 @@ public class GameModeDataSO : ScriptableObject //단순 게임 시작 시 정보를 담는 S
 
     public CharacterDatas[] Characters;
     public int GameTime; //게임 시간
+    public AudioClip BGM;
+    public AudioClip VictoryMusic;
+    public AudioClip DefeatMusic;
 
 }

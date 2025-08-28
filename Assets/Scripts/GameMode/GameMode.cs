@@ -13,7 +13,6 @@ public enum ResultStateEnum
 public class GameMode
 {
     private GameModeDataSO gameModeData;
-    private AudioClip BGM;
     static public Action<int> setGameTime; //TimePanel의 시간을 세팅하는 델리게이트
     private int gameLeftTime = 99;
 
@@ -26,7 +25,6 @@ public class GameMode
     public void OnAwake()
     {
         gameModeData = Addressables.LoadAssetAsync<GameModeDataSO>("GameModeData").WaitForCompletion(); // GameModeDataSO 로드
-        BGM = Addressables.LoadAssetAsync<AudioClip>("BGM").WaitForCompletion();
         //해당 정보를 기반으로 게임을 세팅
     }
 
@@ -42,7 +40,7 @@ public class GameMode
         Screen.SetResolution(1600, 900, false);
 
         //BGM 재생
-        ManagerObject.audioM.PlayBGM(BGM);
+        ManagerObject.audioM.PlayBGM(gameModeData.BGM);
 
         gameLeftTime = gameModeData.GameTime;
 
@@ -53,11 +51,8 @@ public class GameMode
             _timerRunner = go.AddComponent<TimerRunner>();
         }
 
-        // 1초마다 flowTime 호출 (timeScale 영향 받음: WaitForSeconds)
-        // timeScale 무시 원하면 아래 줄을 주석 해제하고 StartRepeatingRealtime 사용
         _timerRunner.StartRepeating(flowTime, 1f);
         // _timerRunner.StartRepeatingRealtime(flowTime, 1f); // ← timeScale 무시 버전
-        // ===========================================
     }
 
     private void flowTime()
@@ -77,15 +72,15 @@ public class GameMode
         if (_timerRunner != null)
             _timerRunner.StopRepeating();
 
+        if(resultStateEnum == ResultStateEnum.Victory) ManagerObject.audioM.PlayAudioClip(gameModeData.VictoryMusic, 4.0f);
+        else ManagerObject.audioM.PlayAudioClip(gameModeData.DefeatMusic, 1.0f);
+
         Time.timeScale = 0f; //게임 일시정지
         ManagerObject.audioM.StopBGM(); //BGM 정지
         gameResultUI?.Invoke(resultStateEnum); //ResultPanel의 UI를 세팅하는 델리게이트 호출
     }
 }
 
-/// <summary>
-/// 간단한 반복 호출 전용 러너. 코루틴으로 1초마다 콜백을 호출함.
-/// </summary>
 public sealed class TimerRunner : MonoBehaviour
 {
     private Coroutine _loop;

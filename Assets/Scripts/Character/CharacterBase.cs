@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum CharacterStateEnum //Enum으로 상태 관리 //int로 캐스팅하여 사용
@@ -27,6 +28,13 @@ public abstract class CharacterBase : MonoBehaviour
     protected Coroutine skillCoroutine;
     private AudioClip hitSound;
 
+    // 쿨타임
+    private readonly Dictionary<Skill, float> _cooldownEnd = new();
+    public event Action<Skill, float> CooldownStarted;
+    public event Action<Skill> CooldownEnded;
+    public static Action<int, float> cooldownUI;
+
+
     protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제
     protected CharacterTypeEnumByTag OpponentType; //상대방 타입, Awake에서 자동 설정
     protected Skill castingSkill; //현재 시전 중인 스킬
@@ -38,6 +46,7 @@ public abstract class CharacterBase : MonoBehaviour
         rb = GetComponent<Rigidbody2D>(); // Rigidbody2D 캐싱
         sr = Util.getObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
         OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
+        _cooldownEnd.Clear();
 
     }
 
@@ -45,13 +54,7 @@ public abstract class CharacterBase : MonoBehaviour
     {
         setState(CharacterStateEnum.Idle); //처음 상태는 Idle
     }
-    protected virtual void Update()
-    {
-        if (state == CharacterStateEnum.Idle) //아무 행동 하지 않을 시 일반 공격
-        {
-            if (skillCoroutine == null) prepareSkill(Skill.Attack);
-        }
-    }
+
 
     public virtual void getDamaged(float damageAmount)
     {
@@ -69,7 +72,8 @@ public abstract class CharacterBase : MonoBehaviour
         if (state == s) return;
         state = s;
 
-        if(state == CharacterStateEnum.Moving || state == CharacterStateEnum.UsingSkill) //이동, 스킬 사용하는 순간 일반 공격 취소
+        if(state == CharacterStateEnum.Moving || state == CharacterStateEnum.UsingSkill) 
+            
         {
             if (skillCoroutine != null)
             {
@@ -81,7 +85,7 @@ public abstract class CharacterBase : MonoBehaviour
         anim.SetInteger("State", (int)s);
     }
 
-    protected void Move(float moveX)
+    protected void move(float moveX)
     {
         rb.velocity = new Vector2(moveX * stat.Current.CurrentMoveSpeed, rb.velocity.y);
 
@@ -92,7 +96,7 @@ public abstract class CharacterBase : MonoBehaviour
         setState(CharacterStateEnum.Moving);
     }
 
-    private bool IsOpponentOnLeft()
+    private bool isOpponentOnLeft()
     {
         var targets = GameObject.FindGameObjectsWithTag(OpponentType.ToString()); // "Player"/"Enemy" 태그 사용
         if (targets == null || targets.Length == 0) return false; // 기본값: 오른쪽
@@ -117,18 +121,11 @@ public abstract class CharacterBase : MonoBehaviour
         return dxNearest < 0f; // 왼쪽이면 true
     }
 
-    private void FaceOpponentLR()
-    {
-        if (sr == null) return;
-        // 프로젝트 컨벤션: 오른쪽을 볼 때 flipX=false, 왼쪽이면 true
-        sr.flipX = IsOpponentOnLeft();
-    }
     protected void prepareSkill(Skill skill)
     {
-        FaceOpponentLR(); //스킬 시전 전 상대방 바라보기
+        sr.flipX = isOpponentOnLeft(); //스킬 시전 전 상대방 바라보기
 
-        if (castingSkill != Skill.Attack) return; //스킬 중간 취소 불가 시 return
-        if (ManagerObject.skillInfoM.TryBeginCooldown(skill) == false) return;//쿨타임 중이면 스킬 시전 불가
+        if (tryBeginCooldown(skill) == false) return;//쿨타임 중이면 스킬 시전 불가
 
         castingSkill = skill; //현재 시전 중인 스킬 설정
 
@@ -156,5 +153,34 @@ public abstract class CharacterBase : MonoBehaviour
         castingSkill = Skill.Attack; //스킬 시전 후 다시 일반 공격 준비 상태로
         prepareSkill(Skill.Attack);
 
+    }
+
+    public bool isCanUse(Skill skill)
+    {
+        if (!ManagerObject.skillInfoM.attackSkillData.ContainsKey(skill)) return false;
+        return !(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end);
+    }
+
+    public bool tryBeginCooldown(Skill skill)
+    {
+        if (!ManagerObject.skillInfoM.attackSkillData.TryGetValue(skill, out var so)) return false;
+
+        float now = Time.time;
+        float dur = Mathf.Max(so.skillCoolTime, 0f);
+        if (_cooldownEnd.TryGetValue(skill, out var end) && now < end) return false;
+
+        _cooldownEnd[skill] = now + dur;
+        CooldownStarted?.Invoke(skill, dur);
+        if (dur > 0f) ManagerObject.skillInfoM.GetRunner().StartCoroutine(coEmitEndAfter(skill, dur));
+
+        cooldownUI?.Invoke((int)skill, so.skillCoolTime);
+        return true;
+    }
+
+    private IEnumerator coEmitEndAfter(Skill skill, float dur)
+    {
+        yield return new WaitForSeconds(dur);
+        if (!(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end))
+            CooldownEnded?.Invoke(skill);
     }
 }
