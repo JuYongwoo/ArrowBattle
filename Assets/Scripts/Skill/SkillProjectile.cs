@@ -7,12 +7,11 @@ public class SkillProjectile : MonoBehaviour
     [Header("스프라이트 각도 보정(도)")]
     [SerializeField] private float spriteAngleOffset = -45f;
 
-    // === 공개 상태 (매니저/액션에서 읽기) ===
     public CharacterTypeEnumByTag AttackerType { get; private set; }
     public SkillDataSO Data { get; private set; }
 
     public Transform TargetTr { get; private set; }
-    public Vector3 TargetPosStatic { get; private set; } // 스폰 시점 타깃 스냅샷(비유도 기본)
+    public Vector3 TargetPosStatic { get; private set; }
     public string EnemyTag { get; private set; }
 
     public Vector3 StartPos { get; private set; }

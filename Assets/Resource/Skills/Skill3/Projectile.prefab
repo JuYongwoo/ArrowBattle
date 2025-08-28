@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4503533334088539303}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.33, y: 0.33, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -99,14 +99,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteAngleOffset: -45
-  guidedTurnRate: 720
-  parabolaHeightBase: 3.5
-  lateralAmplitude: 0.6
-  waveFrequency: 2.5
-  boomerangTotalTime: 1.6
-  multiShotInterval: 0.12
-  multishotSpreadAngle: 6
-  maxLifeTime: 6
 --- !u!58 &-2321023431274222139
 CircleCollider2D:
   m_ObjectHideFlags: 0

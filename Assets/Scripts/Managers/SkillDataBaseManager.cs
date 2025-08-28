@@ -78,7 +78,7 @@ public class SkillDataBaseManager
 
     // RingBurst
     public int ringCount = 12;
-    public float ringRadius = 2.0f;
+    public float ringRadius = 4.0f;
 
     // LineForward
     public int lineCount = 5;

@@ -19,4 +19,4 @@ MonoBehaviour:
   skillCoolTime: 15
   skillCastingTime: 0
   projectileSpeed: 7
-  skillProjectileMovingType: 14
+  skillProjectileMovingType: 5
