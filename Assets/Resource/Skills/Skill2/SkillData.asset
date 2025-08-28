@@ -18,5 +18,5 @@ MonoBehaviour:
   skillDamage: 200
   skillCoolTime: 20
   skillCastingTime: 1
-  projectileSpeed: 5
-  skillProjectileMovingType: 0
+  projectileSpeed: 4
+  skillProjectileMovingType: 15
