@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : CharacterBase
@@ -7,7 +8,7 @@ public class Enemy : CharacterBase
     protected override CharacterTypeEnumByTag CharacterTypeEnum => CharacterTypeEnumByTag.Enemy;
 
     private float moveDuration = 3f;
-    private float moveInterval = 2.1f;
+    private float moveInterval = 3.1f;
 
     private Coroutine moveLoop;
 
@@ -22,7 +23,7 @@ public class Enemy : CharacterBase
     {
         base.Start();
         moveLoop = StartCoroutine(CoMove());
-        InvokeRepeating(nameof(randomSkill), 3f, 3f); //랜덤 스킬 사용
+        InvokeRepeating(nameof(randomSkill), 0f, 1.1f); //랜덤 스킬 사용
     }
     protected void Update()
     {
@@ -38,9 +39,10 @@ public class Enemy : CharacterBase
     
     private void randomSkill()
     {
-        Array skills = Enum.GetValues(typeof(Skill));
+        if( state == CharacterStateEnum.Moving) return; //움직일땐 스킬 사용 안함
+        List<int> skillsList = new List<int>() { 1, 2, 3, 4, 5 }; //Attack, Skill1, Skill2
         System.Random random = new System.Random();
-        Skill randomSkill = (Skill)skills.GetValue(random.Next(skills.Length));
+        Skill randomSkill = (Skill)random.Next(skillsList.Count);
         prepareSkill(randomSkill);
     }
 

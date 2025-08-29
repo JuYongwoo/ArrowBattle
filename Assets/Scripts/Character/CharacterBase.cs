@@ -135,7 +135,7 @@ public abstract class CharacterBase : MonoBehaviour
             skillCoroutine = null;
         }
 
-        setState(CharacterStateEnum.UsingSkill); //여기서 순간적으로 input에서 모든 키 해제, 스킬 시전 중 아무것도 못하도록
+        setState(CharacterStateEnum.UsingSkill);
         skillCoroutine = StartCoroutine(castSkill(skill));
 
     }
@@ -145,7 +145,6 @@ public abstract class CharacterBase : MonoBehaviour
         yield return new WaitForSeconds(ManagerObject.skillInfoM.attackSkillData[skill].skillCastingTime); //캐스팅 시간 대기
 
         //스킬의 투사체 프리팹 소환
-        //TODO JYW 투사체를 하나 발사하는게 아니라 SkillDataBaseManager에서 설정한 방식으로 발사, shoot(CharacterTypeEnum, Skill) 함수로
         ManagerObject.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
 
