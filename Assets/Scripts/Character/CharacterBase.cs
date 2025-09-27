@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CharacterStateEnum //EnumÀ¸·Î »óÅÂ °ü¸® //int·Î Ä³½ºÆÃÇÏ¿© »ç¿ë
+public enum CharacterStateEnum //Enumï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ //intï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½
 {
-    Idle, //AttackingÀ» ÇÏ±â À§ÇÑ 1Æ½
+    Idle, //Attackingï¿½ï¿½ ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ 1Æ½
     Moving,
     UsingSkill
 }
 
 
 
-//JYW Enemy¿Í PlayerÀÇ °øÅë ±â´ÉÀ» ¹­Àº ºÎ¸ð Å¬·¡½ºÀÔ´Ï´Ù.
+//JYW Enemyï¿½ï¿½ Playerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¸ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
 
 public abstract class CharacterBase : MonoBehaviour
 {
@@ -24,21 +24,21 @@ public abstract class CharacterBase : MonoBehaviour
     protected Coroutine skillCoroutine;
     private AudioClip hitSound;
 
-    // ÄðÅ¸ÀÓ
+    // ï¿½ï¿½Å¸ï¿½ï¿½
     private readonly Dictionary<Skill, float> _cooldownEnd = new();
 
 
 
-    protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy ±¸ºÐ //Ãß»ó ÇÁ·ÎÆÛÆ¼ ÀÚ½Ä Å¬·¡½º ±¸Çö °­Á¦
-    protected CharacterTypeEnumByTag OpponentType; //»ó´ë¹æ Å¸ÀÔ, Awake¿¡¼­ ÀÚµ¿ ¼³Á¤
-    public Skill castingSkill; //ÇöÀç ½ÃÀü ÁßÀÎ ½ºÅ³
+    protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy ï¿½ï¿½ï¿½ï¿½ //ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ ï¿½Ú½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    protected CharacterTypeEnumByTag OpponentType; //ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½, Awakeï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
+    public Skill castingSkill; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³
 
-    protected virtual void Awake() //virtual·Î ¼±¾ðÇÏ¿© ÀÚ½Ä Å¬·¡½º¿¡¼­ override °¡´ÉÇÏµµ·Ï ´ÙÇü¼º º¸Àå
+    protected virtual void Awake() //virtualï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Ú½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ override ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
         stat = new CharacterStatManager(CharacterTypeEnum);
-        anim = GetComponentInChildren<Animator>(); // Animator Ä³½Ì
-        rb = GetComponent<Rigidbody2D>(); // Rigidbody2D Ä³½Ì
-        sr = Util.GetObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer Ä³½Ì
+        anim = GetComponentInChildren<Animator>(); // Animator Ä³ï¿½ï¿½
+        rb = GetComponent<Rigidbody2D>(); // Rigidbody2D Ä³ï¿½ï¿½
+        sr = Util.GetObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer Ä³ï¿½ï¿½
         OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
         _cooldownEnd.Clear();
 
@@ -46,7 +46,7 @@ public abstract class CharacterBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        setState(CharacterStateEnum.Idle); //Ã³À½ »óÅÂ´Â Idle
+        setState(CharacterStateEnum.Idle); //Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Â´ï¿½ Idle
     }
 
 
@@ -80,9 +80,9 @@ public abstract class CharacterBase : MonoBehaviour
 
     public void move(float moveX)
     {
-        rb.velocity = new Vector2(moveX * stat.Current.CurrentMoveSpeed, rb.velocity.y);
+        rb.linearVelocity = new Vector2(moveX * stat.Current.CurrentMoveSpeed, rb.linearVelocity.y);
 
-        // ÁÂ¿ì ÇÃ¸³
+        // ï¿½Â¿ï¿½ ï¿½Ã¸ï¿½
         if (moveX > 0.01f) sr.flipX = false;
         else if (moveX < -0.01f) sr.flipX = true;
 
@@ -91,8 +91,8 @@ public abstract class CharacterBase : MonoBehaviour
 
     private bool isOpponentOnLeft()
     {
-        var targets = GameObject.FindGameObjectsWithTag(OpponentType.ToString()); // "Player"/"Enemy" ÅÂ±× »ç¿ë
-        if (targets == null || targets.Length == 0) return false; // ±âº»°ª: ¿À¸¥ÂÊ
+        var targets = GameObject.FindGameObjectsWithTag(OpponentType.ToString()); // "Player"/"Enemy" ï¿½Â±ï¿½ ï¿½ï¿½ï¿½
+        if (targets == null || targets.Length == 0) return false; // ï¿½âº»ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         Transform me = transform;
         Transform nearest = null;
@@ -111,16 +111,16 @@ public abstract class CharacterBase : MonoBehaviour
         if (nearest == null) return false;
 
         float dxNearest = nearest.position.x - me.position.x;
-        return dxNearest < 0f; // ¿ÞÂÊÀÌ¸é true
+        return dxNearest < 0f; // ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ true
     }
 
     public void prepareSkill(Skill skill)
     {
-        sr.flipX = isOpponentOnLeft(); //½ºÅ³ ½ÃÀü Àü »ó´ë¹æ ¹Ù¶óº¸±â
+        sr.flipX = isOpponentOnLeft(); //ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸±ï¿½
 
-        if (tryBeginCooldown(skill) == false) return;//ÄðÅ¸ÀÓ ÁßÀÌ¸é ½ºÅ³ ½ÃÀü ºÒ°¡
+        if (tryBeginCooldown(skill) == false) return;//ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½
 
-        castingSkill = skill; //ÇöÀç ½ÃÀü ÁßÀÎ ½ºÅ³ ¼³Á¤
+        castingSkill = skill; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
 
         if (skillCoroutine != null)
         {
@@ -135,14 +135,14 @@ public abstract class CharacterBase : MonoBehaviour
     protected IEnumerator castSkill(Skill skill)
     {
 
-        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCastingTime); //Ä³½ºÆÃ ½Ã°£ ´ë±â
+        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCastingTime); //Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½
 
-        //½ºÅ³ÀÇ Åõ»çÃ¼ ÇÁ¸®ÆÕ ¼ÒÈ¯
+        //ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         ManagerObject.instance.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
 
         skillCoroutine = null;
-        castingSkill = Skill.Attack; //½ºÅ³ ½ÃÀü ÈÄ ´Ù½Ã ÀÏ¹Ý °ø°Ý ÁØºñ »óÅÂ·Î
+        castingSkill = Skill.Attack; //ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ ï¿½ï¿½ï¿½Â·ï¿½
         prepareSkill(Skill.Attack);
 
     }
