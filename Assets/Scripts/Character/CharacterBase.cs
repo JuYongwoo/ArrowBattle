@@ -10,11 +10,7 @@ public enum CharacterStateEnum //Enum으로 상태 관리 //int로 캐스팅하여 사용
     UsingSkill
 }
 
-public enum CharacterTypeEnumByTag
-{
-    Player,
-    Enemy
-}
+
 
 //JYW Enemy와 Player의 공통 기능을 묶은 부모 클래스입니다.
 
@@ -30,21 +26,19 @@ public abstract class CharacterBase : MonoBehaviour
 
     // 쿨타임
     private readonly Dictionary<Skill, float> _cooldownEnd = new();
-    public event Action<Skill, float> CooldownStarted;
-    public event Action<Skill> CooldownEnded;
-    public Action<int, float> cooldownUI;
+
 
 
     protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy 구분 //추상 프로퍼티 자식 클래스 구현 강제
     protected CharacterTypeEnumByTag OpponentType; //상대방 타입, Awake에서 자동 설정
-    protected Skill castingSkill; //현재 시전 중인 스킬
+    public Skill castingSkill; //현재 시전 중인 스킬
 
     protected virtual void Awake() //virtual로 선언하여 자식 클래스에서 override 가능하도록 다형성 보장
     {
-        stat = new CharacterStatManager($"{Enum.GetName(typeof(CharacterTypeEnumByTag), CharacterTypeEnum)}Data");
+        stat = new CharacterStatManager(CharacterTypeEnum);
         anim = GetComponentInChildren<Animator>(); // Animator 캐싱
         rb = GetComponent<Rigidbody2D>(); // Rigidbody2D 캐싱
-        sr = Util.getObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
+        sr = Util.GetObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer 캐싱
         OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
         _cooldownEnd.Clear();
 
@@ -62,9 +56,8 @@ public abstract class CharacterBase : MonoBehaviour
         if(stat.Current.CurrentHP <= 0)
         {
             stat.Current.CurrentHP = 0;
-            return;
         }
-        ManagerObject.audioM.PlayAudioClip(stat.Current.HitSound);
+        ManagerObject.instance.audioM.PlayAudioClip(stat.Current.HitSound);
     }
 
     public void setState(CharacterStateEnum s)
@@ -85,7 +78,7 @@ public abstract class CharacterBase : MonoBehaviour
         anim.SetInteger("State", (int)s);
     }
 
-    protected void move(float moveX)
+    public void move(float moveX)
     {
         rb.velocity = new Vector2(moveX * stat.Current.CurrentMoveSpeed, rb.velocity.y);
 
@@ -121,7 +114,7 @@ public abstract class CharacterBase : MonoBehaviour
         return dxNearest < 0f; // 왼쪽이면 true
     }
 
-    protected void prepareSkill(Skill skill)
+    public void prepareSkill(Skill skill)
     {
         sr.flipX = isOpponentOnLeft(); //스킬 시전 전 상대방 바라보기
 
@@ -142,10 +135,10 @@ public abstract class CharacterBase : MonoBehaviour
     protected IEnumerator castSkill(Skill skill)
     {
 
-        yield return new WaitForSeconds(ManagerObject.skillInfoM.attackSkillData[skill].skillCastingTime); //캐스팅 시간 대기
+        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCastingTime); //캐스팅 시간 대기
 
         //스킬의 투사체 프리팹 소환
-        ManagerObject.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
+        ManagerObject.instance.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
 
         skillCoroutine = null;
@@ -156,23 +149,23 @@ public abstract class CharacterBase : MonoBehaviour
 
     public bool isCanUse(Skill skill)
     {
-        if (!ManagerObject.skillInfoM.attackSkillData.ContainsKey(skill)) return false;
+        if (!ManagerObject.instance.resourceManager.attackSkillData.ContainsKey(skill)) return false;
         return !(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end);
     }
 
     public bool tryBeginCooldown(Skill skill)
     {
-        if (!ManagerObject.skillInfoM.attackSkillData.TryGetValue(skill, out var so)) return false;
+        if (!ManagerObject.instance.resourceManager.attackSkillData.TryGetValue(skill, out var so)) return false;
 
         float now = Time.time;
-        float dur = Mathf.Max(so.skillCoolTime, 0f);
+        float dur = Mathf.Max(so.Result.skillCoolTime, 0f);
         if (_cooldownEnd.TryGetValue(skill, out var end) && now < end) return false;
 
         _cooldownEnd[skill] = now + dur;
-        CooldownStarted?.Invoke(skill, dur);
-        if (dur > 0f) ManagerObject.skillInfoM.GetRunner().StartCoroutine(coEmitEndAfter(skill, dur));
+        ManagerObject.instance.actionManager.CooldownStarted?.Invoke(skill, dur);
+        if (dur > 0f) ManagerObject.instance.skillInfoM.GetRunner().StartCoroutine(coEmitEndAfter(skill, dur));
 
-        cooldownUI?.Invoke((int)skill, so.skillCoolTime);
+        ManagerObject.instance.actionManager.CooldownUI?.Invoke((int)skill, so.Result.skillCoolTime);
         return true;
     }
 
@@ -180,6 +173,6 @@ public abstract class CharacterBase : MonoBehaviour
     {
         yield return new WaitForSeconds(dur);
         if (!(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end))
-            CooldownEnded?.Invoke(skill);
+            ManagerObject.instance.actionManager.CooldownEnded?.Invoke(skill);
     }
 }

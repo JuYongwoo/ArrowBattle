@@ -4,35 +4,40 @@ public class ManagerObject : MonoBehaviour
 {
     static public ManagerObject instance;
 
-    static public AudioManager audioM = new AudioManager();
-    static public InputManager inputM = new InputManager();
-    static public SkillDataBaseManager skillInfoM = new SkillDataBaseManager();
-    static public GameMode gameMode = new GameMode();
+    public AudioManager audioM = new AudioManager();
+    public ResourceManager resourceManager = new ResourceManager();
+    public InputManager inputM = new InputManager();
+    public ActionManager actionManager = new ActionManager();
+    public SkillDataBaseManager skillInfoM = new SkillDataBaseManager();
 
 
     private void Awake()
     {
-        //if (instance != null && instance != this)
-        //{
-        //    Destroy(gameObject);
-        //    return;
-        //}
 
-        instance = this;
-        //DontDestroyOnLoad(gameObject);
-        gameMode.OnAwake();
-        skillInfoM.OnAwake();
+        makeInstance();
+
+        
+        
+        
+        resourceManager.OnAwake();
+
         audioM.OnAwake();
     }
-    private void Start()
-    {
-        gameMode.OnStart();
-    }
-
     private void Update()
     {
         inputM.OnUpdate();
     }
 
+    private void makeInstance()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
 }

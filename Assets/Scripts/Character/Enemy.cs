@@ -12,7 +12,6 @@ public class Enemy : CharacterBase
 
     private Coroutine moveLoop;
 
-    public static Action<float, float> setHPinUI;
 
     protected override void Awake()
     {
@@ -49,10 +48,10 @@ public class Enemy : CharacterBase
     public override void getDamaged(float damageAmount)
     {
         base.getDamaged(damageAmount); // CharacterBase¿« getDamaged() »£√‚
-        setHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.instance.actionManager.setEnemyHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {
-            ManagerObject.gameMode.endGame(ResultStateEnum.Victory);
+            ManagerObject.instance.actionManager.endGame(ResultStateEnum.Victory);
         }
     }
 

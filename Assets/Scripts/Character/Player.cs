@@ -6,12 +6,10 @@ public class Player : CharacterBase
     protected override CharacterTypeEnumByTag CharacterTypeEnum => CharacterTypeEnumByTag.Player;
 
 
-    public static Action<float, float> setHPinUI;
 
     protected override void Awake()
     {
         base.Awake(); // CharacterStatBase의 Awake() 호출
-        mapOtherAction();
     }
     protected void Update()
     {
@@ -24,18 +22,11 @@ public class Player : CharacterBase
     public override void getDamaged(float damageAmount)
     {
         base.getDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
-        setHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.instance.actionManager.setPlayerHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {
-            ManagerObject.gameMode.endGame(ResultStateEnum.Defeat);
+            ManagerObject.instance.actionManager.endGame(ResultStateEnum.Defeat);
         }
     }
-    private void mapOtherAction()
-    {
-        ManagerObject.inputM.useSkill = prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
-        ManagerObject.inputM.leftRightMove = move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
-        ManagerObject.inputM.idle = () => { setState(CharacterStateEnum.Idle); };
-        ManagerObject.inputM.getCastingSkill = () => castingSkill;
 
-    }
 }

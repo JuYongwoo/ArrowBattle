@@ -14,8 +14,8 @@ public class TimePanel : MonoBehaviour
 
     private void Awake()
     {
-        TimePanelmap = Util.mapDictionaryInChildren<TimePanelEnum, GameObject>(this.gameObject);
-        GameMode.setGameTime = setTime;
+        TimePanelmap = Util.MapEnumChildObjects<TimePanelEnum, GameObject>(this.gameObject);
+        ManagerObject.instance.actionManager.setGameTime = setTime;
     }
     void Start()
     {

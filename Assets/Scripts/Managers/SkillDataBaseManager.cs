@@ -3,11 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Skill
-{
-    Attack,
-    Skill1, Skill2, Skill3, Skill4, Skill5
-}
 
 public enum SkillProjectileMovingType
 {
@@ -36,7 +31,6 @@ public enum SkillProjectileMovingType
 
 public class SkillDataBaseManager
 {
-    public Dictionary<Skill, SkillDataSO> attackSkillData;
 
 
     ////////////////////// JYW TODO: SO로 옮기기(Editor사용하여 선택한 type 값에 따라 수치 칸 보이도록)
@@ -107,11 +101,6 @@ public class SkillDataBaseManager
 
 
 
-    public void OnAwake()
-    {
-        attackSkillData = Util.mapDictionaryWithKeyLoad<Skill, SkillDataSO>();
-    }
-
     public void BindRunner(MonoBehaviour runner) => _runner = runner;
 
     public MonoBehaviour GetRunner()
@@ -163,12 +152,12 @@ public class SkillDataBaseManager
 
     public void shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
     {
-        var so = attackSkillData[skill];
+        var so = ManagerObject.instance.resourceManager.attackSkillData[skill].Result;
         var targetTr = FindTargetForCaster(casterType);
         var targetPos = (targetTr != null) ? targetTr.position : (startPosition + Vector3.right * 8f);
         var forward = DirFromTo(startPosition, targetPos);
 
-        ManagerObject.audioM.PlayAudioClip(attackSkillData[skill].skillSound);
+        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillSound);
 
         switch (so.skillProjectileMovingType)
         {

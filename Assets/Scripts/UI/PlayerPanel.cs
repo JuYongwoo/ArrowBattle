@@ -13,8 +13,8 @@ public class PlayerPanel : MonoBehaviour
 
     private void Awake()
     {
-        PlayerPanelmap = Util.mapDictionaryInChildren<PlayerPanelEnum, GameObject>(this.gameObject);
-        Player.setHPinUI = setHPInUI;
+        PlayerPanelmap = Util.MapEnumChildObjects<PlayerPanelEnum, GameObject>(this.gameObject);
+        ManagerObject.instance.actionManager.setPlayerHPinUI = setHPInUI;
     }
     private void setHPInUI(float hp, float maxHP)
     {

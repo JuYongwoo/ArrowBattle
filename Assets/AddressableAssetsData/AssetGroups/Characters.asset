@@ -18,12 +18,12 @@ MonoBehaviour:
   m_GUID: ccd6e6d7ce5c91348bda1aa34e6a8958
   m_SerializeEntries:
   - m_GUID: 901315c7f65749b4585a1ba9375ceb3c
-    m_Address: Enemy
+    m_Address: EnemyPrefab
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
   - m_GUID: 09718800ad16a7347be1527830d7cf10
-    m_Address: Player
+    m_Address: PlayerPrefab
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character

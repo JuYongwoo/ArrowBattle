@@ -11,15 +11,13 @@ public class ResultPanel : MonoBehaviour
     }
 
     private Dictionary<ResultPanelEnum, GameObject> ResultPanelmap;
-    private Dictionary<ResultStateEnum, Sprite> ResultImgmap;
     private Coroutine _bgFadeRoutine;
 
 
     private void Awake()
     {
-        ResultPanelmap = Util.mapDictionaryInChildren<ResultPanelEnum, GameObject>(this.gameObject);
-        ResultImgmap = Util.mapDictionaryWithKeyLoad<ResultStateEnum, Sprite>();
-        ManagerObject.gameMode.gameResultUI = startUI;
+        ResultPanelmap = Util.MapEnumChildObjects<ResultPanelEnum, GameObject>(this.gameObject);
+        ManagerObject.instance.actionManager.gameResultUI = startUI;
     }
 
 
@@ -30,7 +28,7 @@ public class ResultPanel : MonoBehaviour
         //TODO ResultPopupBGImg 페이드 시작
         var bgImg = ResultPanelmap[ResultPanelEnum.ResultPopupBGImg].GetComponent<Image>();
 
-        bgImg.sprite = ResultImgmap[resultStateEnum];
+        bgImg.sprite = ManagerObject.instance.resourceManager.ResultImgmap[resultStateEnum].Result;
         bgImg.enabled = true;
         var c = bgImg.color;
         bgImg.color = new Color(c.r, c.g, c.b, 0f); // 알파 0으로 세팅

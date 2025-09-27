@@ -1,8 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-
-
 public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지도록
 {
     public struct CharacterStat
@@ -26,13 +22,12 @@ public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지�
 
 
 
-    public static Action<float, float> OnRefreshHPBar;
 
     //TODO JYW 플레이어마다 가지고 있을 스킬들 목록도 여기서 존재가능
 
-    public CharacterStatManager(string key)
+    public CharacterStatManager(CharacterTypeEnumByTag type)
     {
-        var playerData = Addressables.LoadAssetAsync<CharacterStatDataSO>(key).WaitForCompletion();
+        var playerData = ManagerObject.instance.resourceManager.playerDatas[type].Result;
 
         Current = new CharacterStat(playerData);
 
@@ -41,7 +36,6 @@ public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지�
     public void deltaHP(float delta)
     {
         Current.CurrentHP += delta;
-        OnRefreshHPBar?.Invoke(Current.CurrentHP, Current.MaxHP);
     }
 
 }

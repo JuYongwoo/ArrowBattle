@@ -13,8 +13,8 @@ public class EnemyPanel : MonoBehaviour
 
     private void Awake()
     {
-        EnemyPanelmap = Util.mapDictionaryInChildren<EnemyPanelEnum, GameObject>(this.gameObject);
-        Enemy.setHPinUI = setHPInUI;
+        EnemyPanelmap = Util.MapEnumChildObjects<EnemyPanelEnum, GameObject>(this.gameObject);
+        ManagerObject.instance.actionManager.setEnemyHPinUI = setHPInUI;
     }
     private void setHPInUI(float hp, float maxHP)
     {
