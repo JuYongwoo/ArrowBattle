@@ -18,7 +18,6 @@ public class AudioManager
         audioSources[ac].volume = volume;
         audioSources[ac].loop = isLoop;
 
-
         audioSources[ac].Stop();
         audioSources[ac].clip = ac;
         audioSources[ac].Play();

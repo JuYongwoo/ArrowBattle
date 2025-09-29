@@ -16,6 +16,7 @@ public class ManagerObject : MonoBehaviour
 
         makeInstance();
         resourceManager.OnAwake();
+        Screen.SetResolution(1600, 900, false);
 
     }
     private void Update()

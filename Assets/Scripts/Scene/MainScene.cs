@@ -27,8 +27,6 @@ public class MainScene : MonoBehaviour
             else if (go.CompareTag("Enemy")) enemy = go;
         }
 
-        //해상도
-        Screen.SetResolution(1600, 900, false);
 
         //BGM 재생
         ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.BGM, 0.2f, true);
@@ -61,25 +59,6 @@ public class MainScene : MonoBehaviour
         ManagerObject.instance.actionManager.endGame = endGame; // ActionManager의 endGame 이벤트에 endGame 메서드 구독
 
 
-        ManagerObject.instance.actionManager.mainSceneInput = () =>
-        {
-
-
-            if (ManagerObject.instance.actionManager.getCastingSkill() != Skill.Attack) return; //일반 공격 외 다른 스킬 캐스팅 중이라면 어떠한 움직임도 X
-                                                                                                // 스킬 입력 우선
-            if (Input.GetKeyDown(KeyCode.Q)) { ManagerObject.instance.actionManager.useSkill?.Invoke(Skill.Skill1); return; }
-            if (Input.GetKeyDown(KeyCode.W)) { ManagerObject.instance.actionManager.useSkill?.Invoke(Skill.Skill2); return; }
-            if (Input.GetKeyDown(KeyCode.E)) { ManagerObject.instance.actionManager.useSkill?.Invoke(Skill.Skill3); return; }
-            if (Input.GetKeyDown(KeyCode.R)) { ManagerObject.instance.actionManager.useSkill?.Invoke(Skill.Skill4); return; }
-            if (Input.GetKeyDown(KeyCode.Space)) { ManagerObject.instance.actionManager.useSkill?.Invoke(Skill.Skill5); return; }
-
-            // 이동/Idle
-            float moveX = Input.GetAxisRaw("Horizontal");
-            if (moveX != 0f) { ManagerObject.instance.actionManager.leftRightMove?.Invoke(moveX); return; }
-
-            ManagerObject.instance.actionManager.idle?.Invoke();
-
-        };
     }
 
 

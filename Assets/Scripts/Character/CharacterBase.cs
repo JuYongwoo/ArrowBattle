@@ -19,7 +19,6 @@ public abstract class CharacterBase : MonoBehaviour
     protected CharacterStateEnum state = CharacterStateEnum.Moving;
     protected CharacterStatManager stat { get; private set; }
     protected Animator anim;
-    protected Rigidbody2D rb;
     private SpriteRenderer sr;
     protected Coroutine skillCoroutine;
 
@@ -36,7 +35,6 @@ public abstract class CharacterBase : MonoBehaviour
     {
         stat = new CharacterStatManager(CharacterTypeEnum);
         anim = GetComponentInChildren<Animator>();
-        rb = GetComponent<Rigidbody2D>();
         sr = Util.GetObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>();
         OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
         _cooldownEnd.Clear();
@@ -79,9 +77,9 @@ public abstract class CharacterBase : MonoBehaviour
 
     public void move(float moveX)
     {
-        rb.linearVelocity = new Vector2(moveX * stat.Current.CurrentMoveSpeed, rb.linearVelocity.y);
+        Vector2 dir = new Vector2(moveX, 0f).normalized;
+        transform.Translate(dir * stat.Current.CurrentMoveSpeed * Time.deltaTime, Space.World);
 
-        // �¿� �ø�
         if (moveX > 0.01f) sr.flipX = false;
         else if (moveX < -0.01f) sr.flipX = true;
 
