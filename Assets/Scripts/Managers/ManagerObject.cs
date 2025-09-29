@@ -15,13 +15,8 @@ public class ManagerObject : MonoBehaviour
     {
 
         makeInstance();
-
-        
-        
-        
         resourceManager.OnAwake();
 
-        audioM.OnAwake();
     }
     private void Update()
     {

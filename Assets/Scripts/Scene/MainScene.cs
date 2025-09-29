@@ -31,7 +31,7 @@ public class MainScene : MonoBehaviour
         Screen.SetResolution(1600, 900, false);
 
         //BGM 재생
-        ManagerObject.instance.audioM.PlayBGM(ManagerObject.instance.resourceManager.gameModeData.Result.BGM);
+        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.BGM, 0.2f, true);
 
         gameLeftTime = ManagerObject.instance.resourceManager.gameModeData.Result.GameTime;
 
@@ -100,11 +100,11 @@ public class MainScene : MonoBehaviour
         if (_timerRunner != null)
             _timerRunner.StopRepeating();
 
-        if (resultStateEnum == ResultStateEnum.Victory) ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.VictoryMusic, 4.0f);
-        else ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.DefeatMusic, 1.0f);
+        if (resultStateEnum == ResultStateEnum.Victory) ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.VictoryMusic, 0.3f, false);
+        else ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.DefeatMusic, 0.2f, false);
 
         Time.timeScale = 0f; //게임 일시정지
-        ManagerObject.instance.audioM.StopBGM(); //BGM 정지
+        ManagerObject.instance.audioM.StopAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.BGM); //BGM 정지
         ManagerObject.instance.actionManager.gameResultUI?.Invoke(resultStateEnum); //ResultPanel의 UI를 세팅하는 델리게이트 호출
     }
 

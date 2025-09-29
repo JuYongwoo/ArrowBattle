@@ -29,4 +29,18 @@ public class Player : CharacterBase
         }
     }
 
+    protected override bool tryBeginCooldown(Skill skill)
+    {
+        if (base.tryBeginCooldown(skill)) //부모 실행하고
+        {
+            //UI 추가실행 후 true 반환
+            ManagerObject.instance.actionManager.CooldownUI?.Invoke((int)skill, ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }

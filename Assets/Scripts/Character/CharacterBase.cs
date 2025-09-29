@@ -22,23 +22,22 @@ public abstract class CharacterBase : MonoBehaviour
     protected Rigidbody2D rb;
     private SpriteRenderer sr;
     protected Coroutine skillCoroutine;
-    private AudioClip hitSound;
 
     // ��Ÿ��
-    private readonly Dictionary<Skill, float> _cooldownEnd = new();
+    private readonly Dictionary<Skill, float> _cooldownEnd = new(); //각 캐릭터마다 가지는 쿨다운 정보 딕셔너리
 
 
 
-    protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; } //Player, Enemy ���� //�߻� ������Ƽ �ڽ� Ŭ���� ���� ����
-    protected CharacterTypeEnumByTag OpponentType; //���� Ÿ��, Awake���� �ڵ� ����
-    public Skill castingSkill; //���� ���� ���� ��ų
+    protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; }
+    protected CharacterTypeEnumByTag OpponentType;
+    public Skill castingSkill;
 
-    protected virtual void Awake() //virtual�� �����Ͽ� �ڽ� Ŭ�������� override �����ϵ��� ������ ����
+    protected virtual void Awake()
     {
         stat = new CharacterStatManager(CharacterTypeEnum);
-        anim = GetComponentInChildren<Animator>(); // Animator ĳ��
-        rb = GetComponent<Rigidbody2D>(); // Rigidbody2D ĳ��
-        sr = Util.GetObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>(); // SpriteRenderer ĳ��
+        anim = GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        sr = Util.GetObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>();
         OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
         _cooldownEnd.Clear();
 
@@ -46,7 +45,7 @@ public abstract class CharacterBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        setState(CharacterStateEnum.Idle); //ó�� ���´� Idle
+        setState(CharacterStateEnum.Idle);
     }
 
 
@@ -57,7 +56,7 @@ public abstract class CharacterBase : MonoBehaviour
         {
             stat.Current.CurrentHP = 0;
         }
-        ManagerObject.instance.audioM.PlayAudioClip(stat.Current.HitSound);
+        ManagerObject.instance.audioM.PlayAudioClip(stat.Current.HitSound, 0.3f, false);
     }
 
     public void setState(CharacterStateEnum s)
@@ -91,8 +90,8 @@ public abstract class CharacterBase : MonoBehaviour
 
     private bool isOpponentOnLeft()
     {
-        var targets = GameObject.FindGameObjectsWithTag(OpponentType.ToString()); // "Player"/"Enemy" �±� ���
-        if (targets == null || targets.Length == 0) return false; // �⺻��: ������
+        var targets = GameObject.FindGameObjectsWithTag(OpponentType.ToString());
+        if (targets == null || targets.Length == 0) return false;
 
         Transform me = transform;
         Transform nearest = null;
@@ -111,16 +110,16 @@ public abstract class CharacterBase : MonoBehaviour
         if (nearest == null) return false;
 
         float dxNearest = nearest.position.x - me.position.x;
-        return dxNearest < 0f; // �����̸� true
+        return dxNearest < 0f;
     }
 
     public void prepareSkill(Skill skill)
     {
-        sr.flipX = isOpponentOnLeft(); //��ų ���� �� ���� �ٶ󺸱�
+        sr.flipX = isOpponentOnLeft();
 
-        if (tryBeginCooldown(skill) == false) return;//��Ÿ�� ���̸� ��ų ���� �Ұ�
+        if (tryBeginCooldown(skill) == false) return;
 
-        castingSkill = skill; //���� ���� ���� ��ų ����
+        castingSkill = skill;
 
         if (skillCoroutine != null)
         {
@@ -135,14 +134,13 @@ public abstract class CharacterBase : MonoBehaviour
     protected IEnumerator castSkill(Skill skill)
     {
 
-        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCastingTime); //ĳ���� �ð� ���
+        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCastingTime);
 
-        //��ų�� ����ü ������ ��ȯ
         ManagerObject.instance.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
 
         skillCoroutine = null;
-        castingSkill = Skill.Attack; //��ų ���� �� �ٽ� �Ϲ� ���� �غ� ���·�
+        castingSkill = Skill.Attack;
         prepareSkill(Skill.Attack);
 
     }
@@ -153,7 +151,7 @@ public abstract class CharacterBase : MonoBehaviour
         return !(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end);
     }
 
-    public bool tryBeginCooldown(Skill skill)
+    protected virtual bool tryBeginCooldown(Skill skill)
     {
         if (!ManagerObject.instance.resourceManager.attackSkillData.TryGetValue(skill, out var so)) return false;
 
@@ -165,7 +163,7 @@ public abstract class CharacterBase : MonoBehaviour
         ManagerObject.instance.actionManager.CooldownStarted?.Invoke(skill, dur);
         if (dur > 0f) ManagerObject.instance.skillInfoM.GetRunner().StartCoroutine(coEmitEndAfter(skill, dur));
 
-        ManagerObject.instance.actionManager.CooldownUI?.Invoke((int)skill, so.Result.skillCoolTime);
+        //ManagerObject.instance.actionManager.CooldownUI?.Invoke((int)skill, so.Result.skillCoolTime);
         return true;
     }
 
