@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 
 public class MainScene : MonoBehaviour
@@ -46,27 +45,15 @@ public class MainScene : MonoBehaviour
         // Other initialization code...
 
 
-
-        mapOtherAction();
-    }
-    private void mapOtherAction()
-    {
-        ManagerObject.instance.actionManager.useSkill = playerComp.prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
-        ManagerObject.instance.actionManager.leftRightMove = playerComp.move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
-        ManagerObject.instance.actionManager.idle = () => { playerComp.setState(CharacterStateEnum.Idle); };
-        ManagerObject.instance.actionManager.getCastingSkill = () => playerComp.castingSkill;
-
         ManagerObject.instance.actionManager.endGame = endGame; // ActionManager의 endGame 이벤트에 endGame 메서드 구독
 
-
     }
-
 
     private void flowTime()
     {
         gameLeftTime--;
 
-        ManagerObject.instance.actionManager.setGameTime?.Invoke(gameLeftTime); //TimePanel의 시간을 세팅하는 델리게이트 호출
+        ManagerObject.instance.actionManager.setGameTimeUI?.Invoke(gameLeftTime); //TimePanel의 시간을 세팅하는 델리게이트 호출
         if (gameLeftTime <= 0)
         {
             endGame(ResultStateEnum.Defeat); //시간 종료로 패배

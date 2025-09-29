@@ -1,18 +1,13 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CharacterStateEnum //Enum���� ���� ���� //int�� ĳ�����Ͽ� ���
+public enum CharacterStateEnum
 {
-    Idle, //Attacking�� �ϱ� ���� 1ƽ
+    Idle,
     Moving,
     UsingSkill
 }
-
-
-
-//JYW Enemy�� Player�� ���� ����� ���� �θ� Ŭ�����Դϴ�.
 
 public abstract class CharacterBase : MonoBehaviour
 {
@@ -22,10 +17,7 @@ public abstract class CharacterBase : MonoBehaviour
     private SpriteRenderer sr;
     protected Coroutine skillCoroutine;
 
-    // ��Ÿ��
     private readonly Dictionary<Skill, float> _cooldownEnd = new(); //각 캐릭터마다 가지는 쿨다운 정보 딕셔너리
-
-
 
     protected abstract CharacterTypeEnumByTag CharacterTypeEnum { get; }
     protected CharacterTypeEnumByTag OpponentType;
@@ -45,7 +37,6 @@ public abstract class CharacterBase : MonoBehaviour
     {
         setState(CharacterStateEnum.Idle);
     }
-
 
     public virtual void getDamaged(float damageAmount)
     {
@@ -86,36 +77,14 @@ public abstract class CharacterBase : MonoBehaviour
         setState(CharacterStateEnum.Moving);
     }
 
-    private bool isOpponentOnLeft()
-    {
-        var targets = GameObject.FindGameObjectsWithTag(OpponentType.ToString());
-        if (targets == null || targets.Length == 0) return false;
-
-        Transform me = transform;
-        Transform nearest = null;
-        float bestAbsDx = float.MaxValue;
-
-        for (int i = 0; i < targets.Length; i++)
-        {
-            float dx = targets[i].transform.position.x - me.position.x;
-            float abs = Mathf.Abs(dx);
-            if (abs < bestAbsDx)
-            {
-                bestAbsDx = abs;
-                nearest = targets[i].transform;
-            }
-        }
-        if (nearest == null) return false;
-
-        float dxNearest = nearest.position.x - me.position.x;
-        return dxNearest < 0f;
-    }
-
     public void prepareSkill(Skill skill)
     {
-        sr.flipX = isOpponentOnLeft();
 
-        if (tryBeginCooldown(skill) == false) return;
+        sr.flipX = ABUtil.isOpponentOnLeft(gameObject, GameObject.FindGameObjectsWithTag(OpponentType.ToString()));
+
+        if (TryBeginCooldown(skill) == false) return;
+
+        _cooldownEnd[skill] = Time.time + ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime;
 
         castingSkill = skill;
 
@@ -126,49 +95,29 @@ public abstract class CharacterBase : MonoBehaviour
         }
 
         setState(CharacterStateEnum.UsingSkill);
-        skillCoroutine = StartCoroutine(castSkill(skill));
 
+        skillCoroutine = StartCoroutine(castSkill(skill));
     }
-    protected IEnumerator castSkill(Skill skill)
+
+    private IEnumerator castSkill(Skill skill)
     {
 
         yield return new WaitForSeconds(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCastingTime);
 
         ManagerObject.instance.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
-
         skillCoroutine = null;
-        castingSkill = Skill.Attack;
         prepareSkill(Skill.Attack);
+        castingSkill = Skill.Attack;
 
     }
 
-    public bool isCanUse(Skill skill)
+    protected virtual bool TryBeginCooldown(Skill skill)
     {
-        if (!ManagerObject.instance.resourceManager.attackSkillData.ContainsKey(skill)) return false;
-        return !(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end);
+
+        if (_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end) return false; //아직 쿨타임이 안끝남
+        else return true;
+
     }
 
-    protected virtual bool tryBeginCooldown(Skill skill)
-    {
-        if (!ManagerObject.instance.resourceManager.attackSkillData.TryGetValue(skill, out var so)) return false;
-
-        float now = Time.time;
-        float dur = Mathf.Max(so.Result.skillCoolTime, 0f);
-        if (_cooldownEnd.TryGetValue(skill, out var end) && now < end) return false;
-
-        _cooldownEnd[skill] = now + dur;
-        ManagerObject.instance.actionManager.CooldownStarted?.Invoke(skill, dur);
-        if (dur > 0f) ManagerObject.instance.skillInfoM.GetRunner().StartCoroutine(coEmitEndAfter(skill, dur));
-
-        //ManagerObject.instance.actionManager.CooldownUI?.Invoke((int)skill, so.Result.skillCoolTime);
-        return true;
-    }
-
-    private IEnumerator coEmitEndAfter(Skill skill, float dur)
-    {
-        yield return new WaitForSeconds(dur);
-        if (!(_cooldownEnd.TryGetValue(skill, out var end) && Time.time < end))
-            ManagerObject.instance.actionManager.CooldownEnded?.Invoke(skill);
-    }
 }

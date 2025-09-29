@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,11 +11,6 @@ public class Enemy : CharacterBase
 
     private Coroutine moveLoop;
 
-
-    protected override void Awake()
-    {
-        base.Awake();
-    }
 
     protected override void Start()
     {
@@ -74,6 +68,5 @@ public class Enemy : CharacterBase
             dir = -dir;
         }
     }
-
 
 }

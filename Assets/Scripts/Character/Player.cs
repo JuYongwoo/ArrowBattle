@@ -1,4 +1,4 @@
-using System;
+using UnityEngine.LowLevel;
 
 public class Player : CharacterBase
 {
@@ -6,11 +6,15 @@ public class Player : CharacterBase
     protected override CharacterTypeEnumByTag CharacterTypeEnum => CharacterTypeEnumByTag.Player;
 
 
-
     protected override void Awake()
     {
-        base.Awake(); // CharacterStatBase의 Awake() 호출
+        base.Awake();
+        ManagerObject.instance.actionManager.useSkill = prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.instance.actionManager.leftRightMove = move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
+        ManagerObject.instance.actionManager.idle = () => { setState(CharacterStateEnum.Idle); };
+        ManagerObject.instance.actionManager.getCastingSkill = () => castingSkill;
     }
+
     protected void Update()
     {
         if (state == CharacterStateEnum.Idle) //아무 행동 하지 않을 시 일반 공격
@@ -22,16 +26,16 @@ public class Player : CharacterBase
     public override void getDamaged(float damageAmount)
     {
         base.getDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
-        ManagerObject.instance.actionManager.setPlayerHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.instance.actionManager.setPlayerHPinUI?.Invoke(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {
-            ManagerObject.instance.actionManager.endGame(ResultStateEnum.Defeat);
+            ManagerObject.instance.actionManager.endGame?.Invoke(ResultStateEnum.Defeat);
         }
     }
 
-    protected override bool tryBeginCooldown(Skill skill)
+    protected override bool TryBeginCooldown(Skill skill)
     {
-        if (base.tryBeginCooldown(skill)) //부모 실행하고
+        if (base.TryBeginCooldown(skill)) //부모 실행하고
         {
             //UI 추가실행 후 true 반환
             ManagerObject.instance.actionManager.CooldownUI?.Invoke((int)skill, ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime);
