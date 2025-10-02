@@ -44,12 +44,19 @@ public class SkillPanel : MonoBehaviour
 
     private void Start()
     {
-        ManagerObject.instance.actionManager.CooldownUI = StartCooldown;
+        ManagerObject.instance.actionManager.CooldownUI -= StartCooldown;
+        ManagerObject.instance.actionManager.CooldownUI += StartCooldown;
 
         for (int i = 1; i <= 5; i++)
         {
             StartCooldown(i, 0);
         }
+    }
+
+    private void OnDestroy()
+    {
+        ManagerObject.instance.actionManager.CooldownUI -= StartCooldown;
+
     }
 
     public void StartCooldown(int skillNumber, float durationSec)

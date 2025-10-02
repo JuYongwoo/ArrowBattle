@@ -17,7 +17,14 @@ public class ResultPanel : MonoBehaviour
     private void Awake()
     {
         ResultPanelmap = Util.MapEnumChildObjects<ResultPanelEnum, GameObject>(this.gameObject);
-        ManagerObject.instance.actionManager.gameResultUI = startUI;
+        ManagerObject.instance.actionManager.gameResultUI -= startUI;
+        ManagerObject.instance.actionManager.gameResultUI += startUI;
+    }
+
+    private void OnDestroy()
+    {
+        ManagerObject.instance.actionManager.gameResultUI -= startUI;
+
     }
 
 

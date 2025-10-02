@@ -14,8 +14,16 @@ public class PlayerPanel : MonoBehaviour
     private void Awake()
     {
         PlayerPanelmap = Util.MapEnumChildObjects<PlayerPanelEnum, GameObject>(this.gameObject);
-        ManagerObject.instance.actionManager.setPlayerHPinUI = setHPInUI;
+        ManagerObject.instance.actionManager.setPlayerHPinUI -= setHPInUI;
+        ManagerObject.instance.actionManager.setPlayerHPinUI += setHPInUI;
     }
+
+    private void OnDestroy()
+    {
+        ManagerObject.instance.actionManager.setPlayerHPinUI -= setHPInUI;
+
+    }
+
     private void setHPInUI(float hp, float maxHP)
     {
         PlayerPanelmap.TryGetValue(PlayerPanelEnum.PlayerHPSlider, out GameObject hpSliderObj);

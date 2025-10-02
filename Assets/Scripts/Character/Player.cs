@@ -9,10 +9,32 @@ public class Player : CharacterBase
     protected override void Awake()
     {
         base.Awake();
-        ManagerObject.instance.actionManager.useSkill = prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
-        ManagerObject.instance.actionManager.leftRightMove = move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
-        ManagerObject.instance.actionManager.idle = () => { setState(CharacterStateEnum.Idle); };
-        ManagerObject.instance.actionManager.getCastingSkill = () => castingSkill;
+        ManagerObject.instance.actionManager.useSkill -= prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.instance.actionManager.useSkill += prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.instance.actionManager.leftRightMove -= move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
+        ManagerObject.instance.actionManager.leftRightMove += move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
+        ManagerObject.instance.actionManager.idle -= setIdle;
+        ManagerObject.instance.actionManager.idle += setIdle;
+        ManagerObject.instance.actionManager.getCastingSkill -= getCastingKill;
+        ManagerObject.instance.actionManager.getCastingSkill += getCastingKill;
+    }
+
+    private void setIdle()
+    {
+        setState(CharacterStateEnum.Idle);
+    }
+    
+    private Skill getCastingKill()
+    {
+        return castingSkill;
+    }
+
+    private void OnDestroy()
+    {
+        ManagerObject.instance.actionManager.useSkill -= prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.instance.actionManager.leftRightMove -= move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
+        ManagerObject.instance.actionManager.idle -= setIdle;
+        ManagerObject.instance.actionManager.getCastingSkill -= getCastingKill;
     }
 
     protected void Update()
@@ -26,10 +48,10 @@ public class Player : CharacterBase
     public override void getDamaged(float damageAmount)
     {
         base.getDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
-        ManagerObject.instance.actionManager.setPlayerHPinUI?.Invoke(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.instance.actionManager.setPlayerHPinUIM(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {
-            ManagerObject.instance.actionManager.endGame?.Invoke(ResultStateEnum.Defeat);
+            ManagerObject.instance.actionManager.endGameM(ResultStateEnum.Defeat);
         }
     }
 
@@ -38,7 +60,7 @@ public class Player : CharacterBase
         if (base.TryBeginCooldown(skill)) //부모 실행하고
         {
             //UI 추가실행 후 true 반환
-            ManagerObject.instance.actionManager.CooldownUI?.Invoke((int)skill, ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime);
+            ManagerObject.instance.actionManager.CooldownUIM((int)skill, ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime);
             return true;
         }
         else
