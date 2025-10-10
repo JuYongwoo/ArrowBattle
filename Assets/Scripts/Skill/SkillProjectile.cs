@@ -66,7 +66,7 @@ public class SkillProjectile : MonoBehaviour
 
         if (other.CompareTag("DeadZone"))
         {
-            GetComponent<PooledObject>()?.DestroySelf();
+            ManagerObject.instance.poolManager.DestroyPooled(gameObject);
             return;
         }
 
@@ -74,7 +74,7 @@ public class SkillProjectile : MonoBehaviour
         if (stat != null)
         {
             stat.getDamaged(Data.skillDamage);
-            GetComponent<PooledObject>()?.DestroySelf();
+            ManagerObject.instance.poolManager.DestroyPooled(gameObject);
         }
     }
 
