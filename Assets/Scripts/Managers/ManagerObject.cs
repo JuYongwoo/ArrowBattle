@@ -9,6 +9,7 @@ public class ManagerObject : MonoBehaviour
     public InputManager inputM = new InputManager();
     public ActionManager actionManager = new ActionManager();
     public SkillDataBaseManager skillInfoM = new SkillDataBaseManager();
+    public PoolManager poolManager = new PoolManager();
 
 
     private void Awake()

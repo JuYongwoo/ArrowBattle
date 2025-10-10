@@ -144,8 +144,9 @@ public class SkillDataBaseManager
         params object[] args
     )
     {
-        var p = UnityEngine.Object.Instantiate(so.skillProjectile, pos, Quaternion.identity)
-                    .GetComponent<SkillProjectile>();
+
+        var p = ManagerObject.instance.poolManager.Spawn(so.skillProjectile, pos, Quaternion.identity).GetComponent<SkillProjectile>();
+
         p.SetProjectile(casterType, so, init, tick, args);
         return p;
     }
@@ -440,7 +441,7 @@ public class SkillDataBaseManager
         }
 
         if (parent != null)
-            parent.DestroySelf();
+            parent.GetComponent<PooledObject>()?.DestroySelf();
     }
 
     void init_Straight(SkillProjectile p, object[] args)
@@ -466,7 +467,7 @@ public class SkillDataBaseManager
         Vector3 next = p.transform.position + dir * step;
         p.ApplyMove(next, dir);
 
-        if (travel >= maxDist + 0.01f) { p.DestroySelf(); return; }
+        if (travel >= maxDist + 0.01f) { p.GetComponent<PooledObject>().DestroySelf(); return; }
         p.State["travel"] = travel;
     }
 
@@ -509,7 +510,7 @@ public class SkillDataBaseManager
 
         p.ApplyMove(pos, dir.normalized);
 
-        if (Mathf.Approximately(t, 1f)) p.DestroySelf();
+        if (Mathf.Approximately(t, 1f)) p.GetComponent<PooledObject>().DestroySelf();
     }
 
     Vector3 ComputeCtrl(float heightBase, Vector3 from, Vector3 to)
@@ -542,7 +543,7 @@ public class SkillDataBaseManager
         Vector3 next = new Vector3(x, nextY, cur.z);
         p.ApplyMove(next, Vector3.down);
 
-        if (p.transform.position.y <= stopY - 0.2f) p.DestroySelf();
+        if (p.transform.position.y <= stopY - 0.2f) p.GetComponent<PooledObject>().DestroySelf();
     }
 
     void init_SineStraight(SkillProjectile p, object[] args)
@@ -579,7 +580,7 @@ public class SkillDataBaseManager
 
         p.ApplyMove(pos, dir);
 
-        if (dist >= maxDist + 0.01f) p.DestroySelf();
+        if (dist >= maxDist + 0.01f) p.GetComponent<PooledObject>().DestroySelf();
         p.State["dist"] = dist;
     }
 
@@ -617,7 +618,7 @@ public class SkillDataBaseManager
 
         p.ApplyMove(pos, dir);
 
-        if (dist >= maxDist + 0.01f) p.DestroySelf();
+        if (dist >= maxDist + 0.01f) p.GetComponent<PooledObject>().DestroySelf();
         p.State["dist"] = dist;
     }
 
@@ -664,7 +665,7 @@ public class SkillDataBaseManager
         Quaternion baseRot = (Quaternion)p.State["baseRot"];
         p.transform.rotation = baseRot * Quaternion.Euler(0f, 0f, accum);
 
-        if (travel >= maxDist + 0.01f) { p.DestroySelf(); return; }
+        if (travel >= maxDist + 0.01f) { p.GetComponent<PooledObject>().DestroySelf(); return; }
         p.State["travel"] = travel;
     }
 }

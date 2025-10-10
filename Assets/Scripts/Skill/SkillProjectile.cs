@@ -63,9 +63,10 @@ public class SkillProjectile : MonoBehaviour
     {
         if (other.CompareTag(Enum.GetName(typeof(CharacterTypeEnumByTag), AttackerType)))
             return;
+
         if (other.CompareTag("DeadZone"))
         {
-            DestroySelf();
+            GetComponent<PooledObject>()?.DestroySelf();
             return;
         }
 
@@ -73,7 +74,7 @@ public class SkillProjectile : MonoBehaviour
         if (stat != null)
         {
             stat.getDamaged(Data.skillDamage);
-            DestroySelf();
+            GetComponent<PooledObject>()?.DestroySelf();
         }
     }
 
@@ -95,11 +96,13 @@ public class SkillProjectile : MonoBehaviour
         }
     }
 
-    public void DestroySelf() => Destroy(gameObject);
+
 
     private Transform FindTargetByTag(string tagName)
     {
         GameObject go = GameObject.FindGameObjectWithTag(tagName);
         return go != null ? go.transform : null;
     }
+
+
 }
