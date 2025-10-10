@@ -20,52 +20,52 @@ public class ActionManager
     public event Action<float, float> setPlayerHPinUI;
 
 
-    public void leftRightMoveM(float a)
+    public void OnLeftRightMove(float a)
     {
         leftRightMove?.Invoke(a);
     }
 
-    public void useSkillM(Skill a)
+    public void OnUseSkill(Skill a)
     {
         useSkill?.Invoke(a);
     }
 
-    public void idleM()
+    public void OnIdle()
     {
         idle?.Invoke();
     }
 
-    public Skill getCastingSkillM()
+    public Skill OnGetCastingSkill()
     {
         return getCastingSkill?.Invoke() ?? Skill.Skill1;
     }
 
-    public void CooldownUIM(int a, float b)
+    public void OnCooldownUI(int a, float b)
     {
         CooldownUI?.Invoke(a, b);
     }
 
-    public void endGameM(ResultStateEnum a)
+    public void OnEndGame(ResultStateEnum a)
     {
         endGame?.Invoke(a);
     }
 
-    public void setGameTimeUIM(int a)
+    public void OnSetGameTimeUI(int a)
     {
         setGameTimeUI?.Invoke(a);
     }
 
-    public void gameResultUIM(ResultStateEnum a)
+    public void OnGameResultUI(ResultStateEnum a)
     {
         gameResultUI?.Invoke(a);
     }
 
-    public void setEnemyHPinUIM(float a, float b)
+    public void OnSetEnemyHPinUI(float a, float b)
     {
         setEnemyHPinUI?.Invoke(a, b);
     }
 
-    public void setPlayerHPinUIM(float a, float b)
+    public void OnSetPlayerHPinUI(float a, float b)
     {
         setPlayerHPinUI?.Invoke(a, b);
     }

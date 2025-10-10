@@ -48,10 +48,10 @@ public class Player : CharacterBase
     public override void getDamaged(float damageAmount)
     {
         base.getDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
-        ManagerObject.instance.actionManager.setPlayerHPinUIM(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.instance.actionManager.OnSetPlayerHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {
-            ManagerObject.instance.actionManager.endGameM(ResultStateEnum.Defeat);
+            ManagerObject.instance.actionManager.OnEndGame(ResultStateEnum.Defeat);
         }
     }
 
@@ -60,7 +60,7 @@ public class Player : CharacterBase
         if (base.TryBeginCooldown(skill)) //부모 실행하고
         {
             //UI 추가실행 후 true 반환
-            ManagerObject.instance.actionManager.CooldownUIM((int)skill, ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime);
+            ManagerObject.instance.actionManager.OnCooldownUI((int)skill, ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime);
             return true;
         }
         else

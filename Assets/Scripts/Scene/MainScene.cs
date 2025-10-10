@@ -57,7 +57,7 @@ public class MainScene : MonoBehaviour
     {
         gameLeftTime--;
 
-        ManagerObject.instance.actionManager.setGameTimeUIM(gameLeftTime); //TimePanel의 시간을 세팅하는 델리게이트 호출
+        ManagerObject.instance.actionManager.OnSetGameTimeUI(gameLeftTime); //TimePanel의 시간을 세팅하는 델리게이트 호출
         if (gameLeftTime <= 0)
         {
             endGame(ResultStateEnum.Defeat); //시간 종료로 패배
@@ -75,7 +75,7 @@ public class MainScene : MonoBehaviour
 
         Time.timeScale = 0f; //게임 일시정지
         ManagerObject.instance.audioM.StopAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.BGM); //BGM 정지
-        ManagerObject.instance.actionManager.gameResultUIM(resultStateEnum); //ResultPanel의 UI를 세팅하는 델리게이트 호출
+        ManagerObject.instance.actionManager.OnGameResultUI(resultStateEnum); //ResultPanel의 UI를 세팅하는 델리게이트 호출
     }
 
 
