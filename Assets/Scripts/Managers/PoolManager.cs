@@ -5,6 +5,21 @@ using UnityEngine;
 public class PoolManager
 {
     private Dictionary<GameObject, Queue<GameObject>> _pools = new();
+    private Transform _PooledObjects; //풀링된 오브젝트들이 대기하는 곳
+    private Transform PooledObjects
+    {
+        get
+        {
+            if (_PooledObjects == null)
+            {
+                var rootObj = GameObject.Find("PooledObjects");
+                if (rootObj == null)
+                    rootObj = new GameObject("PooledObjects");
+                _PooledObjects = rootObj.transform;
+            }
+            return _PooledObjects;
+        }
+    }
 
     public void CleanPool() { _pools.Clear(); } //씬오브젝트의 Start() 내에서 실행 권장
     public void CreatePool(GameObject prefab, int initialSize = 1)
@@ -98,7 +113,7 @@ public class PoolManager
             return;
         }
 
-        instance.transform.SetParent(null, false); //어딘가의 자식 오브젝트로 계속 존재하면 이벤트가 실행되는 경우 존재, 바깥으로 빼낸다.
+        instance.transform.SetParent(PooledObjects, false); //어딘가의 자식 오브젝트로 계속 존재하면 이벤트가 실행되는 경우 존재, 바깥으로 빼낸다.
         instance.SetActive(false);
         if (!_pools.TryGetValue(originPrefab, out var q))
             _pools[originPrefab] = q = new Queue<GameObject>();
