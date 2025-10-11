@@ -1,11 +1,13 @@
-// Path suggestion: Scripts/Pool/PoolManager.cs
+// Path: Scripts/Pool/PoolManager.cs
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PoolManager
 {
-    private Dictionary<GameObject, Queue<GameObject>> _pools = new();
-    private Transform _PooledObjects; //풀링된 오브젝트들이 대기하는 곳
+    private Dictionary<GameObject, Queue<GameObject>> _pools = new(); // 중복되는 키들을 밸류 속 큐에 넣는다
+    private Dictionary<GameObject, GameObject> _instanceToPrefab = new(); // 모든 키들에 대한 원본 프리팹 값
+
+    private Transform _PooledObjects;
     private Transform PooledObjects
     {
         get
@@ -21,22 +23,22 @@ public class PoolManager
         }
     }
 
-    public void CleanPool() { _pools.Clear(); } //씬오브젝트의 Start() 내에서 실행 권장
+    public void CleanPool()
+    {
+        _pools.Clear();
+        _instanceToPrefab.Clear();
+    }
+
     public void CreatePool(GameObject prefab, int initialSize = 1)
     {
-        if (prefab == null) return;
-        if (_pools.ContainsKey(prefab)) return;
+        if (prefab == null || _pools.ContainsKey(prefab)) return;
 
         var q = new Queue<GameObject>();
         for (int i = 0; i < initialSize; i++)
         {
             var go = Object.Instantiate(prefab);
             go.SetActive(false);
-
-            var pooled = go.GetComponent<PooledObject>();
-            if (pooled == null) pooled = go.AddComponent<PooledObject>();
-            pooled.SetOriginPrefab(prefab);
-
+            _instanceToPrefab[go] = prefab;
             q.Enqueue(go);
         }
         _pools[prefab] = q;
@@ -53,70 +55,40 @@ public class PoolManager
         }
 
         GameObject instance = (q.Count > 0) ? q.Dequeue() : Object.Instantiate(prefab);
+        _instanceToPrefab[instance] = prefab;
         instance.SetActive(true);
-
-        var pooled = instance.GetComponent<PooledObject>();
-        if (pooled == null) pooled = instance.AddComponent<PooledObject>();
-        pooled.SetOriginPrefab(prefab);
-
         return instance;
-
     }
 
     public GameObject Spawn(GameObject prefab, Transform parent)
     {
-        if (prefab == null) return null;
-
-        if (!_pools.TryGetValue(prefab, out var q))
-        {
-            CreatePool(prefab, 0);
-            q = _pools[prefab];
-        }
-
-        GameObject instance = (q.Count > 0) ? q.Dequeue() : Object.Instantiate(prefab);
+        GameObject instance = Spawn(prefab);
+        if (instance == null) return null;
         instance.transform.SetParent(parent, false);
-        instance.SetActive(true);
-
-        var pooled = instance.GetComponent<PooledObject>();
-        if (pooled == null) pooled = instance.AddComponent<PooledObject>();
-        pooled.SetOriginPrefab(prefab);
-
         return instance;
-
     }
+
     public GameObject Spawn(GameObject prefab, Vector3 pos, Quaternion rot)
     {
-        if (prefab == null) return null;
-
-        if (!_pools.TryGetValue(prefab, out var q))
-        {
-            CreatePool(prefab, 0);
-            q = _pools[prefab];
-        }
-
-        GameObject instance = (q.Count > 0) ? q.Dequeue() : Object.Instantiate(prefab);
+        GameObject instance = Spawn(prefab);
+        if (instance == null) return null;
         instance.transform.SetPositionAndRotation(pos, rot);
-        instance.SetActive(true);
-
-        var pooled = instance.GetComponent<PooledObject>();
-        if (pooled == null) pooled = instance.AddComponent<PooledObject>();
-        pooled.SetOriginPrefab(prefab);
-
         return instance;
     }
 
-    public void ReturnToPool(GameObject originPrefab, GameObject instance)
+    public void ReturnToPool(GameObject prefab, GameObject instance)
     {
-        if (originPrefab == null || instance == null)
+        if (prefab == null || instance == null)
         {
             Object.Destroy(instance);
             return;
         }
 
-        instance.transform.SetParent(PooledObjects, false); //어딘가의 자식 오브젝트로 계속 존재하면 이벤트가 실행되는 경우 존재, 바깥으로 빼낸다.
+        instance.transform.SetParent(PooledObjects, false);
         instance.SetActive(false);
-        if (!_pools.TryGetValue(originPrefab, out var q))
-            _pools[originPrefab] = q = new Queue<GameObject>();
+
+        if (!_pools.TryGetValue(prefab, out var q))
+            _pools[prefab] = q = new Queue<GameObject>();
 
         q.Enqueue(instance);
     }
@@ -125,19 +97,13 @@ public class PoolManager
     {
         if (instance == null) return;
 
-        var pooled = instance.GetComponent<PooledObject>();
-        if (pooled != null && pooled.originPrefab != null)
-            ReturnToPool(pooled.originPrefab, instance);
+        if (_instanceToPrefab.TryGetValue(instance, out var prefab))
+        {
+            ReturnToPool(prefab, instance);
+        }
         else
+        {
             Object.Destroy(instance);
+        }
     }
-
-
-}
-public class PooledObject : MonoBehaviour
-{
-    [HideInInspector] public GameObject originPrefab;
-
-    public void SetOriginPrefab(GameObject prefab) => originPrefab = prefab;
-
 }
