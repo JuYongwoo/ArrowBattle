@@ -84,7 +84,7 @@ public abstract class CharacterBase : MonoBehaviour
 
         if (TryBeginCooldown(skill) == false) return;
 
-        _cooldownEnd[skill] = Time.time + ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime;
+        _cooldownEnd[skill] = Time.time + ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCoolTime;
 
         castingSkill = skill;
 
@@ -102,7 +102,7 @@ public abstract class CharacterBase : MonoBehaviour
     private IEnumerator castSkill(Skill skill)
     {
 
-        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCastingTime);
+        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCastingTime);
 
         ManagerObject.instance.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 

@@ -138,7 +138,7 @@ public class SkillDataBaseManager
     private SkillProjectile SpawnProjectile(
         CharacterTypeEnumByTag casterType,
         Vector3 pos,
-        SkillDataSO so,
+        SkillData so,
         Action<SkillProjectile, object[]> init,
         Action<SkillProjectile, object[]> tick,
         params object[] args
@@ -153,12 +153,12 @@ public class SkillDataBaseManager
 
     public void shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
     {
-        var so = ManagerObject.instance.resourceManager.attackSkillData[skill].Result;
+        var so = ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill);
         var targetTr = FindTargetForCaster(casterType);
         var targetPos = (targetTr != null) ? targetTr.position : (startPosition + Vector3.right * 8f);
         var forward = DirFromTo(startPosition, targetPos);
 
-        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillSound, 0.2f, false);
+        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillSound, 0.2f, false);
 
         switch (so.skillProjectileMovingType)
         {
@@ -235,22 +235,22 @@ public class SkillDataBaseManager
                 break;
         }
     }
-    void Spawn_Straight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir)
+    void Spawn_Straight(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 dir)
     {
         SpawnProjectile(caster, pos, so, init_Straight, tick_Straight, dir);
     }
 
-    void Spawn_Parabola(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, float heightBase)
+    void Spawn_Parabola(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, float heightBase)
     {
         SpawnProjectile(caster, pos, so, init_Parabola, tick_Parabola, heightBase);
     }
 
-    void Spawn_StraightSpin(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir, float spinDegPerSec)
+    void Spawn_StraightSpin(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 dir, float spinDegPerSec)
     {
         SpawnProjectile(caster, pos, so, init_StraightSpin, tick_StraightSpin, dir, spinDegPerSec);
     }
 
-    void Spawn_StraightBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir, int shots, float interval)
+    void Spawn_StraightBurst(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 dir, int shots, float interval)
     {
         shots = Mathf.Max(1, shots);
         // 첫 발
@@ -260,7 +260,7 @@ public class SkillDataBaseManager
             GetRunner().StartCoroutine(Co_StraightBurst(caster, so, pos, dir, shots - 1, interval));
     }
 
-    IEnumerator Co_StraightBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir, int remain, float interval)
+    IEnumerator Co_StraightBurst(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 dir, int remain, float interval)
     {
         for (int i = 0; i < remain; i++)
         {
@@ -269,7 +269,7 @@ public class SkillDataBaseManager
         }
     }
 
-    void Spawn_Rain(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 startPos, Vector3 targetPos)
+    void Spawn_Rain(CharacterTypeEnumByTag caster, SkillData so, Vector3 startPos, Vector3 targetPos)
     {
         int count = Mathf.Max(1, rainDownCount);
         float width = downWidth;
@@ -285,14 +285,14 @@ public class SkillDataBaseManager
         }
     }
 
-    void Spawn_DownSingle(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    void Spawn_DownSingle(CharacterTypeEnumByTag caster, SkillData so, Vector3 targetPos)
     {
         Vector3 centerBase = targetPos + Vector3.up * headYOffset;
         Vector3 spawnPos = new Vector3(centerBase.x, centerBase.y + downSpawnHeight, targetPos.z);
         SpawnProjectile(caster, spawnPos, so, init_Down, tick_Down, centerBase.y, centerBase.x, downFallSpeedMul);
     }
 
-    void Spawn_FanBurst(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
+    void Spawn_FanBurst(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 forward)
     {
         int N = Mathf.Max(1, fanCount);
         float total = fanAngle;
@@ -307,7 +307,7 @@ public class SkillDataBaseManager
         }
     }
 
-    void Spawn_RingBurstOut(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 center)
+    void Spawn_RingBurstOut(CharacterTypeEnumByTag caster, SkillData so, Vector3 center)
     {
         int N = Mathf.Max(1, ringCount);
         for (int i = 0; i < N; i++)
@@ -319,7 +319,7 @@ public class SkillDataBaseManager
         }
     }
 
-    void Spawn_RingBurstInToTarget(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    void Spawn_RingBurstInToTarget(CharacterTypeEnumByTag caster, SkillData so, Vector3 targetPos)
     {
         int N = Mathf.Max(1, ringCount);
         Vector3 center = targetPos + Vector3.up * headYOffset;
@@ -332,7 +332,7 @@ public class SkillDataBaseManager
         }
     }
 
-    void Spawn_LineVerticalForward(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 start, Vector3 forward)
+    void Spawn_LineVerticalForward(CharacterTypeEnumByTag caster, SkillData so, Vector3 start, Vector3 forward)
     {
         int N = Mathf.Max(1, lineCount);
         int mid = (N - 1) / 2;
@@ -344,7 +344,7 @@ public class SkillDataBaseManager
         }
     }
 
-    void Spawn_LineHorizontalForward(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 start, Vector3 forward)
+    void Spawn_LineHorizontalForward(CharacterTypeEnumByTag caster, SkillData so, Vector3 start, Vector3 forward)
     {
         int N = Mathf.Max(1, lineCount);
         int mid = (N - 1) / 2;
@@ -356,7 +356,7 @@ public class SkillDataBaseManager
         }
     }
 
-    IEnumerator Co_RandomDownRainDuration(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    IEnumerator Co_RandomDownRainDuration(CharacterTypeEnumByTag caster, SkillData so, Vector3 targetPos)
     {
         float tLeft = Mathf.Max(0.01f, randomRainDuration);
         float interval = 1f / Mathf.Max(0.01f, randomRainRatePerSec);
@@ -374,7 +374,7 @@ public class SkillDataBaseManager
         }
     }
 
-    IEnumerator Co_SweepDownRainDuration(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 targetPos)
+    IEnumerator Co_SweepDownRainDuration(CharacterTypeEnumByTag caster, SkillData so, Vector3 targetPos)
     {
         float tLeft = Mathf.Max(0.01f, sweepRainDuration);
         float interval = 1f / Mathf.Max(0.01f, sweepRainRatePerSec);
@@ -399,7 +399,7 @@ public class SkillDataBaseManager
         }
     }
 
-    void Spawn_SineStraight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
+    void Spawn_SineStraight(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 forward)
     {
         Vector3 right = new Vector3(-forward.y, forward.x, 0f).normalized;
         float maxDist = 9999f; // 실제 종료는 목표 거리 기반으로 tick에서 처리
@@ -407,7 +407,7 @@ public class SkillDataBaseManager
             pos, forward, right, maxDist, sineAmplitude, sineFrequencyHz);
     }
 
-    void Spawn_ZigZagStraight(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 forward)
+    void Spawn_ZigZagStraight(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 forward)
     {
         Vector3 right = new Vector3(-forward.y, forward.x, 0f).normalized;
         float maxDist = 9999f;
@@ -415,13 +415,13 @@ public class SkillDataBaseManager
             pos, forward, right, maxDist, zigzagAmplitude, zigzagFrequencyHz);
     }
 
-    void Spawn_ScatterSplit(CharacterTypeEnumByTag caster, SkillDataSO so, Vector3 pos, Vector3 dir)
+    void Spawn_ScatterSplit(CharacterTypeEnumByTag caster, SkillData so, Vector3 pos, Vector3 dir)
     {
         var parent = SpawnProjectile(caster, pos, so, init_Straight, tick_Straight, dir);
         GetRunner().StartCoroutine(Co_ScatterSplit(caster, so, parent, dir, scatterDelaySec, scatterCount, scatterFanAngle));
     }
 
-    IEnumerator Co_ScatterSplit(CharacterTypeEnumByTag caster, SkillDataSO so, SkillProjectile parent, Vector3 forward, float delay, int count, float fan)
+    IEnumerator Co_ScatterSplit(CharacterTypeEnumByTag caster, SkillData so, SkillProjectile parent, Vector3 forward, float delay, int count, float fan)
     {
         yield return new WaitForSeconds(delay);
 

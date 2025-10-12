@@ -60,7 +60,7 @@ public class Player : CharacterBase
         if (base.TryBeginCooldown(skill)) //부모 실행하고
         {
             //UI 추가실행 후 true 반환
-            ManagerObject.instance.actionManager.OnCooldownUI((int)skill, ManagerObject.instance.resourceManager.attackSkillData[skill].Result.skillCoolTime);
+            ManagerObject.instance.actionManager.OnCooldownUI((int)skill, ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCoolTime);
             return true;
         }
         else

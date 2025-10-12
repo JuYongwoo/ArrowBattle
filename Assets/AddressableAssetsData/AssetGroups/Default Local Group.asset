@@ -13,35 +13,38 @@ MonoBehaviour:
   m_Name: Default Local Group
   m_EditorClassIdentifier: 
   m_GroupName: Default Local Group
-  m_Data:
-    m_SerializedData: []
   m_GUID: fd8328f9dbbe57a47852920f896d4a76
   m_SerializeEntries:
-  - m_GUID: e515b08befacab443844b1f28a871cb3
-    m_Address: BGM
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Sound
-    - BGM
-  - m_GUID: b5a8c3b3aac9b1c4bbcf2f6daa895c79
-    m_Address: Player
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: a80ae1482f702c344ace49c2b7b8bf8b
-    m_Address: Enemy
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 2839b3c4bfbd3b4469cc44b6e9853991
-    m_Address: Victory
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: 05902086448e37d4fba50bdc1847937d
     m_Address: Defeat
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2839b3c4bfbd3b4469cc44b6e9853991
+    m_Address: Victory
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46fa23977d43fe34db2cfb81bd87a5ed
+    m_Address: CharacterDatas
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ce6e05eccef4564bbaab3f6e2ff73ab
+    m_Address: SkillDatas
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e515b08befacab443844b1f28a871cb3
+    m_Address: BGM
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BGM
+    - Sound
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 2c7ba97915dd9df4996218e78c1a45c8, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 31758fc45a0913742ac05ad3bd8053cc, type: 2}
     - {fileID: 11400000, guid: 5058850f01ef8ea49917945eaf634ce8, type: 2}
+    - {fileID: 11400000, guid: 31758fc45a0913742ac05ad3bd8053cc, type: 2}

@@ -8,7 +8,7 @@ public class SkillProjectile : MonoBehaviour
     [SerializeField] private float spriteAngleOffset = -45f;
 
     public CharacterTypeEnumByTag AttackerType { get; private set; }
-    public SkillDataSO Data { get; private set; }
+    public SkillData Data { get; private set; }
 
     public Transform TargetTr { get; private set; }
     public Vector3 TargetPosStatic { get; private set; }
@@ -26,14 +26,14 @@ public class SkillProjectile : MonoBehaviour
 
     public void SetProjectile(
         CharacterTypeEnumByTag attackerType,
-        SkillDataSO skillData,
+        SkillData SkillData,
         Action<SkillProjectile, object[]> initAction,
         Action<SkillProjectile, object[]> tickAction,
         params object[] args
     )
     {
         AttackerType = attackerType;
-        Data = skillData;
+        Data = SkillData;
 
         StartPos = transform.position;
 

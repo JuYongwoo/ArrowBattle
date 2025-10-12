@@ -3,7 +3,7 @@ public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지�
 {
     public struct CharacterStat
     {
-        public CharacterStat(CharacterStatDataSO playerData)
+        public CharacterStat(CharacterStatData playerData)
         {
             this.MaxHP = playerData.MaxHP;
             this.CurrentHP = playerData.CurrentHP;
@@ -27,7 +27,7 @@ public class CharacterStatManager //Player와 Enemy 모두 이 클래스의 객체를 가지�
 
     public CharacterStatManager(CharacterTypeEnumByTag type)
     {
-        var playerData = ManagerObject.instance.resourceManager.playerDatas[type].Result;
+        var playerData = ManagerObject.instance.resourceManager.characterDatas.Result.GetCharacterDataById(type);
 
         Current = new CharacterStat(playerData);
 

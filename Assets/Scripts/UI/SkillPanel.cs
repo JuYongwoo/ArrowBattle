@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class SkillPanel : MonoBehaviour
 {
@@ -35,10 +36,10 @@ public class SkillPanel : MonoBehaviour
             var panelEnum = (SkillPanelEnum)System.Enum.Parse(typeof(SkillPanelEnum), enumName);
 
             // Skills enum도 i에 맞게 선택
-            var skillEnum = (Skill)System.Enum.Parse(typeof(Skill), $"Skill{i}");
+            var skillEnum = System.Enum.Parse<Skill>($"Skill{i}");
 
             // 아이콘 적용
-            map[panelEnum].GetComponent<Image>().sprite = ManagerObject.instance.resourceManager.attackSkillData[skillEnum].Result.skillIcon;
+            map[panelEnum].GetComponent<Image>().sprite = ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skillEnum).skillIcon;
         }
     }
 

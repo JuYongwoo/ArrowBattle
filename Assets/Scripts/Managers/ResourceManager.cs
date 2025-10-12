@@ -25,12 +25,12 @@ public enum CharacterTypeEnumByTag
 public class ResourceManager
 {
 
-    public Dictionary<Skill, AsyncOperationHandle<SkillDataSO>> attackSkillData;
+    public AsyncOperationHandle<SkillDatasSO> SkillDatas;
     public Dictionary<ResultStateEnum, AsyncOperationHandle<Sprite>> ResultImgmap;
-    public Dictionary<CharacterTypeEnumByTag, AsyncOperationHandle<CharacterStatDataSO>> playerDatas;
+    public AsyncOperationHandle<CharacterStatDataSO> characterDatas;
 
 
-    public AsyncOperationHandle<GameModeDataSO> gameModeData;
+    public AsyncOperationHandle<GameStageDataSO> gameModeData;
 
 
 
@@ -39,10 +39,10 @@ public class ResourceManager
 
         ResultImgmap = Util.LoadDictWithEnum<ResultStateEnum, Sprite>();
 
-        attackSkillData = Util.LoadDictWithEnum<Skill, SkillDataSO>();
+        SkillDatas = Util.AsyncLoad<SkillDatasSO>("SkillDatas");
 
-        playerDatas = Util.LoadDictWithEnum<CharacterTypeEnumByTag, CharacterStatDataSO>();
+        characterDatas = Util.AsyncLoad<CharacterStatDataSO>("CharacterDatas");
 
-        gameModeData = Util.AsyncLoad<GameModeDataSO>("GameModeData");
+        gameModeData = Util.AsyncLoad<GameStageDataSO>("GameStageDataSO");
     }
 }

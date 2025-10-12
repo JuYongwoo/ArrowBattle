@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a15b642988f16242ad30434af14c48e, type: 3}
+  m_Name: SkillDatas
+  m_EditorClassIdentifier: 
+  skillDatas:
+  - skillEnum: 0
+    skillProjectile: {fileID: 4503533334088539303, guid: fb38e5d62f3db8d48b8136e9a75f610d, type: 3}
+    skillIcon: {fileID: 21300000, guid: 8a9731ca96306d741a87fb7321dbc010, type: 3}
+    skillSound: {fileID: 8300000, guid: f9ed927211c60f64aa06c671df99a358, type: 3}
+    skillDamage: 20
+    skillCoolTime: 0
+    skillCastingTime: 1
+    projectileSpeed: 7
+    skillProjectileMovingType: 1
+  - skillEnum: 1
+    skillProjectile: {fileID: 4503533334088539303, guid: baa0a827baa91c940a15045607cefa31, type: 3}
+    skillIcon: {fileID: 21300000, guid: b3afc52cfe17ff94798dbb39dec21000, type: 3}
+    skillSound: {fileID: 8300000, guid: cc7609d4324a7a54db0ed7cb41804e56, type: 3}
+    skillDamage: 30
+    skillCoolTime: 7
+    skillCastingTime: 0.5
+    projectileSpeed: 5
+    skillProjectileMovingType: 2
+  - skillEnum: 2
+    skillProjectile: {fileID: 4503533334088539303, guid: 8523827c5dee07d4c857c99e3030517e, type: 3}
+    skillIcon: {fileID: 21300000, guid: 32395d2b235b8bc44bae5543f992de52, type: 3}
+    skillSound: {fileID: 8300000, guid: a0ae5ea16814f7f448ba7e2c879a88ab, type: 3}
+    skillDamage: 100
+    skillCoolTime: 20
+    skillCastingTime: 1
+    projectileSpeed: 6
+    skillProjectileMovingType: 16
+  - skillEnum: 3
+    skillProjectile: {fileID: 4503533334088539303, guid: c6eebad8cfe8dec4aa80d6e34a18e0b3, type: 3}
+    skillIcon: {fileID: 21300000, guid: adf0160a9d9aebe4eae3ffa3ebdaf1b5, type: 3}
+    skillSound: {fileID: 8300000, guid: 9d14758be8c9bc44da7bd77eb4a1307a, type: 3}
+    skillDamage: 50
+    skillCoolTime: 15
+    skillCastingTime: 1
+    projectileSpeed: 3
+    skillProjectileMovingType: 8
+  - skillEnum: 4
+    skillProjectile: {fileID: 4503533334088539303, guid: cc72c9dbcc552de4690275a2a77ecc1a, type: 3}
+    skillIcon: {fileID: 21300000, guid: 01e09192c268d4240922ae7eff8f1dd0, type: 3}
+    skillSound: {fileID: 8300000, guid: 29fb0606bca47d7419c24f8986f603bf, type: 3}
+    skillDamage: 100
+    skillCoolTime: 30
+    skillCastingTime: 1
+    projectileSpeed: 12
+    skillProjectileMovingType: 6
+  - skillEnum: 5
+    skillProjectile: {fileID: 4503533334088539303, guid: 274d3dd93ba961a4cada9650c2b0d7d7, type: 3}
+    skillIcon: {fileID: 21300000, guid: b0654c00494873b4e9f4298c344ee733, type: 3}
+    skillSound: {fileID: 8300000, guid: 70e7d22651609db4aa746a0e8ce26049, type: 3}
+    skillDamage: 40
+    skillCoolTime: 15
+    skillCastingTime: 0
+    projectileSpeed: 30
+    skillProjectileMovingType: 5
