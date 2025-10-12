@@ -15,7 +15,6 @@ public class CharacterStatDataSO : ScriptableObject //이 SO를 이용하여 플레이어�
         }
         return null;
     }
-
 }
 
 [System.Serializable]
@@ -28,7 +27,4 @@ public class CharacterStatData
     public float CurrentMoveSpeed;
     public AudioClip HitSound;
     public Vector2 startPosition;                  // 시작 위치
-
-
-
 }

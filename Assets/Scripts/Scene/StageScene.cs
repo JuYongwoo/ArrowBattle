@@ -2,44 +2,30 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class MainScene : MonoBehaviour
+public class StageScene : MonoBehaviour
 {
-    GameObject player;
-    Player playerComp;
-    GameObject enemy;
+    GameObject player; //현재 씬의 플레이어
+    GameObject enemy; //현재 씬의 적
 
 
 
     private int gameLeftTime = 99;
-    private TimerRunner _timerRunner; // 안전한 반복 호출을 위한 러너
+    private TimerRunner _timerRunner;
 
     public void Awake()
     {
-        //GameMode에서 정의된 캐릭터 프리팹들을 SO 속 정보에 따라 씬에 생성
-        foreach (var spawnCharacters in ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(1).characterTypeEnum) {
-            CharacterStatData stat = ManagerObject.instance.resourceManager.characterDatas.Result.GetCharacterDataById(spawnCharacters);
-            GameObject go = MonoBehaviour.Instantiate(stat.characterPrefab, stat.startPosition, Quaternion.identity);
-            if (go.CompareTag("Player")) player = go;
-            else if (go.CompareTag("Enemy")) enemy = go;
-        }
-
-
-        //BGM 재생
-        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(1).bgm, 0.2f, true);
-
-        gameLeftTime = ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(1).gameTime;
+        
+        loadstage(1); //지금은 GetStageDatabyStageID(1) 로 스테이지 1만 실행, 클리어 시 GetStageDatabyStageID(2)로 스테이지 정보 불러오도록 함
 
         if (_timerRunner == null)
         {
             var go = new GameObject("__GameModeTimer");
-            UnityEngine.Object.DontDestroyOnLoad(go);
+            DontDestroyOnLoad(go);
             _timerRunner = go.AddComponent<TimerRunner>();
         }
 
         _timerRunner.StartRepeating(flowTime, 1f);
-        // _timerRunner.StartRepeatingRealtime(flowTime, 1f); // ← timeScale 무시 버전
-        playerComp = player.GetComponent<Player>();
-        // Other initialization code...
+        // _timerRunner.StartRepeatingRealtime(flowTime, 1f); //timeScale 무시
 
 
         ManagerObject.instance.actionManager.endGame -= endGame; // ActionManager의 endGame 이벤트에 endGame 메서드 구독
@@ -62,6 +48,23 @@ public class MainScene : MonoBehaviour
         {
             endGame(ResultStateEnum.Defeat); //시간 종료로 패배
         }
+    }
+
+    public void loadstage(int stageID)
+    {
+        //스테이지 별 SO에서 정의된 캐릭터ID를 토대로 캐릭터 ID 별 SO 속 정보에 따라 씬에 생성
+        foreach (var spawnCharacters in ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).characterTypeEnum)
+        {
+            CharacterStatData stat = ManagerObject.instance.resourceManager.characterDatas.Result.GetCharacterDataById(spawnCharacters);
+            GameObject go = MonoBehaviour.Instantiate(stat.characterPrefab, stat.startPosition, Quaternion.identity);
+            if (go.CompareTag("Player")) player = go;
+            else if (go.CompareTag("Enemy")) enemy = go;
+        }
+
+        //BGM 재생
+        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).bgm, 0.2f, true);
+
+        gameLeftTime = ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).gameTime;
     }
 
     public void endGame(ResultStateEnum resultStateEnum)
