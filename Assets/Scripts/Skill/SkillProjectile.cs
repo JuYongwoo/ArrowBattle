@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillProjectile : MonoBehaviour
+public class SkillProjectile : MonoBehaviour, PooledObejct
 {
     [Header("스프라이트 각도 보정(도)")]
     [SerializeField] private float spriteAngleOffset = -45f;
@@ -23,6 +23,16 @@ public class SkillProjectile : MonoBehaviour
     private Action<SkillProjectile, object[]> _onInit;
     private Action<SkillProjectile, object[]> _onTick;
     private object[] _args; // params 보관
+
+    public void PoolStart()
+    {
+
+    }
+
+    public void PoolDestroy()
+    {
+
+    }
 
     public void SetProjectile(
         CharacterTypeEnumByTag attackerType,
