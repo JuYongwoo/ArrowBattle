@@ -2,12 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CharacterStateEnum
-{
-    Idle,
-    Moving,
-    UsingSkill
-}
 
 public abstract class CharacterBase : MonoBehaviour
 {
@@ -35,12 +29,12 @@ public abstract class CharacterBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        setState(CharacterStateEnum.Idle);
+        SetState(CharacterStateEnum.Idle);
     }
 
-    public virtual void getDamaged(float damageAmount)
+    public virtual void GetDamaged(float damageAmount)
     {
-        stat.deltaHP(-damageAmount);
+        stat.DeltaHP(-damageAmount);
         if(stat.Current.CurrentHP <= 0)
         {
             stat.Current.CurrentHP = 0;
@@ -48,7 +42,7 @@ public abstract class CharacterBase : MonoBehaviour
         ManagerObject.instance.audioM.PlayAudioClip(stat.Current.HitSound, 0.3f, false);
     }
 
-    public void setState(CharacterStateEnum s)
+    protected virtual void SetState(CharacterStateEnum s)
     {
         if (state == s) return;
         state = s;
@@ -66,7 +60,7 @@ public abstract class CharacterBase : MonoBehaviour
         anim.SetInteger("State", (int)s);
     }
 
-    public void move(float moveX)
+    protected virtual void Move(float moveX)
     {
         Vector2 dir = new Vector2(moveX, 0f).normalized;
         transform.Translate(dir * stat.Current.CurrentMoveSpeed * Time.deltaTime, Space.World);
@@ -74,7 +68,7 @@ public abstract class CharacterBase : MonoBehaviour
         if (moveX > 0.01f) sr.flipX = false;
         else if (moveX < -0.01f) sr.flipX = true;
 
-        setState(CharacterStateEnum.Moving);
+        SetState(CharacterStateEnum.Moving);
     }
 
     public void prepareSkill(Skill skill)
@@ -94,7 +88,7 @@ public abstract class CharacterBase : MonoBehaviour
             skillCoroutine = null;
         }
 
-        setState(CharacterStateEnum.UsingSkill);
+        SetState(CharacterStateEnum.UsingSkill);
 
         skillCoroutine = StartCoroutine(castSkill(skill));
     }
@@ -104,7 +98,7 @@ public abstract class CharacterBase : MonoBehaviour
 
         yield return new WaitForSeconds(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCastingTime);
 
-        ManagerObject.instance.skillInfoM.shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
+        ManagerObject.instance.skillInfoM.Shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
         skillCoroutine = null;
         prepareSkill(Skill.Attack);

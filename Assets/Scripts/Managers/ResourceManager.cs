@@ -2,6 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
+
+public enum CharacterStateEnum
+{
+    Idle,
+    Moving,
+    UsingSkill
+}
 public enum Skill
 {
     Attack,

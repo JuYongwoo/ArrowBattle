@@ -11,8 +11,8 @@ public class Player : CharacterBase
         base.Awake();
         ManagerObject.instance.actionManager.UseSkillEvent -= prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
         ManagerObject.instance.actionManager.UseSkillEvent += prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
-        ManagerObject.instance.actionManager.LeftRightMoveEvent -= move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
-        ManagerObject.instance.actionManager.LeftRightMoveEvent += move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
+        ManagerObject.instance.actionManager.LeftRightMoveEvent -= Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
+        ManagerObject.instance.actionManager.LeftRightMoveEvent += Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
         ManagerObject.instance.actionManager.IdleEvent -= setIdle;
         ManagerObject.instance.actionManager.IdleEvent += setIdle;
         ManagerObject.instance.actionManager.GetCastingSkillEvent -= getCastingKill;
@@ -21,7 +21,7 @@ public class Player : CharacterBase
 
     private void setIdle()
     {
-        setState(CharacterStateEnum.Idle);
+        SetState(CharacterStateEnum.Idle);
     }
     
     private Skill getCastingKill()
@@ -32,7 +32,7 @@ public class Player : CharacterBase
     private void OnDestroy()
     {
         ManagerObject.instance.actionManager.UseSkillEvent -= prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
-        ManagerObject.instance.actionManager.LeftRightMoveEvent -= move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
+        ManagerObject.instance.actionManager.LeftRightMoveEvent -= Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
         ManagerObject.instance.actionManager.IdleEvent -= setIdle;
         ManagerObject.instance.actionManager.GetCastingSkillEvent -= getCastingKill;
     }
@@ -45,9 +45,9 @@ public class Player : CharacterBase
         }
     }
 
-    public override void getDamaged(float damageAmount)
+    public override void GetDamaged(float damageAmount)
     {
-        base.getDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
+        base.GetDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
         ManagerObject.instance.actionManager.OnSetPlayerHPInUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {

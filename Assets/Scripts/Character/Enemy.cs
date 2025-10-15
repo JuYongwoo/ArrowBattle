@@ -39,9 +39,9 @@ public class Enemy : CharacterBase
         prepareSkill(randomSkill);
     }
 
-    public override void getDamaged(float damageAmount)
+    public override void GetDamaged(float damageAmount)
     {
-        base.getDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
+        base.GetDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
         ManagerObject.instance.actionManager.OnSetEnemyHPInUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {
@@ -59,11 +59,11 @@ public class Enemy : CharacterBase
             float t = 0f;
             while (t < moveDuration)
             {
-                move(dir);
+                Move(dir);
                 yield return waitFixed;
                 t += Time.fixedDeltaTime;
             }
-            setState(CharacterStateEnum.Idle);
+            SetState(CharacterStateEnum.Idle);
             yield return new WaitForSeconds(moveInterval);
             dir = -dir;
         }

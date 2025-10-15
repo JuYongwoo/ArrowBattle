@@ -17,19 +17,19 @@ public class ResultPanel : MonoBehaviour
     private void Awake()
     {
         ResultPanelmap = Util.MapEnumChildObjects<ResultPanelEnum, GameObject>(this.gameObject);
-        ManagerObject.instance.actionManager.GameResultUIEvent -= startUI;
-        ManagerObject.instance.actionManager.GameResultUIEvent += startUI;
+        ManagerObject.instance.actionManager.GameResultUIEvent -= StartUI;
+        ManagerObject.instance.actionManager.GameResultUIEvent += StartUI;
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.GameResultUIEvent -= startUI;
+        ManagerObject.instance.actionManager.GameResultUIEvent -= StartUI;
 
     }
 
 
 
-    private void startUI(ResultStateEnum resultStateEnum)
+    private void StartUI(ResultStateEnum resultStateEnum)
     {
 
         //TODO ResultPopupBGImg 페이드 시작

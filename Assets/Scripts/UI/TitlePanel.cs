@@ -3,12 +3,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public enum TitlePanelObj
-{
-    TitilePlayBtn
-}
 public class TitlePanel : MonoBehaviour
 {
+    private enum TitlePanelObj
+    {
+        TitilePlayBtn
+    }
 
     private Dictionary<TitlePanelObj, GameObject> titlePanelObjs;
 
@@ -17,19 +17,8 @@ public class TitlePanel : MonoBehaviour
     {
         titlePanelObjs = Util.MapEnumChildObjects<TitlePanelObj, GameObject>(this.gameObject);
     }
-    void Start()
+    private void Start()
     {
-        titlePanelObjs[TitlePanelObj.TitilePlayBtn]
-            .GetComponent<UnityEngine.UI.Button>()
-            .onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene("Main");
-            });
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        titlePanelObjs[TitlePanelObj.TitilePlayBtn].GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>{SceneManager.LoadScene("Main");});
     }
 }

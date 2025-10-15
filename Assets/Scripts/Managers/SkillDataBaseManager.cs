@@ -33,74 +33,71 @@ public class SkillDataBaseManager
 
 
     ////////////////////// JYW TODO: SO로 옮기기(Editor사용하여 선택한 type 값에 따라 수치 칸 보이도록)
-    public float headYOffset = 1.0f;
+    private float headYOffset = 1.0f;
 
     // StraightThreeMultipleShot
-    public int tripleShots = 3;
-    public float tripleInterval = 0.12f;
+    private int tripleShots = 3;
+    private float tripleInterval = 0.12f;
 
     // StraightFiveMultipleShot
-    public int fiveShots = 5;
-    public float fiveInterval = 0.10f;
+    private int fiveShots = 5;
+    private float fiveInterval = 0.10f;
 
     // Parabola
-    public float parabolaHeightBase = 3.5f;
+    private float parabolaHeightBase = 3.5f;
 
     // Rain/Down
-    public int rainDownCount = 6;
-    public float downSpawnHeight = 5f;
-    public float downWidth = 4f;
-    public float downFallSpeedMul = 1f;
+    private int rainDownCount = 6;
+    private float downSpawnHeight = 5f;
+    private float downWidth = 4f;
+    private float downFallSpeedMul = 1f;
 
     // RandomDownRainDuration
-    public float randomRainDuration = 5.0f;
-    public float randomRainRatePerSec = 8.0f;
-    public float randomRainWidth = 6.0f;
-    public float randomRainSpawnH = 6.0f;
-    public float randomRainFallMul = 1.0f;
+    private float randomRainDuration = 5.0f;
+    private float randomRainRatePerSec = 8.0f;
+    private float randomRainWidth = 6.0f;
+    private float randomRainSpawnH = 6.0f;
+    private float randomRainFallMul = 1.0f;
 
     // SweepDownRainDuration
-    public float sweepRainDuration = 5.0f;
-    public float sweepRainRatePerSec = 8.0f;
-    public float sweepRainWidth = 6.0f;
-    public float sweepRainSpeed = 3.0f;
-    public float sweepRainSpawnH = 6.0f;
-    public float sweepRainFallMul = 1.0f;
+    private float sweepRainDuration = 5.0f;
+    private float sweepRainRatePerSec = 8.0f;
+    private float sweepRainWidth = 6.0f;
+    private float sweepRainSpeed = 3.0f;
+    private float sweepRainSpawnH = 6.0f;
+    private float sweepRainFallMul = 1.0f;
 
     // FanBurst
-    public int fanCount = 7;
-    public float fanAngle = 60f;
+    private int fanCount = 7;
+    private float fanAngle = 60f;
 
     // RingBurst
-    public int ringCount = 12;
-    public float ringRadius = 7.0f;
+    private int ringCount = 12;
+    private float ringRadius = 7.0f;
 
     // LineForward
-    public int lineCount = 5;
-    public float lineSpacing = 0.6f;
+    private int lineCount = 5;
+    private float lineSpacing = 0.6f;
 
     // Sine/ZigZag
-    public float sineAmplitude = 0.6f;
-    public float sineFrequencyHz = 2.5f;
-    public float zigzagAmplitude = 0.6f;
-    public float zigzagFrequencyHz = 3.0f;
+    private float sineAmplitude = 0.6f;
+    private float sineFrequencyHz = 2.5f;
+    private float zigzagAmplitude = 0.6f;
+    private float zigzagFrequencyHz = 3.0f;
 
     // ScatterSplit
-    public float scatterDelaySec = 0.45f;
-    public int scatterCount = 12;
-    public float scatterFanAngle = 120f;
+    private float scatterDelaySec = 0.45f;
+    private int scatterCount = 12;
+    private float scatterFanAngle = 120f;
 
     // StraightSpin
-    public float spinningStraightSpinSpeedDeg = -1440f; // 도/초
+    private float spinningStraightSpinSpeedDeg = -1440f; // 도/초
 
     //////////////////////
 
     // 코루틴 러너 (옵션)
     private MonoBehaviour _runner;
 
-
-
-    public void BindRunner(MonoBehaviour runner) => _runner = runner;
 
     public MonoBehaviour GetRunner()
     {
@@ -150,7 +147,7 @@ public class SkillDataBaseManager
         return p;
     }
 
-    public void shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
+    public void Shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
     {
         var so = ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill);
         var targetTr = FindTargetForCaster(casterType);
