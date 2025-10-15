@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class CharacterBase : MonoBehaviour
 {
     protected CharacterStateEnum state = CharacterStateEnum.Moving;
-    protected CharacterStatManager stat { get; private set; }
+    protected CharacterStatManager Stat { get; private set; }
     protected Animator anim;
     private SpriteRenderer sr;
     protected Coroutine skillCoroutine;
@@ -19,7 +19,7 @@ public abstract class CharacterBase : MonoBehaviour
 
     protected virtual void Awake()
     {
-        stat = new CharacterStatManager(CharacterTypeEnum);
+        Stat = new CharacterStatManager(CharacterTypeEnum);
         anim = GetComponentInChildren<Animator>();
         sr = Util.GetObjectInChildren(gameObject, "Cat").GetComponent<SpriteRenderer>();
         OpponentType = (CharacterTypeEnum == CharacterTypeEnumByTag.Player) ? CharacterTypeEnumByTag.Enemy : CharacterTypeEnumByTag.Player;
@@ -34,12 +34,12 @@ public abstract class CharacterBase : MonoBehaviour
 
     public virtual void GetDamaged(float damageAmount)
     {
-        stat.DeltaHP(-damageAmount);
-        if(stat.Current.CurrentHP <= 0)
+        Stat.DeltaHP(-damageAmount);
+        if(Stat.Current.CurrentHP <= 0)
         {
-            stat.Current.CurrentHP = 0;
+            Stat.Current.CurrentHP = 0;
         }
-        ManagerObject.instance.audioM.PlayAudioClip(stat.Current.HitSound, 0.3f, false);
+        ManagerObject.instance.audioM.PlayAudioClip(Stat.Current.HitSound, 0.3f, false);
     }
 
     protected virtual void SetState(CharacterStateEnum s)
@@ -63,7 +63,7 @@ public abstract class CharacterBase : MonoBehaviour
     protected virtual void Move(float moveX)
     {
         Vector2 dir = new Vector2(moveX, 0f).normalized;
-        transform.Translate(dir * stat.Current.CurrentMoveSpeed * Time.deltaTime, Space.World);
+        transform.Translate(dir * Stat.Current.CurrentMoveSpeed * Time.deltaTime, Space.World);
 
         if (moveX > 0.01f) sr.flipX = false;
         else if (moveX < -0.01f) sr.flipX = true;
@@ -71,7 +71,7 @@ public abstract class CharacterBase : MonoBehaviour
         SetState(CharacterStateEnum.Moving);
     }
 
-    public void prepareSkill(Skill skill)
+    public void PrepareSkill(Skill skill)
     {
 
         sr.flipX = ABUtil.isOpponentOnLeft(gameObject, GameObject.FindGameObjectsWithTag(OpponentType.ToString()));
@@ -90,10 +90,10 @@ public abstract class CharacterBase : MonoBehaviour
 
         SetState(CharacterStateEnum.UsingSkill);
 
-        skillCoroutine = StartCoroutine(castSkill(skill));
+        skillCoroutine = StartCoroutine(CastSkill(skill));
     }
 
-    private IEnumerator castSkill(Skill skill)
+    private IEnumerator CastSkill(Skill skill)
     {
 
         yield return new WaitForSeconds(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCastingTime);
@@ -101,7 +101,7 @@ public abstract class CharacterBase : MonoBehaviour
         ManagerObject.instance.skillInfoM.Shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
         skillCoroutine = null;
-        prepareSkill(Skill.Attack);
+        PrepareSkill(Skill.Attack);
         castingSkill = Skill.Attack;
 
     }

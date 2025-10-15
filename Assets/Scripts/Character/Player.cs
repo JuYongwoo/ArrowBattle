@@ -9,8 +9,8 @@ public class Player : CharacterBase
     protected override void Awake()
     {
         base.Awake();
-        ManagerObject.instance.actionManager.UseSkillEvent -= prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
-        ManagerObject.instance.actionManager.UseSkillEvent += prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.instance.actionManager.UseSkillEvent -= PrepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.instance.actionManager.UseSkillEvent += PrepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
         ManagerObject.instance.actionManager.LeftRightMoveEvent -= Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
         ManagerObject.instance.actionManager.LeftRightMoveEvent += Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
         ManagerObject.instance.actionManager.IdleEvent -= setIdle;
@@ -31,7 +31,7 @@ public class Player : CharacterBase
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.UseSkillEvent -= prepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
+        ManagerObject.instance.actionManager.UseSkillEvent -= PrepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
         ManagerObject.instance.actionManager.LeftRightMoveEvent -= Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
         ManagerObject.instance.actionManager.IdleEvent -= setIdle;
         ManagerObject.instance.actionManager.GetCastingSkillEvent -= getCastingKill;
@@ -41,15 +41,15 @@ public class Player : CharacterBase
     {
         if (state == CharacterStateEnum.Idle) //아무 행동 하지 않을 시 일반 공격
         {
-            if (skillCoroutine == null) prepareSkill(Skill.Attack);
+            if (skillCoroutine == null) PrepareSkill(Skill.Attack);
         }
     }
 
     public override void GetDamaged(float damageAmount)
     {
         base.GetDamaged(damageAmount); // CharacterBase의 getDamaged() 호출
-        ManagerObject.instance.actionManager.OnSetPlayerHPInUI(stat.Current.CurrentHP, stat.Current.MaxHP);
-        if (stat.Current.CurrentHP <= 0)
+        ManagerObject.instance.actionManager.OnSetPlayerHPInUI(Stat.Current.CurrentHP, Stat.Current.MaxHP);
+        if (Stat.Current.CurrentHP <= 0)
         {
             ManagerObject.instance.actionManager.OnEndGame(ResultStateEnum.Defeat);
         }

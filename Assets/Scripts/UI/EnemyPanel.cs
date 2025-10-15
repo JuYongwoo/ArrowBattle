@@ -13,7 +13,7 @@ public class EnemyPanel : MonoBehaviour
 
     private void Awake()
     {
-        EnemyPanelmap = Util.MapEnumChildObjects<EnemyPanelEnum, GameObject>(this.gameObject);
+        EnemyPanelmap = Util.MapEnumChildObjects<EnemyPanelEnum, GameObject>(gameObject);
         ManagerObject.instance.actionManager.SetEnemyHPInUIEvent -= SetHPInUI;
         ManagerObject.instance.actionManager.SetEnemyHPInUIEvent += SetHPInUI;
     }

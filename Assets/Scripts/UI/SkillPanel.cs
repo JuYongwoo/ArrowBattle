@@ -21,11 +21,9 @@ public class SkillPanel : MonoBehaviour
     private readonly Dictionary<int, Coroutine> txtCo = new();
     private readonly Dictionary<int, float> baseHeight = new();   // FadeImg 기준 높이
 
-    private WaitForSeconds wait1s;
 
     private void Awake()
     {
-        wait1s = new WaitForSeconds(1f);
         map = Util.MapEnumChildObjects<SkillPanelEnum, GameObject>(gameObject);
         for (int i = 1; i <= 5; i++) //SO 토대로 스킬 아이콘 설정
         {
@@ -132,7 +130,7 @@ public class SkillPanel : MonoBehaviour
         while (t > 0)
         {
             SetText(idx, t.ToString());
-            yield return wait1s;
+            yield return new WaitForSeconds(1f);
             t--;
         }
         SetText(idx, "");
