@@ -13,18 +13,18 @@ public class Player : CharacterBase
         ManagerObject.instance.actionManager.UseSkillEvent += PrepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
         ManagerObject.instance.actionManager.LeftRightMoveEvent -= Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
         ManagerObject.instance.actionManager.LeftRightMoveEvent += Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
-        ManagerObject.instance.actionManager.IdleEvent -= setIdle;
-        ManagerObject.instance.actionManager.IdleEvent += setIdle;
-        ManagerObject.instance.actionManager.GetCastingSkillEvent -= getCastingKill;
-        ManagerObject.instance.actionManager.GetCastingSkillEvent += getCastingKill;
+        ManagerObject.instance.actionManager.SetIdleEvent -= SetIdle;
+        ManagerObject.instance.actionManager.SetIdleEvent += SetIdle;
+        ManagerObject.instance.actionManager.GetCastingSkillEvent -= GetCastingKill;
+        ManagerObject.instance.actionManager.GetCastingSkillEvent += GetCastingKill;
     }
 
-    private void setIdle()
+    private void SetIdle()
     {
         SetState(CharacterStateEnum.Idle);
     }
     
-    private Skill getCastingKill()
+    private Skill GetCastingKill()
     {
         return castingSkill;
     }
@@ -33,8 +33,8 @@ public class Player : CharacterBase
     {
         ManagerObject.instance.actionManager.UseSkillEvent -= PrepareSkill; // InputManager의 attack 이벤트에 Attack 메서드 구독
         ManagerObject.instance.actionManager.LeftRightMoveEvent -= Move; // InputManager의 leftRightMove 이벤트에 Move 메서드 구독
-        ManagerObject.instance.actionManager.IdleEvent -= setIdle;
-        ManagerObject.instance.actionManager.GetCastingSkillEvent -= getCastingKill;
+        ManagerObject.instance.actionManager.SetIdleEvent -= SetIdle;
+        ManagerObject.instance.actionManager.GetCastingSkillEvent -= GetCastingKill;
     }
 
     protected void Update()

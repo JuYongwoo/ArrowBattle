@@ -31,7 +31,7 @@ public class InputManager
             ManagerObject.instance.actionManager.OnLeftRightMove(moveX); return;
         }
 
-        ManagerObject.instance.actionManager.OnIdle();
+        ManagerObject.instance.actionManager.OnSetIdle();
 
 
     }

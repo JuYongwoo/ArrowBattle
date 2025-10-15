@@ -16,7 +16,7 @@ public class Enemy : CharacterBase
     {
         base.Start();
         moveLoop = StartCoroutine(CoMove());
-        InvokeRepeating(nameof(randomSkill), 0f, 1.1f); //랜덤 스킬 사용
+        InvokeRepeating(nameof(RandomSkill), 0f, 1.1f); //랜덤 스킬 사용
     }
     protected void Update()
     {
@@ -30,7 +30,7 @@ public class Enemy : CharacterBase
         if (moveLoop != null) StopCoroutine(moveLoop);
     }
     
-    private void randomSkill()
+    private void RandomSkill()
     {
         if( state == CharacterStateEnum.Moving) return; //움직일땐 스킬 사용 안함
         List<int> skillsList = new List<int>() { 1, 2, 3, 4, 5 }; //Attack, Skill1, Skill2

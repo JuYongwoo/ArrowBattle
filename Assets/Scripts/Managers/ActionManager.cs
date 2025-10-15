@@ -4,7 +4,7 @@ public class ActionManager
 {
     public event Action<float> LeftRightMoveEvent;
     public event Action<Skill> UseSkillEvent;
-    public event Action IdleEvent;
+    public event Action SetIdleEvent;
     public event Func<Skill> GetCastingSkillEvent;
 
 
@@ -30,9 +30,9 @@ public class ActionManager
         UseSkillEvent?.Invoke(a);
     }
 
-    public void OnIdle()
+    public void OnSetIdle()
     {
-        IdleEvent?.Invoke();
+        SetIdleEvent?.Invoke();
     }
 
     public Skill OnGetCastingSkill()
