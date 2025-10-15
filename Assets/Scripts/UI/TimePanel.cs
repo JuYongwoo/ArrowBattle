@@ -14,13 +14,13 @@ public class TimePanel : MonoBehaviour
     private void Awake()
     {
         TimePanelmap = Util.MapEnumChildObjects<TimePanelEnum, GameObject>(this.gameObject);
-        ManagerObject.instance.actionManager.setGameTimeUI -= setTime;
-        ManagerObject.instance.actionManager.setGameTimeUI += setTime;
+        ManagerObject.instance.actionManager.SetGameTimeUIEvent -= setTime;
+        ManagerObject.instance.actionManager.SetGameTimeUIEvent += setTime;
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.setGameTimeUI -= setTime;
+        ManagerObject.instance.actionManager.SetGameTimeUIEvent -= setTime;
 
     }
 

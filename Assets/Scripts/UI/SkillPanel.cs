@@ -44,8 +44,8 @@ public class SkillPanel : MonoBehaviour
 
     private void Start()
     {
-        ManagerObject.instance.actionManager.CooldownUI -= StartCooldown;
-        ManagerObject.instance.actionManager.CooldownUI += StartCooldown;
+        ManagerObject.instance.actionManager.CooldownUIEvent -= StartCooldown;
+        ManagerObject.instance.actionManager.CooldownUIEvent += StartCooldown;
 
         for (int i = 1; i <= 5; i++)
         {
@@ -55,7 +55,7 @@ public class SkillPanel : MonoBehaviour
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.CooldownUI -= StartCooldown;
+        ManagerObject.instance.actionManager.CooldownUIEvent -= StartCooldown;
 
     }
 

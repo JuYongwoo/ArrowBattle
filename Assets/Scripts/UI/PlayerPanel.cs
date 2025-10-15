@@ -14,13 +14,13 @@ public class PlayerPanel : MonoBehaviour
     private void Awake()
     {
         PlayerPanelmap = Util.MapEnumChildObjects<PlayerPanelEnum, GameObject>(this.gameObject);
-        ManagerObject.instance.actionManager.setPlayerHPinUI -= setHPInUI;
-        ManagerObject.instance.actionManager.setPlayerHPinUI += setHPInUI;
+        ManagerObject.instance.actionManager.SetPlayerHPInUIEvent -= setHPInUI;
+        ManagerObject.instance.actionManager.SetPlayerHPInUIEvent += setHPInUI;
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.setPlayerHPinUI -= setHPInUI;
+        ManagerObject.instance.actionManager.SetPlayerHPInUIEvent -= setHPInUI;
 
     }
 

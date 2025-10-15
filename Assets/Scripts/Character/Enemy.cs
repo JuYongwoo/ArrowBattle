@@ -42,7 +42,7 @@ public class Enemy : CharacterBase
     public override void getDamaged(float damageAmount)
     {
         base.getDamaged(damageAmount); // CharacterBase¿« getDamaged() »£√‚
-        ManagerObject.instance.actionManager.OnSetEnemyHPinUI(stat.Current.CurrentHP, stat.Current.MaxHP);
+        ManagerObject.instance.actionManager.OnSetEnemyHPInUI(stat.Current.CurrentHP, stat.Current.MaxHP);
         if (stat.Current.CurrentHP <= 0)
         {
             ManagerObject.instance.actionManager.OnEndGame(ResultStateEnum.Victory);

@@ -28,14 +28,14 @@ public class StageScene : MonoBehaviour
         // _timerRunner.StartRepeatingRealtime(flowTime, 1f); //timeScale 무시
 
 
-        ManagerObject.instance.actionManager.endGame -= endGame; // ActionManager의 endGame 이벤트에 endGame 메서드 구독
-        ManagerObject.instance.actionManager.endGame += endGame;
+        ManagerObject.instance.actionManager.EndGameEvent -= endGame; // ActionManager의 endGame 이벤트에 endGame 메서드 구독
+        ManagerObject.instance.actionManager.EndGameEvent += endGame;
 
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.endGame -= endGame;
+        ManagerObject.instance.actionManager.EndGameEvent -= endGame;
 
     }
 
