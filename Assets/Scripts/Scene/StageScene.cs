@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class StageScene : MonoBehaviour
 {
-    GameObject player; //현재 씬의 플레이어
-    GameObject enemy; //현재 씬의 적
+    //public GameObject player; //현재 씬의 플레이어
+    //public GameObject enemy; //현재 씬의 적
 
 
 
     private int gameLeftTime = 99;
     private TimerRunner _timerRunner;
 
-    public void Awake()
+    private void Awake()
     {
         
-        loadstage(1); //지금은 GetStageDatabyStageID(1) 로 스테이지 1만 실행, 클리어 시 GetStageDatabyStageID(2)로 스테이지 정보 불러오도록 함
+        Loadstage(1); //지금은 GetStageDatabyStageID(1) 로 스테이지 1만 실행, 클리어 시 GetStageDatabyStageID(2)로 스테이지 정보 불러오도록 함
 
         if (_timerRunner == null)
         {
@@ -28,14 +28,14 @@ public class StageScene : MonoBehaviour
         // _timerRunner.StartRepeatingRealtime(flowTime, 1f); //timeScale 무시
 
 
-        ManagerObject.instance.actionManager.EndGameEvent -= endGame; // ActionManager의 endGame 이벤트에 endGame 메서드 구독
-        ManagerObject.instance.actionManager.EndGameEvent += endGame;
+        ManagerObject.instance.actionManager.EndGameEvent -= EndGame; // ActionManager의 endGame 이벤트에 endGame 메서드 구독
+        ManagerObject.instance.actionManager.EndGameEvent += EndGame;
 
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.EndGameEvent -= endGame;
+        ManagerObject.instance.actionManager.EndGameEvent -= EndGame;
 
     }
 
@@ -46,19 +46,19 @@ public class StageScene : MonoBehaviour
         ManagerObject.instance.actionManager.OnSetGameTimeUI(gameLeftTime); //TimePanel의 시간을 세팅하는 델리게이트 호출
         if (gameLeftTime <= 0)
         {
-            endGame(ResultStateEnum.Defeat); //시간 종료로 패배
+            EndGame(ResultStateEnum.Defeat); //시간 종료로 패배
         }
     }
 
-    public void loadstage(int stageID)
+    public void Loadstage(int stageID)
     {
         //스테이지 별 SO에서 정의된 캐릭터ID를 토대로 캐릭터 ID 별 SO 속 정보에 따라 씬에 생성
         foreach (var spawnCharacters in ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).characterTypeEnum)
         {
             CharacterStatData stat = ManagerObject.instance.resourceManager.characterDatas.Result.GetCharacterDataById(spawnCharacters);
             GameObject go = MonoBehaviour.Instantiate(stat.characterPrefab, stat.startPosition, Quaternion.identity);
-            if (go.CompareTag("Player")) player = go;
-            else if (go.CompareTag("Enemy")) enemy = go;
+            //if (go.CompareTag("Player")) player = go;
+            //else if (go.CompareTag("Enemy")) enemy = go;
         }
 
         //BGM 재생
@@ -67,7 +67,7 @@ public class StageScene : MonoBehaviour
         gameLeftTime = ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).gameTime;
     }
 
-    public void endGame(ResultStateEnum resultStateEnum)
+    public void EndGame(ResultStateEnum resultStateEnum)
     {
         // 반복 중지
         if (_timerRunner != null)
