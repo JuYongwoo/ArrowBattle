@@ -154,7 +154,7 @@ public class SkillDataBaseManager
         var targetPos = (targetTr != null) ? targetTr.position : (startPosition + Vector3.right * 8f);
         var forward = DirFromTo(startPosition, targetPos);
 
-        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillSound, 0.2f, false);
+        ManagerObject.instance.actionManager.OnPlayAudioClip(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillSound, 0.2f, false);
 
         switch (so.skillProjectileMovingType)
         {

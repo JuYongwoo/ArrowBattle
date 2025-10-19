@@ -62,7 +62,7 @@ public class StageScene : MonoBehaviour
         }
 
         //BGM 재생
-        ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).bgm, 0.2f, true);
+        ManagerObject.instance.actionManager.OnPlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).bgm, 0.2f, true);
 
         gameLeftTime = ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).gameTime;
     }
@@ -73,11 +73,11 @@ public class StageScene : MonoBehaviour
         if (_timerRunner != null)
             _timerRunner.StopRepeating();
 
-        if (resultStateEnum == ResultStateEnum.Victory) ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.victoryMusic, 0.3f, false);
-        else ManagerObject.instance.audioM.PlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.defeatMusic, 0.2f, false);
+        if (resultStateEnum == ResultStateEnum.Victory) ManagerObject.instance.actionManager.OnPlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.victoryMusic, 0.3f, false);
+        else ManagerObject.instance.actionManager.OnPlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.defeatMusic, 0.2f, false);
 
         Time.timeScale = 0f; //게임 일시정지
-        ManagerObject.instance.audioM.StopAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(1).bgm); //BGM 정지
+        ManagerObject.instance.audioManager.StopAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(1).bgm); //BGM 정지
         ManagerObject.instance.actionManager.OnGameResultUI(resultStateEnum); //ResultPanel의 UI를 세팅하는 델리게이트 호출
     }
 

@@ -6,9 +6,29 @@ public class AudioManager
     //private Dictionary<Skills, AudioClip> skillSoundsMap;
 
     private Dictionary<AudioClip, AudioSource> audioSources = new Dictionary<AudioClip, AudioSource>();
+    private float masterVolume = 1f; //모든 사운드에 곱해지는 값
 
+    public void OnStart()
+    {
+        ManagerObject.instance.actionManager.PlayAudioClipEvent -= PlayAudioClip;
+        ManagerObject.instance.actionManager.PlayAudioClipEvent += PlayAudioClip;
+        ManagerObject.instance.actionManager.StopAudioClipEvent -= StopAudioClip;
+        ManagerObject.instance.actionManager.StopAudioClipEvent += StopAudioClip;
+        ManagerObject.instance.actionManager.StopAllAudioClipEvent -= StopAllAudioClip;
+        ManagerObject.instance.actionManager.StopAllAudioClipEvent += StopAllAudioClip;
+        ManagerObject.instance.actionManager.SetMasterVolumeEvent -= SetMasterVolume;
+        ManagerObject.instance.actionManager.SetMasterVolumeEvent += SetMasterVolume;
+    }
+    public void OnDestroy()
+    {
+        ManagerObject.instance.actionManager.PlayAudioClipEvent -= PlayAudioClip;
+        ManagerObject.instance.actionManager.StopAudioClipEvent -= StopAudioClip;
+        ManagerObject.instance.actionManager.StopAllAudioClipEvent -= StopAllAudioClip;
+        ManagerObject.instance.actionManager.SetMasterVolumeEvent -= SetMasterVolume;
 
-    public void PlayAudioClip(AudioClip ac, float volume, bool isLoop)
+    }
+
+    private void PlayAudioClip(AudioClip ac, float volume, bool isLoop)
     {
         if (!audioSources.ContainsKey(ac)) //존재하지 않는 오디오 클립 대응 소스
         {
@@ -17,7 +37,7 @@ public class AudioManager
 
 
             //지금 사용한다는 것은 앞으로도 재생할 일 O, 쉬고있는 오디오소스를 이용하도록 딕셔너리의 key만 바꿔주도록 한다.
-            foreach(var pair in audioSources)
+            foreach (var pair in audioSources)
             {
                 if (!pair.Value.isPlaying) //쉬고있는 오디오소스가 있는가
                 {
@@ -27,7 +47,7 @@ public class AudioManager
             }
 
 
-            if(removeCandi.Key != null) //쉬고 있는 오디오소스를 찾았다
+            if (removeCandi.Key != null) //쉬고 있는 오디오소스를 찾았다
             {
                 audioSources.Remove(removeCandi.Key); //기존 딕셔너리 제거(실제 컴포넌트는 제거하지 않음)
                 audioSources.Add(ac, removeCandi.Value); //키만 바꿔서 등록한다
@@ -48,7 +68,7 @@ public class AudioManager
             var s = audioSources[ac];
             if (s.isPlaying && s.clip == ac) return; // 이미 같은 루프가 재생 중이면 무시
         }
-        audioSources[ac].volume = volume;
+        audioSources[ac].volume = volume * masterVolume;
         audioSources[ac].loop = isLoop;
 
         audioSources[ac].Stop();
@@ -65,6 +85,18 @@ public class AudioManager
         }
     }
 
+    public void StopAllAudioClip()
+    {
+        foreach (var source in audioSources.Values)
+        {
+            source.Stop();
+        }
+    }
+
+    public void SetMasterVolume(float vol)
+    {
+        masterVolume = vol;
+    }
 
 
 }

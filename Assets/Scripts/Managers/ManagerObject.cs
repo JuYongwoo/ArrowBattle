@@ -4,11 +4,11 @@ public class ManagerObject : MonoBehaviour
 {
     static public ManagerObject instance;
 
-    public AudioManager audioM = new AudioManager();
+    public AudioManager audioManager = new AudioManager();
     public ResourceManager resourceManager = new ResourceManager();
-    public InputManager inputM = new InputManager();
+    public InputManager inputManager = new InputManager();
     public ActionManager actionManager = new ActionManager();
-    public SkillDataBaseManager skillInfoM = new SkillDataBaseManager();
+    public SkillDataBaseManager skillInfoManager = new SkillDataBaseManager();
     public PoolManager poolManager = new PoolManager();
 
 
@@ -17,12 +17,19 @@ public class ManagerObject : MonoBehaviour
 
         MakeInstance();
         resourceManager.OnAwake();
+        audioManager.OnStart();
         Screen.SetResolution(1600, 900, false);
 
     }
+
+    private void OnDestroy()
+    {
+        audioManager.OnDestroy();
+    }
+
     private void Update()
     {
-        inputM.OnUpdate();
+        inputManager.OnUpdate();
     }
 
     private void MakeInstance()

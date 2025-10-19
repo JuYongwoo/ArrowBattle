@@ -39,7 +39,7 @@ public abstract class CharacterBase : MonoBehaviour
         {
             Stat.Current.CurrentHP = 0;
         }
-        ManagerObject.instance.audioM.PlayAudioClip(Stat.Current.HitSound, 0.3f, false);
+        ManagerObject.instance.actionManager.OnPlayAudioClip(Stat.Current.HitSound, 0.3f, false);
     }
 
     protected virtual void SetState(CharacterStateEnum s)
@@ -98,7 +98,7 @@ public abstract class CharacterBase : MonoBehaviour
 
         yield return new WaitForSeconds(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCastingTime);
 
-        ManagerObject.instance.skillInfoM.Shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
+        ManagerObject.instance.skillInfoManager.Shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 
         skillCoroutine = null;
         PrepareSkill(Skill.Attack);

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class ActionManager
 {
@@ -19,6 +20,10 @@ public class ActionManager
     public event Action<float, float> SetEnemyHPInUIEvent;
     public event Action<float, float> SetPlayerHPInUIEvent;
 
+    public event Action<AudioClip, float, bool> PlayAudioClipEvent;
+    public event Action<AudioClip> StopAudioClipEvent;
+    public event Action StopAllAudioClipEvent;
+    public event Action<float> SetMasterVolumeEvent;
 
     public void OnLeftRightMove(float a)
     {
@@ -70,4 +75,24 @@ public class ActionManager
         SetPlayerHPInUIEvent?.Invoke(a, b);
     }
 
+    public void OnPlayAudioClip(AudioClip ac, float volume, bool isLoop)
+    {
+        PlayAudioClipEvent?.Invoke(ac, volume, isLoop);
+    }
+
+    public void OnStopAudioClip(AudioClip ac)
+    {
+        StopAudioClipEvent?.Invoke(ac);
+    }
+
+    public void OnStopAllAudioClip()
+    {
+        StopAllAudioClipEvent?.Invoke();
+    }
+
+    public void OnSetMasterVolume(float vol)
+    {
+        SetMasterVolumeEvent?.Invoke(vol);
+
+    }
 }
