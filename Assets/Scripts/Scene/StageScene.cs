@@ -69,6 +69,7 @@ public class StageScene : MonoBehaviour
 
     public void EndGame(ResultStateEnum resultStateEnum)
     {
+        ManagerObject.instance.actionManager.OnStopAllAudioClip();
         // 반복 중지
         if (_timerRunner != null)
             _timerRunner.StopRepeating();
@@ -77,7 +78,6 @@ public class StageScene : MonoBehaviour
         else ManagerObject.instance.actionManager.OnPlayAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.defeatMusic, 0.2f, false);
 
         Time.timeScale = 0f; //게임 일시정지
-        ManagerObject.instance.audioManager.StopAudioClip(ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(1).bgm); //BGM 정지
         ManagerObject.instance.actionManager.OnGameResultUI(resultStateEnum); //ResultPanel의 UI를 세팅하는 델리게이트 호출
     }
 
