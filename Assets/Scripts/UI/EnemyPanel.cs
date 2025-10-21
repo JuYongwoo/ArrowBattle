@@ -14,13 +14,13 @@ public class EnemyPanel : MonoBehaviour
     private void Awake()
     {
         EnemyPanelmap = Util.MapEnumChildObjects<EnemyPanelEnum, GameObject>(gameObject);
-        ManagerObject.instance.actionManager.SetEnemyHPInUIEvent -= SetHPInUI;
-        ManagerObject.instance.actionManager.SetEnemyHPInUIEvent += SetHPInUI;
+        ManagerObject.instance.eventManager.SetEnemyHPInUIEvent -= SetHPInUI;
+        ManagerObject.instance.eventManager.SetEnemyHPInUIEvent += SetHPInUI;
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.SetEnemyHPInUIEvent -= SetHPInUI;
+        ManagerObject.instance.eventManager.SetEnemyHPInUIEvent -= SetHPInUI;
 
     }
 

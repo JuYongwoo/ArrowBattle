@@ -12,7 +12,6 @@ public class TitlePanel : MonoBehaviour
 
     private Dictionary<TitlePanelObj, GameObject> titlePanelObjs;
 
-
     private void Awake()
     {
         titlePanelObjs = Util.MapEnumChildObjects<TitlePanelObj, GameObject>(this.gameObject);

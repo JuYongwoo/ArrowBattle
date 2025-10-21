@@ -141,7 +141,7 @@ public class SkillDataBaseManager
     )
     {
 
-        var p = ManagerObject.instance.poolManager.Spawn(so.skillProjectile, pos, Quaternion.identity).GetComponent<SkillProjectile>();
+        var p = ManagerObject.instance.poolManager.Spawn(so.SkillProjectile, pos, Quaternion.identity).GetComponent<SkillProjectile>();
 
         p.SetProjectile(casterType, so, init, tick, args);
         return p;
@@ -154,9 +154,9 @@ public class SkillDataBaseManager
         var targetPos = (targetTr != null) ? targetTr.position : (startPosition + Vector3.right * 8f);
         var forward = DirFromTo(startPosition, targetPos);
 
-        ManagerObject.instance.actionManager.OnPlayAudioClip(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillSound, 0.2f, false);
+        ManagerObject.instance.eventManager.OnPlayAudioClip(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).SkillSound, 0.2f, false);
 
-        switch (so.skillProjectileMovingType)
+        switch (so.SkillProjectileMovingType)
         {
             case SkillProjectileMovingType.Straight:
                 Spawn_Straight(casterType, so, startPosition, forward);
@@ -458,7 +458,7 @@ public class SkillDataBaseManager
         float travel = (float)p.State["travel"];
         float maxDist = (float)p.State["maxDist"];
 
-        float step = p.Data.projectileSpeed * Time.deltaTime;
+        float step = p.Data.ProjectileSpeed * Time.deltaTime;
         travel += step;
 
         Vector3 next = p.transform.position + dir * step;
@@ -491,7 +491,7 @@ public class SkillDataBaseManager
         Vector3 target = (Vector3)p.State["targetSnap"];
 
         float baseDist = (initDist > 0.01f) ? initDist : Vector3.Distance(from, target);
-        t = Mathf.Clamp01(t + (p.Data.projectileSpeed / baseDist) * Time.deltaTime);
+        t = Mathf.Clamp01(t + (p.Data.ProjectileSpeed / baseDist) * Time.deltaTime);
         p.State["t"] = t;
 
         Vector3 ctrl = ComputeCtrl(heightBase, from, target);
@@ -535,7 +535,7 @@ public class SkillDataBaseManager
         float x = (float)p.State["x"];
 
         Vector3 cur = p.transform.position;
-        float nextY = cur.y - (p.Data.projectileSpeed * fallMul) * Time.deltaTime;
+        float nextY = cur.y - (p.Data.ProjectileSpeed * fallMul) * Time.deltaTime;
 
         Vector3 next = new Vector3(x, nextY, cur.z);
         p.ApplyMove(next, Vector3.down);
@@ -565,12 +565,12 @@ public class SkillDataBaseManager
         float freqHz = (float)p.State["freqHz"];
 
         float dt = Time.deltaTime;
-        dist += p.Data.projectileSpeed * dt;
+        dist += p.Data.ProjectileSpeed * dt;
 
         float phase = p.Elapsed * freqHz * Mathf.PI * 2f;
         Vector3 pos = origin + forward * dist + right * (Mathf.Sin(phase) * amp);
 
-        float d2 = dist + p.Data.projectileSpeed * 0.02f;
+        float d2 = dist + p.Data.ProjectileSpeed * 0.02f;
         float ph2 = phase + freqHz * Mathf.PI * 2f * 0.02f;
         Vector3 p2 = origin + forward * d2 + right * (Mathf.Sin(ph2) * amp);
         Vector3 dir = (p2 - pos).normalized;
@@ -603,12 +603,12 @@ public class SkillDataBaseManager
         float freqHz = (float)p.State["freqHz"];
 
         float dt = Time.deltaTime;
-        dist += p.Data.projectileSpeed * dt;
+        dist += p.Data.ProjectileSpeed * dt;
 
         float wave = TriWave(p.Elapsed * freqHz);
         Vector3 pos = origin + forward * dist + right * (wave * amp);
 
-        float d2 = dist + p.Data.projectileSpeed * 0.02f;
+        float d2 = dist + p.Data.ProjectileSpeed * 0.02f;
         float w2 = TriWave((p.Elapsed + 0.02f) * freqHz);
         Vector3 p2 = origin + forward * d2 + right * (w2 * amp);
         Vector3 dir = (p2 - pos).normalized;
@@ -643,7 +643,7 @@ public class SkillDataBaseManager
         float spinSpd = (float)p.State["spinSpeed"];
         float dt = Time.deltaTime;
 
-        float step = p.Data.projectileSpeed * dt;
+        float step = p.Data.ProjectileSpeed * dt;
         travel += step;
         Vector3 next = p.transform.position + dir * step;
 

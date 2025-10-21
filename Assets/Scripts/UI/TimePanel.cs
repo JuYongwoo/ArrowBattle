@@ -10,17 +10,16 @@ public class TimePanel : MonoBehaviour
     }
     private Dictionary<TimePanelEnum, GameObject> TimePanelmap;
 
-
     private void Awake()
     {
         TimePanelmap = Util.MapEnumChildObjects<TimePanelEnum, GameObject>(gameObject);
-        ManagerObject.instance.actionManager.SetGameTimeUIEvent -= SetTime;
-        ManagerObject.instance.actionManager.SetGameTimeUIEvent += SetTime;
+        ManagerObject.instance.eventManager.SetGameTimeUIEvent -= SetTime;
+        ManagerObject.instance.eventManager.SetGameTimeUIEvent += SetTime;
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.SetGameTimeUIEvent -= SetTime;
+        ManagerObject.instance.eventManager.SetGameTimeUIEvent -= SetTime;
 
     }
 

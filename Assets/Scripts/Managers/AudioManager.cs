@@ -10,21 +10,21 @@ public class AudioManager
 
     public void OnStart()
     {
-        ManagerObject.instance.actionManager.PlayAudioClipEvent -= PlayAudioClip;
-        ManagerObject.instance.actionManager.PlayAudioClipEvent += PlayAudioClip;
-        ManagerObject.instance.actionManager.StopAudioClipEvent -= StopAudioClip;
-        ManagerObject.instance.actionManager.StopAudioClipEvent += StopAudioClip;
-        ManagerObject.instance.actionManager.StopAllAudioClipEvent -= StopAllAudioClip;
-        ManagerObject.instance.actionManager.StopAllAudioClipEvent += StopAllAudioClip;
-        ManagerObject.instance.actionManager.SetMasterVolumeEvent -= SetMasterVolume;
-        ManagerObject.instance.actionManager.SetMasterVolumeEvent += SetMasterVolume;
+        ManagerObject.instance.eventManager.PlayAudioClipEvent -= PlayAudioClip;
+        ManagerObject.instance.eventManager.PlayAudioClipEvent += PlayAudioClip;
+        ManagerObject.instance.eventManager.StopAudioClipEvent -= StopAudioClip;
+        ManagerObject.instance.eventManager.StopAudioClipEvent += StopAudioClip;
+        ManagerObject.instance.eventManager.StopAllAudioClipEvent -= StopAllAudioClip;
+        ManagerObject.instance.eventManager.StopAllAudioClipEvent += StopAllAudioClip;
+        ManagerObject.instance.eventManager.SetMasterVolumeEvent -= SetMasterVolume;
+        ManagerObject.instance.eventManager.SetMasterVolumeEvent += SetMasterVolume;
     }
     public void OnDestroy()
     {
-        ManagerObject.instance.actionManager.PlayAudioClipEvent -= PlayAudioClip;
-        ManagerObject.instance.actionManager.StopAudioClipEvent -= StopAudioClip;
-        ManagerObject.instance.actionManager.StopAllAudioClipEvent -= StopAllAudioClip;
-        ManagerObject.instance.actionManager.SetMasterVolumeEvent -= SetMasterVolume;
+        ManagerObject.instance.eventManager.PlayAudioClipEvent -= PlayAudioClip;
+        ManagerObject.instance.eventManager.StopAudioClipEvent -= StopAudioClip;
+        ManagerObject.instance.eventManager.StopAllAudioClipEvent -= StopAllAudioClip;
+        ManagerObject.instance.eventManager.SetMasterVolumeEvent -= SetMasterVolume;
 
     }
 

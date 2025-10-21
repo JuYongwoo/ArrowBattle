@@ -13,21 +13,18 @@ public class ResultPanel : MonoBehaviour
     private Dictionary<ResultPanelEnum, GameObject> ResultPanelmap;
     private Coroutine _bgFadeRoutine;
 
-
     private void Awake()
     {
         ResultPanelmap = Util.MapEnumChildObjects<ResultPanelEnum, GameObject>(this.gameObject);
-        ManagerObject.instance.actionManager.GameResultUIEvent -= StartUI;
-        ManagerObject.instance.actionManager.GameResultUIEvent += StartUI;
+        ManagerObject.instance.eventManager.GameResultUIEvent -= StartUI;
+        ManagerObject.instance.eventManager.GameResultUIEvent += StartUI;
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.actionManager.GameResultUIEvent -= StartUI;
+        ManagerObject.instance.eventManager.GameResultUIEvent -= StartUI;
 
     }
-
-
 
     private void StartUI(ResultStateEnum resultStateEnum)
     {

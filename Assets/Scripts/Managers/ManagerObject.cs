@@ -7,7 +7,7 @@ public class ManagerObject : MonoBehaviour
     public AudioManager audioManager = new AudioManager();
     public ResourceManager resourceManager = new ResourceManager();
     public InputManager inputManager = new InputManager();
-    public ActionManager actionManager = new ActionManager();
+    public EventManager eventManager = new EventManager();
     public SkillDataBaseManager skillInfoManager = new SkillDataBaseManager();
     public PoolManager poolManager = new PoolManager();
 

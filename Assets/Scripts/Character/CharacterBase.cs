@@ -39,7 +39,7 @@ public abstract class CharacterBase : MonoBehaviour
         {
             Stat.Current.CurrentHP = 0;
         }
-        ManagerObject.instance.actionManager.OnPlayAudioClip(Stat.Current.HitSound, 0.3f, false);
+        ManagerObject.instance.eventManager.OnPlayAudioClip(Stat.Current.HitSound, 0.3f, false);
     }
 
     protected virtual void SetState(CharacterStateEnum s)
@@ -78,7 +78,7 @@ public abstract class CharacterBase : MonoBehaviour
 
         if (TryBeginCooldown(skill) == false) return;
 
-        _cooldownEnd[skill] = Time.time + ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCoolTime;
+        _cooldownEnd[skill] = Time.time + ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).SkillCoolTime;
 
         castingSkill = skill;
 
@@ -96,7 +96,7 @@ public abstract class CharacterBase : MonoBehaviour
     private IEnumerator CastSkill(Skill skill)
     {
 
-        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).skillCastingTime);
+        yield return new WaitForSeconds(ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill).SkillCastingTime);
 
         ManagerObject.instance.skillInfoManager.Shoot(CharacterTypeEnum, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f), skill);
 

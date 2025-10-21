@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface PooledObejct
+public interface PooledObject
 {
     public abstract void PoolDestroy();
     public abstract void PoolStart();
@@ -64,7 +64,7 @@ public class PoolManager
         _instanceToPrefab[instance] = prefab;
         instance.SetActive(true);
 
-        PooledObejct[] classes = instance.GetComponents<PooledObejct>();
+        PooledObject[] classes = instance.GetComponents<PooledObject>();
         for (int i = 0; i < classes.Length; i++) classes[i].PoolStart();
         return instance;
     }
@@ -113,7 +113,7 @@ public class PoolManager
             return;
         }
 
-        PooledObejct[] classes = instance.GetComponents<PooledObejct>();
+        PooledObject[] classes = instance.GetComponents<PooledObject>();
         for (int i = 0; i < classes.Length; i++) classes[i].PoolDestroy();
 
         instance.transform.SetParent(PooledObjects, false);
