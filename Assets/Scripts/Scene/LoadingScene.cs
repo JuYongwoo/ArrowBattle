@@ -1,18 +1,22 @@
 using System.Collections;
 using UnityEngine;
 
-public class LoadingScene : MonoBehaviour
+namespace JYW.ArrowBattle.Scene
 {
 
-    private void Start()
+    public class LoadingScene : MonoBehaviour
     {
-        StartCoroutine(ChangeScene());
-    }
 
-    private IEnumerator ChangeScene()
-    {
-        yield return new WaitForSeconds(2f);
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
-    }
+        private void Start()
+        {
+            StartCoroutine(ChangeScene());
+        }
 
+        private IEnumerator ChangeScene()
+        {
+            yield return new WaitForSeconds(2f);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
+        }
+
+    }
 }

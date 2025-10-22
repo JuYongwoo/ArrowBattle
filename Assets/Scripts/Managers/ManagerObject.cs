@@ -1,50 +1,54 @@
 using UnityEngine;
 
-public class ManagerObject : MonoBehaviour
+namespace JYW.ArrowBattle.Managers
 {
-    static public ManagerObject instance;
 
-    public AudioManager audioManager = new AudioManager();
-    public ResourceManager resourceManager = new ResourceManager();
-    public InputManager inputManager = new InputManager();
-    public EventManager eventManager = new EventManager();
-    public SkillDataBaseManager skillInfoManager = new SkillDataBaseManager();
-    public PoolManager poolManager = new PoolManager();
-
-
-    private void Awake()
+    public class ManagerObject : MonoBehaviour
     {
-        MakeInstance();
-        resourceManager.OnAwake();
-        audioManager.OnAwake();
-    }
+        static public ManagerObject instance;
 
-    private void Start()
-    {
-        Screen.SetResolution(1600, 900, false);
-    }
+        public AudioManager audioManager = new AudioManager();
+        public ResourceManager resourceManager = new ResourceManager();
+        public InputManager inputManager = new InputManager();
+        public EventManager eventManager = new EventManager();
+        public SkillDataBaseManager skillInfoManager = new SkillDataBaseManager();
+        public PoolManager poolManager = new PoolManager();
 
 
-    private void OnDestroy()
-    {
-        audioManager.OnDestroy();
-    }
-
-    private void Update()
-    {
-        inputManager.OnUpdate();
-    }
-
-    private void MakeInstance()
-    {
-        if (instance != null && instance != this)
+        private void Awake()
         {
-            Destroy(gameObject);
-            return;
+            MakeInstance();
+            resourceManager.OnAwake();
+            audioManager.OnAwake();
         }
 
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
+        private void Start()
+        {
+            Screen.SetResolution(1600, 900, false);
+        }
 
+
+        private void OnDestroy()
+        {
+            audioManager.OnDestroy();
+        }
+
+        private void Update()
+        {
+            inputManager.OnUpdate();
+        }
+
+        private void MakeInstance()
+        {
+            if (instance != null && instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+    }
 }

@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using JYW.ArrowBattle.Managers;
+using JYW.ArrowBattle.Skill;
+using JYW.ArrowBattle.SO;
 
 
 public enum SkillProjectileMovingType
@@ -147,7 +150,7 @@ public class SkillDataBaseManager
         return p;
     }
 
-    public void Shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, Skill skill)
+    public void Shoot(CharacterTypeEnumByTag casterType, Vector3 startPosition, SkillType skill)
     {
         var so = ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skill);
         var targetTr = FindTargetForCaster(casterType);

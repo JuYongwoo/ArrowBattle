@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
-
+using JYW.ArrowBattle.SO;
 
 public enum CharacterStateEnum
 {
@@ -9,7 +9,7 @@ public enum CharacterStateEnum
     Moving,
     UsingSkill
 }
-public enum Skill
+public enum SkillType
 {
     Attack,
     Skill1, Skill2, Skill3, Skill4, Skill5
