@@ -8,7 +8,7 @@ public class AudioManager
     private Dictionary<AudioClip, AudioSource> audioSources = new Dictionary<AudioClip, AudioSource>();
     private float masterVolume = 1f; //모든 사운드에 곱해지는 값
 
-    public void OnStart()
+    public void OnAwake()
     {
         ManagerObject.instance.eventManager.PlayAudioClipEvent -= PlayAudioClip;
         ManagerObject.instance.eventManager.PlayAudioClipEvent += PlayAudioClip;

@@ -14,13 +14,16 @@ public class ManagerObject : MonoBehaviour
 
     private void Awake()
     {
-
         MakeInstance();
         resourceManager.OnAwake();
-        audioManager.OnStart();
-        Screen.SetResolution(1600, 900, false);
-
+        audioManager.OnAwake();
     }
+
+    private void Start()
+    {
+        Screen.SetResolution(1600, 900, false);
+    }
+
 
     private void OnDestroy()
     {

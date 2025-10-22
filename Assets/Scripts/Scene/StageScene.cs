@@ -28,7 +28,7 @@ public class StageScene : MonoBehaviour
             _timerRunner = go.AddComponent<TimerRunner>();
         }
 
-        _timerRunner.StartRepeating(flowTime, 1f);
+        _timerRunner.StartRepeating(FlowTime, 1f);
         // _timerRunner.StartRepeatingRealtime(flowTime, 1f); //timeScale 무시
 
     }
@@ -39,7 +39,7 @@ public class StageScene : MonoBehaviour
 
     }
 
-    private void flowTime()
+    private void FlowTime()
     {
         gameLeftTime--;
 
@@ -50,7 +50,7 @@ public class StageScene : MonoBehaviour
         }
     }
 
-    public void Loadstage(int stageID)
+    private void Loadstage(int stageID)
     {
         //스테이지 별 SO에서 정의된 캐릭터ID를 토대로 캐릭터 ID 별 SO 속 정보에 따라 씬에 생성
         foreach (var spawnCharacters in ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).CharacterTypeEnum)
@@ -67,7 +67,7 @@ public class StageScene : MonoBehaviour
         gameLeftTime = ManagerObject.instance.resourceManager.gameModeData.Result.GetStageDatabyStageID(stageID).GameTime;
     }
 
-    public void EndGame(ResultStateEnum resultStateEnum)
+    private void EndGame(ResultStateEnum resultStateEnum)
     {
         ManagerObject.instance.eventManager.OnStopAllAudioClip();
         // 반복 중지
