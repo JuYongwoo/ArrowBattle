@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using JYW.ArrowBattle.Managers;
+using JYW.ArrowBattle.Utils;
 
 namespace JYW.ArrowBattle.UI
 {

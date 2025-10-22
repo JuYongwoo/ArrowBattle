@@ -1,31 +1,34 @@
 using UnityEngine;
 
-
-public class ABUtil
+namespace JYW.ArrowBattle.Utils
 {
 
-    public static bool isOpponentOnLeft(GameObject startGO, GameObject[] GoalGOs)
+    public class ABUtil
     {
 
-
-
-        Transform nearest = null;
-        float bestAbsDx = float.MaxValue;
-
-        for (int i = 0; i < GoalGOs.Length; i++)
+        public static bool isOpponentOnLeft(GameObject startGO, GameObject[] GoalGOs)
         {
-            float dx = GoalGOs[i].transform.position.x - startGO.transform.position.x;
-            float abs = Mathf.Abs(dx);
-            if (abs < bestAbsDx)
+
+
+
+            Transform nearest = null;
+            float bestAbsDx = float.MaxValue;
+
+            for (int i = 0; i < GoalGOs.Length; i++)
             {
-                bestAbsDx = abs;
-                nearest = GoalGOs[i].transform;
+                float dx = GoalGOs[i].transform.position.x - startGO.transform.position.x;
+                float abs = Mathf.Abs(dx);
+                if (abs < bestAbsDx)
+                {
+                    bestAbsDx = abs;
+                    nearest = GoalGOs[i].transform;
+                }
             }
+            if (nearest == null) return false;
+
+            float dxNearest = nearest.position.x - startGO.transform.position.x;
+            return dxNearest < 0f;
         }
-        if (nearest == null) return false;
 
-        float dxNearest = nearest.position.x - startGO.transform.position.x;
-        return dxNearest < 0f;
     }
-
 }

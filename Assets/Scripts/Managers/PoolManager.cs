@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+namespace JYW.ArrowBattle.Managers
+{
     public interface PooledObject
     {
         public abstract void PoolDestroy();
         public abstract void PoolStart();
     }
 
-namespace JYW.ArrowBattle.Managers
-{
+
     public class PoolManager
     {
         private Dictionary<GameObject, Queue<GameObject>> _pools = new();

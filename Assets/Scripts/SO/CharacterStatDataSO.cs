@@ -1,3 +1,4 @@
+using JYW.ArrowBattle.Managers;
 using UnityEngine;
 
 namespace JYW.ArrowBattle.SO

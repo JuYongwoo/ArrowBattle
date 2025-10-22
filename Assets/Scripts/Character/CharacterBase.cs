@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using JYW.ArrowBattle.Managers;
+using JYW.ArrowBattle.Utils;
 
 namespace JYW.ArrowBattle.Character
 {
