@@ -14,17 +14,17 @@ public class PlayerPanel : MonoBehaviour
     private void Awake()
     {
         PlayerPanelmap = Util.MapEnumChildObjects<PlayerPanelEnum, GameObject>(this.gameObject);
-        ManagerObject.instance.eventManager.SetPlayerHPInUIEvent -= setHPInUI;
-        ManagerObject.instance.eventManager.SetPlayerHPInUIEvent += setHPInUI;
+        ManagerObject.instance.eventManager.SetPlayerHPInUIEvent -= SetHPPlayerUI;
+        ManagerObject.instance.eventManager.SetPlayerHPInUIEvent += SetHPPlayerUI;
     }
 
     private void OnDestroy()
     {
-        ManagerObject.instance.eventManager.SetPlayerHPInUIEvent -= setHPInUI;
+        ManagerObject.instance.eventManager.SetPlayerHPInUIEvent -= SetHPPlayerUI;
 
     }
 
-    private void setHPInUI(float hp, float maxHP)
+    private void SetHPPlayerUI(float hp, float maxHP)
     {
         PlayerPanelmap.TryGetValue(PlayerPanelEnum.PlayerHPSlider, out GameObject hpSliderObj);
         hpSliderObj.GetComponent<UnityEngine.UI.Slider>().value = hp / maxHP;

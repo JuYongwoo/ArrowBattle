@@ -15,9 +15,6 @@ public class TitlePanel : MonoBehaviour
     private void Awake()
     {
         titlePanelObjs = Util.MapEnumChildObjects<TitlePanelObj, GameObject>(this.gameObject);
-    }
-    private void Start()
-    {
         titlePanelObjs[TitlePanelObj.TitilePlayBtn].GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>{SceneManager.LoadScene("Main");});
     }
 }

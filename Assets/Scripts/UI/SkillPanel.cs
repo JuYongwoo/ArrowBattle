@@ -24,6 +24,9 @@ public class SkillPanel : MonoBehaviour
     private void Awake()
     {
         map = Util.MapEnumChildObjects<SkillPanelEnum, GameObject>(gameObject);
+        ManagerObject.instance.eventManager.CooldownUIEvent -= StartCooldown;
+        ManagerObject.instance.eventManager.CooldownUIEvent += StartCooldown;
+        
         for (int i = 1; i <= 5; i++) //SO 토대로 스킬 아이콘 설정
         {
 
@@ -37,13 +40,11 @@ public class SkillPanel : MonoBehaviour
             // 아이콘 적용
             map[panelEnum].GetComponent<Image>().sprite = ManagerObject.instance.resourceManager.SkillDatas.Result.GetSkillDataById(skillEnum).SkillIcon;
         }
+
     }
 
     private void Start()
     {
-        ManagerObject.instance.eventManager.CooldownUIEvent -= StartCooldown;
-        ManagerObject.instance.eventManager.CooldownUIEvent += StartCooldown;
-
         for (int i = 1; i <= 5; i++)
         {
             StartCooldown(i, 0);
