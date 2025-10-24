@@ -1,14 +1,18 @@
 # ArrowBattle
 
 ## 프로젝트 설명
+
+![게임 시연](https://raw.githubusercontent.com/JuYongWoo/ArrowBattle_Public/main/README/ArrowBattle_GIF1.gif)
 - **좌우 이동 + 스킬 기반 전투**. 기본 공격과 5개의 스킬이 존재합니다.
-- **제한 시간** 내 승리 조건을 달성하면 승리, 시간이 만료되면 패배 처리됩니다.
-- 타이틀 화면에서 **Play** 버튼으로 메인 씬으로 진입합니다.
+<br><br>
+
+![게임 시연](https://raw.githubusercontent.com/JuYongWoo/ArrowBattle_Public/main/README/ArrowBattle_GIF2.gif)
+- **제한 시간** 내 상대방의 체력을 0으로 만들면 승리, 플레이어의 체력이 0이 되거나 시간이 만료되면 패배합니다.
 
 ### 조작
-- 이동: `Horizontal` 축 (예: A/D, ←/→)  
+- 이동: `← 좌 이동` 또는 `→ 우 이동`
 - 스킬: `Q/W/E/R/Space` (Skill1~Skill5)  
-- 기본 공격은 코드 상 `Attack` 스킬로 통합되어 있으며, 캐스팅/쿨타임 로직과 함께 동작합니다.
+- 기본 공격은 가만히 있으면 자동 공격합니다.
 
 ---
 
@@ -34,6 +38,11 @@
 ### **Singleton 스타일의 매니저 허브**
 - `ManagerObject`(DontDestroyOnLoad)가 `Audio/Resource/Input/Action/SkillDataBase`를 보유.  
 - `MainScene`은 타이머 러너를 통해 **고정/실시간 반복 콜백**으로 시간 흐름과 UI 갱신을 수행.
+
+### **오브젝트 풀링 사용**
+- 스킬 사용 시 액션게임 특성 상 반복적인 프리팹 소환  
+- 매번 프리팹을 새로 소환하는 것 보다, 처음 소환한 것을 큐에 저장, 다시 소환 시 **기존 프리팹을 재사용**하도록 설정
+- `PoolManager`를 통해 `Instantiate`함수를 `Spawn` 함수로 비슷한 수행을 하도록 대체
 
 ---
 
